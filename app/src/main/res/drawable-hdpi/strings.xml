@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Profile</string>
+    <string name="nickname">Disappointed Oscillating Fan</string>
+    <string name="action_settings">Settings</string>
+    <string name="email_address">NoOneUsesMeSinceAC@email.com</string>
+    <string name="balance">$125.00</string>
+    <string name="confirmations">3 Confirmations</string>
+    <string name="view_your_tags">view your tags</string>
+
+</resources>

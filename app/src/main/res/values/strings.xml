@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Tap Dat</string>
+    <string name="title_activity_activity_arm">Tap Dat</string>
+    <string name="title_section1">Account</string>
+    <string name="title_section2">Tap</string>
+    <string name="title_section3">History</string>
+    <string name="hello_world">Howdy</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_tag">TagActivity</string>
+    <string name="title_activity_write">WriteActivity</string>
+
+
+    <string name="load_address_text">load address:</string>
+
+    <string name="withdraw_address_text">withdraw address:</string>
+</resources>

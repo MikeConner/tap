@@ -1,0 +1,38 @@
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/withdraw_address_text"
+        android:id="@+id/withdraw_address_text"
+        android:textSize="9pt"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:textColor="#88605563"
+        android:layout_marginBottom="135dp"
+        android:layout_gravity="center" />
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etWithdrawAddress"
+        android:text="Your Bitcoin Address"
+        android:textSize="8pt"
+        android:textColor="#f7c869"
+        android:layout_marginBottom="105dp"
+        android:layout_gravity="center"
+        android:textAlignment="center" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/check_mark"
+        android:src="@drawable/check_mark"
+        android:background="@drawable/check_mark_bg"
+        android:layout_marginBottom="45dp"
+        android:layout_gravity="center" />
+</FrameLayout>
+
