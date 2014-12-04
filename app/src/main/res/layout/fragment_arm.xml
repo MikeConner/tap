@@ -8,10 +8,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity"
 
-    android:background="@drawable/my_bg">
+    >
 
 
     >
+
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="-"
+        android:id="@+id/btnMinus"
+        android:background="@drawable/circlenotnumber"
+        android:gravity="center_vertical|center_horizontal"
+        android:textColor="#fff"
+        android:layout_gravity="left|center_vertical"
+        android:onClick="tapMinus"
+        android:layout_alignTop="@+id/btnOne"
+        android:layout_toEndOf="@+id/btnTen" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -24,6 +37,19 @@
         android:layout_marginTop="189dp" />
 
     <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="+"
+        android:id="@+id/btnPlus"
+        android:background="@drawable/circlenotnumber"
+        android:gravity="center_vertical|center_horizontal"
+        android:textColor="#fff"
+        android:layout_gravity="right|center_vertical"
+        android:onClick="tapPlus"
+        android:layout_alignTop="@+id/btnOne"
+        android:layout_toStartOf="@+id/btnOne" />
+
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TAP"
@@ -34,130 +60,46 @@
         android:background="@drawable/tapbutton_bg"
         android:onClick="armOrSend" />
 
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignEnd="@+id/btnWithdraw"
-        android:id="@+id/FrameLayout">
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="$1"
+        android:id="@+id/btnOne"
+        android:background="@drawable/circle"
+        android:gravity="center_vertical|center_horizontal"
+        android:textColor="#fff"
+        android:layout_below="@+id/txtAmount"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:layout_marginLeft="55dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:onClick="tapOne"/>
 
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:text="$5"
-            android:id="@+id/btnFive"
-            android:background="@drawable/circle"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="#fff"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="46dp"
-            android:layout_gravity="center_horizontal|top"
-            android:onClick="tapFive"/>
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="$10"
+        android:id="@+id/btnTen"
+        android:background="@drawable/circle"
+        android:gravity="center_vertical|center_horizontal"
+        android:textColor="#fff"
+        android:layout_gravity="left|bottom"
+        android:onClick="tapTen"
+        android:layout_below="@+id/btnMinus"
+        android:layout_toEndOf="@+id/btnOne" />
 
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:text="$50"
-            android:id="@+id/btnFifty"
-            android:background="@drawable/circle"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="#fff"
-            android:layout_below="@+id/txtAmount"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="100dp"
-            android:layout_gravity="center"
-            android:onClick="tapFifty"/>
-
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:text="$100"
-            android:id="@+id/btnHundred"
-            android:background="@drawable/circle"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="#fff"
-            android:layout_below="@+id/txtAmount"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="50dp"
-            android:layout_marginRight="55dp"
-            android:layout_gravity="right|center_vertical"
-            android:onClick="tapHundred"/>
-
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:text="-"
-            android:id="@+id/btnMinus"
-            android:background="@drawable/circlenotnumber"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="#fff"
-            android:layout_below="@+id/txtAmount"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
-            android:layout_marginLeft="20dp"
-            android:layout_gravity="left|center_vertical"
-            android:onClick="tapMinus"/>
-
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:text="$10"
-            android:id="@+id/btnTen"
-            android:background="@drawable/circle"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="#fff"
-            android:layout_below="@+id/txtAmount"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="80dp"
-            android:layout_marginRight="55dp"
-            android:layout_gravity="right|top"
-            android:onClick="tapTen"/>
-
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:text="$1"
-            android:id="@+id/btnOne"
-            android:background="@drawable/circle"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="#fff"
-            android:layout_below="@+id/txtAmount"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="80dp"
-            android:layout_marginLeft="55dp"
-            android:layout_gravity="left|top"
-            android:onClick="tapOne"/>
-
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:text="$20"
-            android:id="@+id/btnTwenty"
-            android:background="@drawable/circle"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="#fff"
-            android:layout_below="@+id/txtAmount"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="50dp"
-            android:layout_marginLeft="55dp"
-            android:layout_gravity="left|center_vertical"
-            android:onClick="tapTwenty"/>
-
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:text="+"
-            android:id="@+id/btnPlus"
-            android:background="@drawable/circlenotnumber"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="#fff"
-            android:layout_below="@+id/txtAmount"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
-            android:layout_marginRight="20dp"
-            android:layout_gravity="right|center_vertical"
-            android:onClick="tapPlus"/>
-
-    </FrameLayout>
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="$5"
+        android:id="@+id/btnFive"
+        android:background="@drawable/circle"
+        android:gravity="center_vertical|center_horizontal"
+        android:textColor="#fff"
+        android:layout_gravity="right|bottom"
+        android:onClick="tapFive"
+        android:layout_toStartOf="@+id/txtAmount"
+        android:layout_below="@+id/btnOne"
+        android:layout_toEndOf="@+id/btnPlus" />
 
 </RelativeLayout>

@@ -465,9 +465,9 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         Button btnOne = (Button) findViewById(R.id.btnOne);
         Button btnFive = (Button) findViewById(R.id.btnFive);
         Button btnTen = (Button) findViewById(R.id.btnTen);
-        Button btnTwenty = (Button) findViewById(R.id.btnTwenty);
-        Button btnFifty = (Button) findViewById(R.id.btnFifty);
-        Button btnHundred = (Button) findViewById(R.id.btnHundred);
+        //Button btnTwenty = (Button) findViewById(R.id.btnTwenty);
+        //Button btnFifty = (Button) findViewById(R.id.btnFifty);
+        //Button btnHundred = (Button) findViewById(R.id.btnHundred);
 
         Resources res = getResources();
         Drawable selected = res.getDrawable(R.drawable.circleselected);
@@ -475,9 +475,9 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         btnOne.setBackground(normal);
         btnFive.setBackground(normal);
         btnTen.setBackground(normal);
-        btnTwenty.setBackground(normal);
-        btnFifty.setBackground(normal);
-        btnHundred.setBackground(normal);
+        //btnTwenty.setBackground(normal);
+        //btnFifty.setBackground(normal);
+        //btnHundred.setBackground(normal);
 
         v.setBackground(selected);
 
