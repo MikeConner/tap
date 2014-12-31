@@ -3,9 +3,11 @@ package co.tapdatapp.tapandroid;
 
 
 import android.app.DialogFragment;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +59,17 @@ public class ArmedFragment extends DialogFragment {
     public void onResume(){
         super.onResume();
         TextView tv = (TextView)  getView().findViewById(R.id.txtFrag);
-        tv.setText( " About to TAP.  Tipping $" + mAmount);
+        TextView tvAmount = (TextView)  getView().findViewById(R.id.txtArmedAmount);
+
+        tv.setText( " TAP " );
+        tvAmount.setText(  "$" + String.format("%d", (long)mAmount));
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        //float densi = getActivity().getResources().getDisplayMetrics().density;
+        getDialog().getWindow().setLayout(width, height);
     }
 
 

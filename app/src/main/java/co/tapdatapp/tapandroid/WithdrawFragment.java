@@ -57,7 +57,7 @@ public class WithdrawFragment extends DialogFragment {
    //     tv.setText( " About to TAP.  Tipping $" + mAmount);
         TapUser mTapUser = TapCloud.getTapUser(getActivity());
         String Outbound = mTapUser.getBTCoutbound();
-        Button btnWithdraw = (Button) getView().findViewById(R.id.btnWithdraw);
+        //Button btnWithdraw = (Button) getView().findViewById(R.id.btnWithdraw);
 
         if (Outbound.equals("null") | Outbound.equals("")){
             //no addy here.. disable button

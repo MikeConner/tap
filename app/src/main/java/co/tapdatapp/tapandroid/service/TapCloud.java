@@ -68,6 +68,8 @@ public class TapCloud {
 
     public final static String TAP_USER_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/users/me";
     public final static String TAP_USERNICK_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/users/reset_nickname";
+    public final static String TAP_USERBALANCE_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/users/balance_inquiry";
+
 
     public final static String TAP_TAGS_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/nfc_tags.json";
     public final static String TAP_TAG_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/nfc_tags/0.json";
@@ -334,12 +336,14 @@ public class TapCloud {
         protected Bitmap doInBackground(String... urls) {
             String urldisplay = urls[0];
             Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
+            if(urldisplay != null) {
+                try {
+                    InputStream in = new java.net.URL(urldisplay).openStream();
+                    mIcon11 = BitmapFactory.decodeStream(in);
+                } catch (Exception e) {
+                    Log.e("Error", e.toString());
+                    e.printStackTrace();
+                }
             }
             return mIcon11;
         }

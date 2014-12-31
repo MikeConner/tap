@@ -77,7 +77,7 @@ public class AccountFragment extends Fragment {
     public void onResume(){
         super.onResume();
         MainActivity ma =  (MainActivity) getActivity();
-        mTapUser=  ma.getUserContext();
+        mTapUser=  ma.mTapUser;
 
         TextView nickName = (TextView)  getActivity().findViewById(R.id.etNickName);
         nickName.setText( mTapUser.getNickname());

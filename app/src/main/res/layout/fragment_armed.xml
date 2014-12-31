@@ -13,16 +13,18 @@
         android:id="@+id/txtFrag"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
 
     <ImageView
         android:layout_width="215dp"
-        android:layout_height="215dp"
+        android:layout_height="245dp"
         android:id="@+id/imageYapa"
         android:layout_gravity="center"
-        android:layout_below="@+id/txtFrag"
-        android:layout_centerHorizontal="true" />
+        android:src="@drawable/armbg"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="match_parent"
@@ -31,5 +33,18 @@
         android:id="@+id/txtYap"
         android:layout_below="@+id/imageYapa"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Amount"
+        android:id="@+id/txtArmedAmount"
+        android:layout_below="@+id/txtYap"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:gravity="center_horizontal" />
 
 </RelativeLayout>

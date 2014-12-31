@@ -3,12 +3,10 @@ package co.tapdatapp.tapandroid;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -41,7 +39,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,23 +54,26 @@ import co.tapdatapp.tapandroid.service.YapaAdapter;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class MainActivity extends Activity implements AccountFragment.OnFragmentInteractionListener, HistoryFragment.OnFragmentInteractionListener, ArmFragment.OnFragmentInteractionListener, ActionBar.TabListener {
+public class MainActivity extends Activity implements AccountFragment.OnFragmentInteractionListener, HistoryFragment.OnFragmentInteractionListener, ArmFragment.OnFragmentInteractionListener, ActionBar.TabListener, DataLoaderFragment.ProgressListener {
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
 
-    private SharedPreferences mPreferences;
-    private String mPhoneSecret;
-    private String mAuthToken;
-    private TapUser mTapUser;
+    protected SharedPreferences mPreferences;
+    protected String mPhoneSecret;
+    protected String mAuthToken;
 
-    private TapCloud mTapCloud;
+    protected TapUser mTapUser;
+    protected TapCloud mTapCloud;
 
-    private float fAmount;
-    private int fUnit;
+    protected float fAmount;
+    protected int fUnit;
+
     private TextView txAmount;
+
     private NfcAdapter mNfcAdapter;
     private IntentFilter[] mNdefExchangeFilters;
     private PendingIntent mNfcPendingIntent;
+
     private boolean mArmed = false;
     private ArmedFragment mArmFrag;
 
@@ -83,34 +83,83 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
     boolean mFromCamera = false;
     static final int REQUEST_TAKE_PHOTO = 1;
 
+
+    //splash screen and data loader fragment
+    private static final String TAG_DATA_LOADER = "TAPloader";
+    private static final String TAG_SPLASH_SCREEN = "TAPsplashScreen";
+
+    private DataLoaderFragment mDataLoaderFragment;
+    private SplashScreenFragment mSplashScreenFragment;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Default Amounts / Units for Tap Screen
         fAmount = 1;
         fUnit = 1;
-
-        //Capture NFC interactions for this activity
-        //TODO: make sure NFC is turn on or kill the APP with dialog
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        mNfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-                getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
-        IntentFilter smartwhere = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        try {
-            smartwhere.addDataType("tapdat/performer");    /* Handles all MIME based dispatches.
-                                       You should specify only the ones that you need. */
-        }
-        catch (IntentFilter.MalformedMimeTypeException  e) {
-            throw new RuntimeException("fail", e);
-        }
-        mNdefExchangeFilters = new IntentFilter[] { smartwhere };
-
+        captureNFC();
 
         //TODO: REMOVE THIS - Make sure all NETWORK TXNS are async
         StrictMode.ThreadPolicy tp = StrictMode.ThreadPolicy.LAX;
         StrictMode.setThreadPolicy(tp);
 
         super.onCreate(savedInstanceState);
+
+        //Load Splash Fragment
+        final FragmentManager fm = getFragmentManager();
+        mDataLoaderFragment = (DataLoaderFragment) fm.findFragmentByTag(TAG_DATA_LOADER);
+        if (mDataLoaderFragment == null) {
+            mDataLoaderFragment = new DataLoaderFragment();
+            mDataLoaderFragment.setProgressListener(this);
+            mDataLoaderFragment.startLoading();
+            fm.beginTransaction().add(mDataLoaderFragment, TAG_DATA_LOADER).commit();
+        } else {
+            if (checkCompletionStatus()) {
+                return;
+            }
+        }
+
+        // Show loading fragment
+        mSplashScreenFragment = (SplashScreenFragment) fm.findFragmentByTag(TAG_SPLASH_SCREEN);
+        if (mSplashScreenFragment == null) {
+            mSplashScreenFragment = new SplashScreenFragment();
+            fm.beginTransaction().add(android.R.id.content, mSplashScreenFragment, TAG_SPLASH_SCREEN).commit();
+        }
+
+    }
+
+
+    @Override
+    public void onCompletion(Double result) {
+        // For the sake of brevity, we just show a TextView with the result
+        setupTabs();
+       // tap_init();
+//        TextView tv = new TextView(this);
+//        tv.setText(String.valueOf(result));
+//        setContentView(tv);
+
+        mDataLoaderFragment = null;
+    }
+
+    private void captureNFC(){
+        //Capture NFC interactions for this activity
+        //TODO: make sure NFC is turn on or kill the APP with dialog
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        mNfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
+                getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
+        IntentFilter tapFilter = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+        try {
+            tapFilter.addDataType("tapdat/performer");    /* Handles all MIME based dispatches.
+                                       You should specify only the ones that you need. */
+        }
+        catch (IntentFilter.MalformedMimeTypeException  e) {
+            throw new RuntimeException("fail", e);
+        }
+        mNdefExchangeFilters = new IntentFilter[] { tapFilter };
+    }
+
+    private void setupTabs(){
         setContentView(R.layout.activity_main);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -149,10 +198,11 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         //sets home page to tap
 
         mViewPager.setCurrentItem(1);
-        //Start of Tap Network Operations
-        mPreferences = getSharedPreferences("CurrentUser", MODE_PRIVATE);
+    }
 
-//Main Operation - get TapCloud, create user if one does not exist based on phone secret, log in / get auth token
+    private void tap_init(){
+
+        mPreferences = getSharedPreferences("CurrentUser", MODE_PRIVATE);
         mTapCloud = new TapCloud();
         mTapUser = TapCloud.getTapUser(this);
         if (mPreferences.contains("PhoneSecret")) {
@@ -174,14 +224,14 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
                     mAuthToken = mPreferences.getString("AuthToken", "");
                     mTapCloud.setAuthToken(mAuthToken);
                     mTapUser.LoadUser(mAuthToken);
-                //TODO: Failure case for when auth token has expired -> get error, get new auth token based on secret
-                //TODO: Failure case in case we can't get to tap or tap is down
-            }
+                    //TODO: Failure case for when auth token has expired -> get error, get new auth token based on secret
+                    //TODO: Failure case in case we can't get to tap or tap is down
+                }
                 else {
                     mAuthToken =  mTapUser.CreateUser(mPhoneSecret);
                     SharedPreferences.Editor editor = mPreferences.edit();
                     editor.putString("AuthToken", mAuthToken);
-                    editor.putString("NickName", mTapUser.getNickname());
+                    //editor.putString("NickName", mTapUser.getNickname());
                     editor.commit();
                     mTapCloud.setAuthToken(mAuthToken);
 
@@ -193,7 +243,7 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
                 mAuthToken =  mTapUser.CreateUser(mPhoneSecret);
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putString("AuthToken", mAuthToken);
-                editor.putString("NickName", mTapUser.getNickname());
+                //editor.putString("NickName", mTapUser.getNickname());
                 editor.commit();
 
 
@@ -210,10 +260,56 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         }
         //end of Tap network Ops
     }
+
+
+
+    @Override
+    public void onProgressUpdate(int progress) {
+        mSplashScreenFragment.setProgress(progress);
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mDataLoaderFragment != null) {
+            checkCompletionStatus();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mDataLoaderFragment != null) {
+            mDataLoaderFragment.removeProgressListener();
+        }
+    }
+
+    /**
+     * Checks if data is done loading, if it is, the result is handled
+     *
+     * @return true if data is done loading
+     */
+    private boolean checkCompletionStatus() {
+        if (mDataLoaderFragment.hasResult()) {
+            onCompletion(mDataLoaderFragment.getResult());
+            FragmentManager fm = getFragmentManager();
+            mSplashScreenFragment = (SplashScreenFragment) fm.findFragmentByTag(TAG_SPLASH_SCREEN);
+            if (mSplashScreenFragment != null) {
+                fm.beginTransaction().remove(mSplashScreenFragment). commit();
+            }
+            return true;
+        }
+        mDataLoaderFragment.setProgressListener(this);
+        return false;
+    }
+
+
+
     @Override
     public void onResume(){
         super.onResume();
-      //  Toast.makeText(this, (CharSequence) (mTapUser.getNickname()), Toast.LENGTH_SHORT).show();
+
         txAmount = (TextView) findViewById(R.id.txtAmount);
 
         if (mNfcAdapter != null) {
@@ -426,7 +522,7 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         // in a transaction.  We also want to remove any currently showing
         // dialog, so make our own transaction and take care of that here.
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        Fragment prev = getFragmentManager().findFragmentByTag("armed");
         if (prev != null) {
             ft.remove(prev);
         }
@@ -434,7 +530,7 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
 
         // Create and show the dialog.
         mArmFrag =  new ArmedFragment(mAuthToken, fAmount);
-        mArmFrag.show(ft, "dialog");
+        mArmFrag.show(ft, "armed");
     }
     private void changeAmount(int change_value, boolean addition){
         if (addition) {
@@ -469,17 +565,17 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         //Button btnFifty = (Button) findViewById(R.id.btnFifty);
         //Button btnHundred = (Button) findViewById(R.id.btnHundred);
 
-        Resources res = getResources();
-        Drawable selected = res.getDrawable(R.drawable.circleselected);
-        Drawable normal = res.getDrawable(R.drawable.circle);
-        btnOne.setBackground(normal);
-        btnFive.setBackground(normal);
-        btnTen.setBackground(normal);
+        //Resources res = getResources();
+        //Drawable selected = res.getDrawable(R.drawable.circleselected);
+        //Drawable normal = res.getDrawable(R.drawable.circle);
+        //btnOne.setBackground(normal);
+        ///btnFive.setBackground(normal);
+        //btnTen.setBackground(normal);
         //btnTwenty.setBackground(normal);
         //btnFifty.setBackground(normal);
         //btnHundred.setBackground(normal);
 
-        v.setBackground(selected);
+        //v.setBackground(selected);
 
     }
     public void tapOne(View v){
@@ -581,21 +677,6 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
 
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
