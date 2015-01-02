@@ -592,9 +592,9 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
                     txn.setAuthToken(mAuthToken);
                     txn.setTagID(result.replaceAll("-",""));
                     txn.setTxnAmount(fAmount);
-                    new executeTapTxn().execute(txn);
+                    new TapTxnTask().execute(txn);
 
-                    mArmFrag.setValues(mMessage, mYapURL);
+
 //                    Toast.makeText(MainActivity.this, result.getPayloadImageThumb(), Toast.LENGTH_LONG).show();
 
                     //tv.setText(txn.getMessage());
@@ -612,10 +612,9 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
             }
         }
     }
-    protected String mMessage;
-    protected String mYapURL;
 
-    private class executeTapTxn extends AsyncTask<TapTxn, Integer, TapTxn> {
+
+    private class TapTxnTask extends AsyncTask<TapTxn, Integer, TapTxn> {
         protected TapTxn doInBackground(TapTxn... taptxn) {
             int count = taptxn.length;
             for (int i = 0; i < count; i++) {
@@ -633,29 +632,51 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
 
         protected void onPostExecute(TapTxn result) {
             mArmed = false;
+             String mMessage;
+             String mYapURL;
             mMessage = result.getMessage();
             mYapURL = result.getPayloadImageThumb();
 
-
+            mArmFrag.setValues(mMessage, mYapURL);
         }
     }
 
+
+
+    private class loadHistoryTask extends AsyncTask<String, Integer, Long> {
+        protected Long doInBackground(String... strings) {
+//            int count = strings.length;
+
+            long rv = 0;
+            TapUser mTapUser = TapCloud.getTapUser(MainActivity.this);
+            mTapUser.loadTxns(TapCloud.getAuthToken());
+            //mtagMap = mTapUser.getTags(mAuthToken);
+            return rv;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            //setProgressPercent(progress[0]);
+        }
+
+        protected void onPostExecute(Long result) {
+            GridView gridview = (GridView)  findViewById(R.id.gridHistory);
+            //ImageAdapter imgAdp = new ImageAdapter(MainActivity.this, mTapUser.myTransactions());
+            YapaAdapter imgAdp = new YapaAdapter(MainActivity.this, mTapUser.myTransactions());
+
+            gridview.setAdapter(imgAdp);
+            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                    Toast.makeText(MainActivity.this, "" + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
+                    //writeThisTag(mAuthToken, parent.getItemAtPosition(position).toString());
+                }
+            });
+        }
+    }
     //HISTORY STUFF
     private void loadTxnHistory(){
-        TapUser mTapUser = TapCloud.getTapUser(MainActivity.this);
-        mTapUser.loadTxns(TapCloud.getAuthToken());
-        //mtagMap = mTapUser.getTags(mAuthToken);
-        GridView gridview = (GridView)  findViewById(R.id.gridHistory);
-        //ImageAdapter imgAdp = new ImageAdapter(MainActivity.this, mTapUser.myTransactions());
-        YapaAdapter imgAdp = new YapaAdapter(MainActivity.this, mTapUser.myTransactions());
 
-        gridview.setAdapter(imgAdp);
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Toast.makeText(MainActivity.this, "" + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
-                //writeThisTag(mAuthToken, parent.getItemAtPosition(position).toString());
-            }
-        });
+    new loadHistoryTask().execute("now");
+
 
 
 
