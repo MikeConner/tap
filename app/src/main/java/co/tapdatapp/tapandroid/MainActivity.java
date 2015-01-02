@@ -100,10 +100,39 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         captureNFC();
 
         //TODO: REMOVE THIS - Make sure all NETWORK TXNS are async
-        StrictMode.ThreadPolicy tp = StrictMode.ThreadPolicy.LAX;
-        StrictMode.setThreadPolicy(tp);
+        //StrictMode.ThreadPolicy tp = StrictMode.ThreadPolicy.LAX;
+        //StrictMode.setThreadPolicy(tp);
 
         super.onCreate(savedInstanceState);
+
+    }
+
+    //TODO: Move this to DataLoaderFragment
+    private void captureNFC(){
+        //Capture NFC interactions for this activity
+        //TODO: make sure NFC is turned on or kill the APP with dialog
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        mNfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
+                getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
+        IntentFilter tapFilter = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+        try {
+            tapFilter.addDataType("tapdat/performer");    /* Handles all MIME based dispatches.
+                                       You should specify only the ones that you need. */
+        }
+        catch (IntentFilter.MalformedMimeTypeException  e) {
+            throw new RuntimeException("fail", e);
+        }
+        mNdefExchangeFilters = new IntentFilter[] { tapFilter };
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+
 
         //Load Splash Fragment
         final FragmentManager fm = getFragmentManager();
@@ -126,40 +155,53 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
             fm.beginTransaction().add(android.R.id.content, mSplashScreenFragment, TAG_SPLASH_SCREEN).commit();
         }
 
+        if (mDataLoaderFragment != null) {
+            checkCompletionStatus();
+        }
     }
-
 
     @Override
     public void onCompletion(Double result) {
-        // For the sake of brevity, we just show a TextView with the result
         setupTabs();
-       // tap_init();
-//        TextView tv = new TextView(this);
-//        tv.setText(String.valueOf(result));
-//        setContentView(tv);
-
         mDataLoaderFragment = null;
     }
 
-    private void captureNFC(){
-        //Capture NFC interactions for this activity
-        //TODO: make sure NFC is turn on or kill the APP with dialog
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        mNfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-                getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
-        IntentFilter tapFilter = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        try {
-            tapFilter.addDataType("tapdat/performer");    /* Handles all MIME based dispatches.
-                                       You should specify only the ones that you need. */
+
+
+    @Override
+    public void onProgressUpdate(int progress) {
+        mSplashScreenFragment.setProgress(progress);
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mDataLoaderFragment != null) {
+            mDataLoaderFragment.removeProgressListener();
         }
-        catch (IntentFilter.MalformedMimeTypeException  e) {
-            throw new RuntimeException("fail", e);
+    }
+    /**
+     * Checks if data is done loading, if it is, the result is handled
+     *
+     * @return true if data is done loading
+     */
+    private boolean checkCompletionStatus() {
+        if (mDataLoaderFragment.hasResult()) {
+            onCompletion(mDataLoaderFragment.getResult());
+            FragmentManager fm = getFragmentManager();
+            mSplashScreenFragment = (SplashScreenFragment) fm.findFragmentByTag(TAG_SPLASH_SCREEN);
+            if (mSplashScreenFragment != null) {
+                fm.beginTransaction().remove(mSplashScreenFragment). commit();
+            }
+            return true;
         }
-        mNdefExchangeFilters = new IntentFilter[] { tapFilter };
+        mDataLoaderFragment.setProgressListener(this);
+        return false;
     }
 
+
     private void setupTabs(){
+        //TODO: In teh case where balance is zero open up a load phone fragment
+
         setContentView(R.layout.activity_main);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -200,111 +242,6 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         mViewPager.setCurrentItem(1);
     }
 
-    private void tap_init(){
-
-        mPreferences = getSharedPreferences("CurrentUser", MODE_PRIVATE);
-        mTapCloud = new TapCloud();
-        mTapUser = TapCloud.getTapUser(this);
-        if (mPreferences.contains("PhoneSecret")) {
-            mPhoneSecret = mPreferences.getString("PhoneSecret", "");
-        }
-        else {
-            mPhoneSecret =  mTapUser.generatePhoneSecret();
-            SharedPreferences.Editor editor = mPreferences.edit();
-            editor.putString("PhoneSecret", mPhoneSecret);
-            editor.commit();
-        }
-        // at this point we have a Phone Secret, let's try some network shit
-
-        Boolean mNetwork = mTapCloud.isNetworkAvailable(this);
-        if (mNetwork) {
-
-            if (mPreferences.contains("AuthToken")) {
-                if (!mPreferences.getString("AuthToken", "").isEmpty()){
-                    mAuthToken = mPreferences.getString("AuthToken", "");
-                    mTapCloud.setAuthToken(mAuthToken);
-                    mTapUser.LoadUser(mAuthToken);
-                    //TODO: Failure case for when auth token has expired -> get error, get new auth token based on secret
-                    //TODO: Failure case in case we can't get to tap or tap is down
-                }
-                else {
-                    mAuthToken =  mTapUser.CreateUser(mPhoneSecret);
-                    SharedPreferences.Editor editor = mPreferences.edit();
-                    editor.putString("AuthToken", mAuthToken);
-                    //editor.putString("NickName", mTapUser.getNickname());
-                    editor.commit();
-                    mTapCloud.setAuthToken(mAuthToken);
-
-
-                }
-            }
-            else{
-                //Get Auth Token
-                mAuthToken =  mTapUser.CreateUser(mPhoneSecret);
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putString("AuthToken", mAuthToken);
-                //editor.putString("NickName", mTapUser.getNickname());
-                editor.commit();
-
-
-                //We know user is null, but let's load user anyway to be consistent with above
-                mTapCloud.setAuthToken(mAuthToken);
-                mTapUser.LoadUser(mAuthToken);
-
-                //TODO: Delete Auth Token on kill of application, so it gets a new one when it comes back OR NOT?
-            }
-        }
-        else {
-            Toast.makeText(this, (CharSequence) ("No NETWORK!  Going Home!"), Toast.LENGTH_SHORT).show();
-            //TODO: Code to send message, kill app, or figure out what to do next?
-        }
-        //end of Tap network Ops
-    }
-
-
-
-    @Override
-    public void onProgressUpdate(int progress) {
-        mSplashScreenFragment.setProgress(progress);
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mDataLoaderFragment != null) {
-            checkCompletionStatus();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mDataLoaderFragment != null) {
-            mDataLoaderFragment.removeProgressListener();
-        }
-    }
-
-    /**
-     * Checks if data is done loading, if it is, the result is handled
-     *
-     * @return true if data is done loading
-     */
-    private boolean checkCompletionStatus() {
-        if (mDataLoaderFragment.hasResult()) {
-            onCompletion(mDataLoaderFragment.getResult());
-            FragmentManager fm = getFragmentManager();
-            mSplashScreenFragment = (SplashScreenFragment) fm.findFragmentByTag(TAG_SPLASH_SCREEN);
-            if (mSplashScreenFragment != null) {
-                fm.beginTransaction().remove(mSplashScreenFragment). commit();
-            }
-            return true;
-        }
-        mDataLoaderFragment.setProgressListener(this);
-        return false;
-    }
-
-
 
     @Override
     public void onResume(){
@@ -342,6 +279,9 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         super.onPause();
         if(mNfcAdapter != null) mNfcAdapter.disableForegroundDispatch(this);
     }
+
+
+
 
     //Image Stuff
     public void getImage(View view){
@@ -619,6 +559,8 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
     //NFC STUFF
     @Override
     protected void onNewIntent(Intent intent) {
+
+        //TODO: WHen not in armed mode, if intent is detected, change to send mode
         super.onNewIntent(intent);
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             NdefMessage[] messages = null;
@@ -636,7 +578,7 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
                 for (int b = 0; b<payload.length; b++) { // skip SOH
                     result += (char) payload[b];
                 }
-                Toast.makeText(getApplicationContext(), "Tag Contains " + result, Toast.LENGTH_SHORT).show();
+
                 if (mArmed){
                     TapTxn txn = new TapTxn();
                     txn.TapAfool(mAuthToken, result.replaceAll("-",""),fAmount );
@@ -645,6 +587,7 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
                     //tv.setText(txn.getMessage());
 
                 } else {
+                    Toast.makeText(getApplicationContext(), "Tag Contains " + result, Toast.LENGTH_SHORT).show();
 
                     //show tap screen, change button to SEND?
                 }
@@ -763,6 +706,7 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         mWithdrawFrag.show(ft, "withdraw");
 
     }
+
     public void myTags(View view){
         TagsFragment mTags = new TagsFragment();
         Intent i = new Intent(this,TagActivity.class);
@@ -838,15 +782,15 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
             Fragment frag;
             switch (position) {
                 case 0:
-                    frag = new AccountFragment().newInstance("1","2");
+                    frag = new AccountFragment().newInstance();
                     //frag = mAccountFrag;
                     break;
                 case 1:
-                    frag = new ArmFragment().newInstance("1","2");
+                    frag = new ArmFragment().newInstance();
                     // frag = mTapFrag;
                     break;
                 case 2:
-                    frag = new HistoryFragment().newInstance("1","2");
+                    frag = new HistoryFragment().newInstance();
                     //frag = mHistoryFrag ;
                     break;
 
@@ -883,5 +827,66 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
     }
 
 
+    // NO LONGER USED -> MOVED TO LOADER FRAGMENT
+    private void tap_init(){
+
+        mPreferences = getSharedPreferences("CurrentUser", MODE_PRIVATE);
+        mTapCloud = new TapCloud();
+        mTapUser = TapCloud.getTapUser(this);
+        if (mPreferences.contains("PhoneSecret")) {
+            mPhoneSecret = mPreferences.getString("PhoneSecret", "");
+        }
+        else {
+            mPhoneSecret =  mTapUser.generatePhoneSecret();
+            SharedPreferences.Editor editor = mPreferences.edit();
+            editor.putString("PhoneSecret", mPhoneSecret);
+            editor.commit();
+        }
+        // at this point we have a Phone Secret, let's try some network shit
+
+        Boolean mNetwork = mTapCloud.isNetworkAvailable(this);
+        if (mNetwork) {
+
+            if (mPreferences.contains("AuthToken")) {
+                if (!mPreferences.getString("AuthToken", "").isEmpty()){
+                    mAuthToken = mPreferences.getString("AuthToken", "");
+                    mTapCloud.setAuthToken(mAuthToken);
+                    mTapUser.LoadUser(mAuthToken);
+                    //TODO: Failure case for when auth token has expired -> get error, get new auth token based on secret
+                    //TODO: Failure case in case we can't get to tap or tap is down
+                }
+                else {
+                    mAuthToken =  mTapUser.CreateUser(mPhoneSecret);
+                    SharedPreferences.Editor editor = mPreferences.edit();
+                    editor.putString("AuthToken", mAuthToken);
+                    //editor.putString("NickName", mTapUser.getNickname());
+                    editor.commit();
+                    mTapCloud.setAuthToken(mAuthToken);
+
+
+                }
+            }
+            else{
+                //Get Auth Token
+                mAuthToken =  mTapUser.CreateUser(mPhoneSecret);
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putString("AuthToken", mAuthToken);
+                //editor.putString("NickName", mTapUser.getNickname());
+                editor.commit();
+
+
+                //We know user is null, but let's load user anyway to be consistent with above
+                mTapCloud.setAuthToken(mAuthToken);
+                mTapUser.LoadUser(mAuthToken);
+
+                //TODO: Delete Auth Token on kill of application, so it gets a new one when it comes back OR NOT?
+            }
+        }
+        else {
+            Toast.makeText(this, (CharSequence) ("No NETWORK!  Going Home!"), Toast.LENGTH_SHORT).show();
+            //TODO: Code to send message, kill app, or figure out what to do next?
+        }
+        //end of Tap network Ops
+    }
 
 }

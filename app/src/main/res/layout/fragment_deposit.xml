@@ -12,14 +12,16 @@
         android:id="@+id/imgQRCODE"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="EMPTY LOAD ADDRESS"
         android:id="@+id/txtInboundAddy"
-        android:textSize="8pt"
+        android:textSize="14sp"
         android:textColor="#f7c869"
         android:layout_marginBottom="125dp"
-        android:layout_gravity="center_horizontal|bottom" />
+        android:layout_gravity="center_horizontal|bottom"
+        android:textAlignment="center"
+        android:gravity="center_horizontal" />
 
     <TextView
         android:layout_width="wrap_content"

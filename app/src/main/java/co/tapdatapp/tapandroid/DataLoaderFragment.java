@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,13 +119,29 @@ public class DataLoaderFragment extends Fragment {
 
         @Override
         protected Double doInBackground(Void... params) {
-            MainActivity ma = (MainActivity)getActivity();
+
+
+            MainActivity ma = null;
+
+            while (ma==null) {
+                ma = (MainActivity) getActivity();
+                Log.v("trying","trying");
+            }
 
             //Main Operation - get TapCloud, create user if one does not exist based on phone secret, log in / get auth token
             //Start of Tap Network Operations
             try {
-                ma.mPreferences = getActivity().getSharedPreferences("CurrentUser", Context.MODE_PRIVATE);
+                //shitty timing thing i have to do otheriwse it bombs out!  figure out what the race condition is here
+
+                ma.mPreferences = ma.getSharedPreferences("CurrentUser", Context.MODE_PRIVATE);
+
                 ma.mTapCloud = new TapCloud();
+
+                //TODO: something funky going on here
+                Thread.sleep(50);
+                this.publishProgress(25);
+
+                
 
                 ma.mTapUser = TapCloud.getTapUser(getActivity());
                 if (ma.mPreferences.contains("PhoneSecret")) {
@@ -138,8 +155,8 @@ public class DataLoaderFragment extends Fragment {
                 }
                 // at this point we have a Phone Secret, let's try some network shit
 
-                Thread.sleep(500);
-                this.publishProgress(25);
+                Thread.sleep(50);
+                this.publishProgress(50);
 
 
                 Boolean mNetwork = ma.mTapCloud.isNetworkAvailable(getActivity());
@@ -186,15 +203,13 @@ public class DataLoaderFragment extends Fragment {
                 //end of Tap network Ops
 
 
-                Thread.sleep(500);
-                this.publishProgress(50);
+                Thread.sleep(50);
+                this.publishProgress(75);
 
-                try {
-                    Thread.sleep(500);
-                    this.publishProgress(75);
-                } catch (InterruptedException e) {
-                    return null;
-                }
+
+                Thread.sleep(50);
+                this.publishProgress(99);
+
 
             } catch (InterruptedException e) {
                 return null;

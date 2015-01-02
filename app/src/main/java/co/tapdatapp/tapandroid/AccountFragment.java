@@ -26,33 +26,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
  *
  */
 public class AccountFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private TapUser mTapUser;
 
     private OnFragmentInteractionListener mListener;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AccountFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AccountFragment newInstance(String param1, String param2) {
+
+
+    public static AccountFragment newInstance() {
         AccountFragment fragment = new AccountFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+//        Bundle args = new Bundle();
+//        args.putString(ARG_PARAM1, param1);
+//        args.putString(ARG_PARAM2, param2);
+//        fragment.setArguments(args);
         return fragment;
     }
     public AccountFragment() {
@@ -65,13 +51,6 @@ public class AccountFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-       // Toast.makeText(getActivity(), (CharSequence)("Howdy AccountFragment"), Toast.LENGTH_SHORT).show();
-
     }
     @Override
     public void onResume(){
@@ -85,17 +64,17 @@ public class AccountFragment extends Fragment {
         TextView email = (TextView)getActivity().findViewById(R.id.etEmail);
         String mEmailAddy = mTapUser.getEmail();
         if (mEmailAddy.equals("")){
-            email.setText("your@email.addy");
+            email.setText("no@email.addy");
         }else
         {
-            email.setText(mTapUser.getEmail());
+            email.setText(mEmailAddy);
 
         }
         email.setEnabled(false);
         nickName.setEnabled(false);
         TextView balance = (TextView) getActivity().findViewById(R.id.txtBalance);
         balance.setText(  String.valueOf(mTapUser.getSatoshiBalance()) + " S");
-      //  ImageView ivProfilePic = (ImageView) getActivity().findViewById(R.id.imageView);
+
         CircleImageView ivProfilePic = (CircleImageView) getActivity().findViewById(R.id.profile_image);
         String mThumb = mTapUser.getProfilePicThumb();
         if (mThumb.equals("") || mThumb.equals("null")){

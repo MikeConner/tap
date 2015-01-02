@@ -2,6 +2,7 @@ package co.tapdatapp.tapandroid;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -60,16 +63,34 @@ public class DepositFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_FRAME,android.R.style.Theme);
+
+
     }
     @Override
     public void onResume(){
         super.onResume();
+        ImageButton b = (ImageButton) getView().findViewById(R.id.check_mark);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //getActivity().getFragmentManager().beginTransaction().remove(this).commit();
+//                FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                Fragment prev = getFragmentManager().findFragmentByTag("withdraw");
+//                if (prev != null) {
+//                    ft.remove(prev);
+//                }
+//                ft.addToBackStack(null);
+            }
+        });
         TextView btcInbound = (TextView) getView().findViewById(R.id.txtInboundAddy);
         TapUser mTapUser = TapCloud.getTapUser(getActivity());
         String mBTCaddy = mTapUser.getBTCinbound();
         ImageView iv = (ImageView) getView().findViewById(R.id.imgQRCODE);
         iv.setImageDrawable(TapCloud.LoadImageFromWebOperations(mTapUser.getQR()));
         btcInbound.setText(  mBTCaddy);
+
+
     }
+
 
 }
