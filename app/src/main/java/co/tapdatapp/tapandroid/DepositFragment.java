@@ -86,7 +86,8 @@ public class DepositFragment extends DialogFragment {
         TapUser mTapUser = TapCloud.getTapUser(getActivity());
         String mBTCaddy = mTapUser.getBTCinbound();
         ImageView iv = (ImageView) getView().findViewById(R.id.imgQRCODE);
-        iv.setImageDrawable(TapCloud.LoadImageFromWebOperations(mTapUser.getQR()));
+        new TapCloud.DownloadImageTask(iv).execute(mTapUser.getQR());
+//        iv.setImageDrawable(TapCloud.LoadImageFromWebOperations(mTapUser.getQR()));
         btcInbound.setText(  mBTCaddy);
 
 

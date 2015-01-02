@@ -776,10 +776,24 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
 
     }
     public void newNickNameMe(View view){
-        TextView et = (TextView) findViewById(R.id.etNickName);
-        et.setText(        mTapUser.getNewNickname(mAuthToken));
+       new newNickTask().execute(mTapUser);
 
     }
+    private class newNickTask extends AsyncTask<TapUser, Void, String> {
+        protected String doInBackground(TapUser... tapusers) {
+            return tapusers[0].getNewNickname(mAuthToken);
+        }
+
+        protected void onProgressUpdate(Void... progress) {
+            //setProgressPercent(progress[0]);
+        }
+
+        protected void onPostExecute(String result) {
+            TextView et = (TextView) findViewById(R.id.etNickName);
+            et.setText(      result  );
+        }
+    }
+
     public void writeUser(View view){
         EditText edName = (EditText) findViewById(R.id.etNickName);
         EditText edEmail = (EditText) findViewById(R.id.etEmail);
