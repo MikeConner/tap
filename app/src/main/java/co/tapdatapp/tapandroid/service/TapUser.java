@@ -119,6 +119,8 @@ public class TapUser {
     }
     catch (Exception e)
     {
+        e.printStackTrace();
+        Log.e("error:", "" + e);
         //TODO: any errors possible here?
     }
 }

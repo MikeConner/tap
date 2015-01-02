@@ -3,6 +3,7 @@ package co.tapdatapp.tapandroid;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,6 +28,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.os.StrictMode;
@@ -52,6 +54,11 @@ import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.service.YapaAdapter;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+
 
 
 public class MainActivity extends Activity implements AccountFragment.OnFragmentInteractionListener, HistoryFragment.OnFragmentInteractionListener, ArmFragment.OnFragmentInteractionListener, ActionBar.TabListener, DataLoaderFragment.ProgressListener {
@@ -454,6 +461,7 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
     public void armOrSend(View v){
         mArmed=true;
         showArmedDialog();
+        //TODO: make sure we unarm on resume
     }
     void showArmedDialog() {
      //  mStackLevel++;
@@ -581,9 +589,14 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
 
                 if (mArmed){
                     TapTxn txn = new TapTxn();
-                    txn.TapAfool(mAuthToken, result.replaceAll("-",""),fAmount );
-                    mArmed = false;
-                    mArmFrag.setValues(txn.getMessage(), txn.getPayloadImageThumb().toString());
+                    txn.setAuthToken(mAuthToken);
+                    txn.setTagID(result.replaceAll("-",""));
+                    txn.setTxnAmount(fAmount);
+                    new executeTapTxn().execute(txn);
+
+                    mArmFrag.setValues(mMessage, mYapURL);
+//                    Toast.makeText(MainActivity.this, result.getPayloadImageThumb(), Toast.LENGTH_LONG).show();
+
                     //tv.setText(txn.getMessage());
 
                 } else {
@@ -597,6 +610,33 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
               //  startActivity(i);
 
             }
+        }
+    }
+    protected String mMessage;
+    protected String mYapURL;
+
+    private class executeTapTxn extends AsyncTask<TapTxn, Integer, TapTxn> {
+        protected TapTxn doInBackground(TapTxn... taptxn) {
+            int count = taptxn.length;
+            for (int i = 0; i < count; i++) {
+                taptxn[i].TapAfool();
+//                publishProgress((int) ((i / (float) count) * 100));
+                // Escape early if cancel() is called
+                if (isCancelled()) break;
+            }
+            return taptxn[0];
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            //setProgressPercent(progress[0]);
+        }
+
+        protected void onPostExecute(TapTxn result) {
+            mArmed = false;
+            mMessage = result.getMessage();
+            mYapURL = result.getPayloadImageThumb();
+
+
         }
     }
 

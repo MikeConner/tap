@@ -31,8 +31,14 @@ public class ArmedFragment extends DialogFragment {
         TextView tv = (TextView) getView().findViewById(R.id.txtYap);
         ImageView iv = (ImageView) getView().findViewById(R.id.imageYapa);
         tv.setText(message);
-        iv.setImageDrawable(TapCloud.LoadImageFromWebOperations(payload_url));
-        iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        new TapCloud.DownloadImageTask(iv)
+                .execute(payload_url);
+
+        //iv.setImageDrawable(TapCloud.LoadImageFromWebOperations(payload_url));
+
+        //TODO: set options to do cropping in teh async background donwloader
+        //iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
     }
 
