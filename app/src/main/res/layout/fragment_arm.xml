@@ -75,7 +75,12 @@
         android:onClick="tapOne"
         android:layout_above="@+id/btnTen"
         android:layout_marginBottom="20dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:enabled="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:longClickable="true" />
 
     <Button
         android:layout_width="117dp"

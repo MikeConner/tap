@@ -57,6 +57,7 @@ public class ArmedFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         return inflater.inflate(R.layout.fragment_armed, container, false);
 
 

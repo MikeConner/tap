@@ -58,6 +58,8 @@ public class AccountFragment extends Fragment {
         MainActivity ma =  (MainActivity) getActivity();
         mTapUser=  ma.mTapUser;
 
+
+
         TextView nickName = (TextView)  getActivity().findViewById(R.id.etNickName);
         nickName.setText( mTapUser.getNickname());
 
@@ -83,11 +85,10 @@ public class AccountFragment extends Fragment {
         }
         else{
             //TODO: Check to see if we've already done this.. if not get it again
-                 new TapCloud.DownloadImageTask(ivProfilePic)
-                          .execute(mTapUser.getProfilePicThumb());
+            new TapCloud.DownloadImageTask(ivProfilePic)
+                    .execute(mTapUser.getProfilePicThumb());
 
         }
-
 
 
     }
@@ -100,9 +101,13 @@ public class AccountFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_account, container, false);
 
 
-
     }
 
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

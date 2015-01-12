@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -36,6 +37,8 @@ import android.provider.MediaStore;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -208,45 +211,46 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
 
     private void setupTabs(){
         //TODO: In teh case where balance is zero open up a load phone fragment
+        if (mSectionsPagerAdapter == null) {
+            setContentView(R.layout.activity_main);
+            // Create the adapter that will return a fragment for each of the three
+            // primary sections of the activity.
 
-        setContentView(R.layout.activity_main);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-
-        //set up action bar and nav tabs
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-        // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
-        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
-        // parent.
-        actionBar.setHomeButtonEnabled(false);
-        // Specify that we will be displaying tabs in the action bar.
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                // When swiping between different app sections, select the corresponding tab.
-                // We can also use ActionBar.Tab#select() to do this if we have a reference to the
-                // Tab.
-                actionBar.setSelectedNavigationItem(position);
+            //set up action bar and nav tabs
+            mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+            // Set up the action bar.
+            final ActionBar actionBar = getActionBar();
+            // Specify that the Home/Up button should not be enabled, since there is no hierarchical
+            // parent.
+            actionBar.setHomeButtonEnabled(false);
+            // Specify that we will be displaying tabs in the action bar.
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+            // Set up the ViewPager with the sections adapter.
+            mViewPager = (ViewPager) findViewById(R.id.pager);
+            mViewPager.setAdapter(mSectionsPagerAdapter);
+            mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                @Override
+                public void onPageSelected(int position) {
+                    // When swiping between different app sections, select the corresponding tab.
+                    // We can also use ActionBar.Tab#select() to do this if we have a reference to the
+                    // Tab.
+                    actionBar.setSelectedNavigationItem(position);
+                }
+            });
+            for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+                // Create a tab with text corresponding to the page title defined by the adapter.
+                // Also specify this Activity object, which implements the TabListener interface, as the
+                // listener for when this tab is selected.
+                actionBar.addTab(
+                        actionBar.newTab()
+                                .setText(mSectionsPagerAdapter.getPageTitle(i))
+                                .setTabListener(this));
             }
-        });
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by the adapter.
-            // Also specify this Activity object, which implements the TabListener interface, as the
-            // listener for when this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
+
+            //sets home page to tap
+
+            mViewPager.setCurrentItem(1);
         }
-
-        //sets home page to tap
-
-        mViewPager.setCurrentItem(1);
     }
 
 
@@ -279,6 +283,8 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
             //     Toast.makeText(getApplicationContext(), "Sorry, No NFC Adapter found.", Toast.LENGTH_SHORT).show();
             // }
         }
+
+
 
     }
     @Override
@@ -900,6 +906,14 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         // we need this for fragments / menus
         //not sure what we have to do here if anything
     }
+
+
+
+
+
+
+
+
 
 
     // NO LONGER USED -> MOVED TO LOADER FRAGMENT
