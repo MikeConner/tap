@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Map;
 
 import co.tapdatapp.tapandroid.service.TapCloud;
@@ -27,6 +29,7 @@ public class TagActivity extends Activity implements TagsFragment.OnFragmentInte
     private TapUser mTapUser;
     private TapTag mTapTag;
     private Map<String, String> mtagMap;
+    private String mDefaultYapaString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +53,7 @@ public class TagActivity extends Activity implements TagsFragment.OnFragmentInte
     private void loadTags(){
         if (!mAuthToken.isEmpty()) {
 //            mTapUser.LoadUser(AccountActivity.this, mAuthToken);
-            mtagMap = mTapUser.getTags(mAuthToken);
+            mtagMap = mTapUser.myTagHash();
             GridView gridview = (GridView) findViewById(R.id.gridView);
             ImageAdapter imgAdp = new ImageAdapter(this, mtagMap);
 
@@ -110,12 +113,31 @@ public class TagActivity extends Activity implements TagsFragment.OnFragmentInte
         // do nothing
     }
     public void makeNewTag(View view){
-        mTapTag = new TapTag();
-        mTapTag.generateNewTag(mAuthToken, TapCloud.getTapUser(this).getProfilePicThumb());
-        loadTags();
-
+        mDefaultYapaString = TapCloud.getTapUser(this).getProfilePicThumb();
+        new NewTagTask().execute(mDefaultYapaString);
     }
 
+
+    private class NewTagTask extends AsyncTask<String, Void, String>{
+        @Override
+        protected String doInBackground(String... urls) {
+
+            // params comes from the execute() call: params[0] is the url.
+            try {
+                mTapTag = new TapTag();
+                mTapTag.generateNewTag(mAuthToken, mDefaultYapaString);
+                mTapUser.getTags(mAuthToken);
+                return mDefaultYapaString;  
+            } catch (Exception e) {
+                return "Unable to retrieve web page. URL may be invalid.";
+            }
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            loadTags();
+        }
+    }
 
     private class ImageAdapter extends BaseAdapter {
         private Context mContext;

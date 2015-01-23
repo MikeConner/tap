@@ -184,7 +184,7 @@ public class TapTag {
             //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
 
             //TODO: Update this to session controller instead of registration controller
-            output = mTapCloud.httpPost(TapCloud.TAP_TAGS_API_ENDPOINT_URL, tag);
+                output = mTapCloud.httpPost(TapCloud.TAP_TAGS_API_ENDPOINT_URL, tag);
             mTagID = output.getJSONObject("response").getString("id");
             mTagName = output.getJSONObject("response").getString("name");
         //    Log.e(output.toString(), "" );

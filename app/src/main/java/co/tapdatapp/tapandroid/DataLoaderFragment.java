@@ -167,7 +167,12 @@ public class DataLoaderFragment extends Fragment {
                             ma.mAuthToken = ma.mPreferences.getString("AuthToken", "");
                             ma.mTapCloud.setAuthToken(ma.mAuthToken);
                             ma.mTapUser.LoadUser(ma.mAuthToken);
+
+                            //TODO: Get Balance to get balance with all vouchers.
                             ma.mTapUser.getBalance(ma.mAuthToken);
+                            //TODO: Store last used currency, set mode to that currency
+                            ma.mTapUser.getTags(ma.mAuthToken);
+
                             //TODO: Failure case for when auth token has expired -> get error, get new auth token based on secret
                             //TODO: Failure case in case we can't get to tap or tap is down
                         }

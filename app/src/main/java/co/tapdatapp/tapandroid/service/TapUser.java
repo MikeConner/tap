@@ -40,6 +40,7 @@ public class TapUser {
     private ArrayList<TapTxn> mTapTxns = new ArrayList<TapTxn>();
 
 
+
     public int getSatoshiBalance()
     {
         return mBalance;
@@ -233,6 +234,10 @@ public class TapUser {
             Log.e("JSON", "" + e);
         }
         return mAuthToken;
+    }
+
+    public Map<String, String> myTagHash(){
+        return mtagMap;
     }
 
     public Map<String, String> getTags(String auth_token){
