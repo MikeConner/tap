@@ -3,7 +3,6 @@ package co.tapdatapp.tapandroid;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,11 +19,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.nfc.NdefMessage;
@@ -32,13 +28,10 @@ import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,7 +39,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,12 +49,6 @@ import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.service.YapaAdapter;
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-
-
-
 
 public class MainActivity extends Activity implements AccountFragment.OnFragmentInteractionListener, HistoryFragment.OnFragmentInteractionListener, ArmFragment.OnFragmentInteractionListener, ActionBar.TabListener, DataLoaderFragment.ProgressListener {
     SectionsPagerAdapter mSectionsPagerAdapter;
@@ -805,8 +791,8 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
     }
 
     public void writeUser(View view){
-        EditText edName = (EditText) findViewById(R.id.etNickName);
-        EditText edEmail = (EditText) findViewById(R.id.etEmail);
+        TextView edName = (TextView) findViewById(R.id.etNickName);
+        TextView edEmail = (TextView) findViewById(R.id.etEmail);
         //EditText edWithDraw = (EditText) findViewById(R.id.etWithdraw);
         mTapUser.setNickName(edName.getText().toString());
         //mTapUser.setBTCoutbound( edWithDraw.getText().toString());
