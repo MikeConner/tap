@@ -570,6 +570,10 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
 
     }
 
+    //LOAD VOUCHER
+
+
+
     //NFC STUFF
     @Override
     protected void onNewIntent(Intent intent) {

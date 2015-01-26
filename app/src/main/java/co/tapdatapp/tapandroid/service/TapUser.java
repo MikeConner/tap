@@ -296,13 +296,56 @@ public class TapUser {
             output = mTapCloud.httpPut(TapCloud.TAP_USER_API_ENDPOINT_URL + ".json?auth_token=" + mAuthToken, json);
 //            mAuthToken = output.getJSONObject("response").getString("auth_token");
 //            mNickName = output.getJSONObject("response").getString("nickname");
-            Log.e("bob", "bob");
+
         }
         catch (JSONException e) {
             e.printStackTrace();
             Log.e("JSON", "" + e);
         }
     }
+
+
+    public void RedeemVoucherCode(String auth_token, String VoucherCode){
+        //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
+        mTapCloud = new TapCloud();
+        //END
+
+        mAuthToken = auth_token;
+
+        JSONObject user = new JSONObject();
+        JSONObject json = new JSONObject();
+        JSONObject output;
+        try {
+
+            user.put("id", VoucherCode);
+            //user.put("outbound_btc_address", mOutboundBTCaddress);
+            //user.put("mobile_profile_image_url", mProfilePicFull);
+            //user.put("mobile_profile_thumb_url", mProfilePicThumb);
+
+
+//            json.put("user", user);
+            //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
+
+            String strEndpoint = TapCloud.TAP_USER_VOUCHER_API_ENDPOINT_URL.replace("VOUCHER_CODE", VoucherCode);
+
+            output = mTapCloud.httpPut(strEndpoint + ".json?auth_token=" + mAuthToken, json);
+//            mAuthToken = output.getJSONObject("response").getString("auth_token");
+//            mNickName = output.getJSONObject("response").getString("nickname");
+            String barr = output.toString() + "--";
+
+
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("JSON", "" + e);
+        }
+    }
+
+
+
+
+
+
 
     public String getProfilePicThumb(){
 

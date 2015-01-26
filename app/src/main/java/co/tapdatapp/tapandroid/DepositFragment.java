@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.Display;
@@ -13,9 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
@@ -73,6 +78,13 @@ public class DepositFragment extends DialogFragment {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //TODO: figure out why this is null
+                EditText edVoucherCode = (EditText) getView().findViewById(R.id.edVoucher);
+                new LoadVoucherTask().execute("ce963f33");
+//                Toast.makeText(MainActivity.this,  edVoucherCode.getText(), Toast.LENGTH_LONG).show();
+
+
+
                 //getActivity().getFragmentManager().beginTransaction().remove(this).commit();
 //                FragmentTransaction ft = getFragmentManager().beginTransaction();
 //                Fragment prev = getFragmentManager().findFragmentByTag("withdraw");
@@ -93,5 +105,25 @@ public class DepositFragment extends DialogFragment {
 
     }
 
+
+    private class LoadVoucherTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... vouchers) {
+
+            // params comes from the execute() call: params[0] is the url.
+            try {
+                TapUser mTapUser = TapCloud.getTapUser(getActivity());
+                mTapUser.RedeemVoucherCode(TapCloud.getAuthToken(),vouchers[0]);
+                return vouchers[0];
+            } catch (Exception e) {
+                return "Unable to retrieve web page. URL may be invalid.";
+            }
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+//            textView.setText(result);
+        }
+    }
 
 }
