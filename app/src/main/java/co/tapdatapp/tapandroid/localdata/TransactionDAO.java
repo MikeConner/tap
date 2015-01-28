@@ -27,4 +27,11 @@ public interface TransactionDAO {
    * @param location the transaction # to move to
    */
   public void moveTo(int location);
+
+  /**
+   * Create a new transaction record from the data currently in this
+   * object.
+   */
+  public void create();
+
 }

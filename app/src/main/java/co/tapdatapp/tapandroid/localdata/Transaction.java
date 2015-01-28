@@ -75,12 +75,14 @@ public class Transaction implements SingleTable, TransactionDAO {
     }
   }
 
+  @Override
   public Transaction getByOrder(int i) {
     Transaction rv = new Transaction();
     rv.moveTo(i);
     return rv;
   }
 
+  @Override
   public void moveTo(int location) {
     Cursor c = null;
     try {
@@ -111,6 +113,7 @@ public class Transaction implements SingleTable, TransactionDAO {
     }
   }
 
+  @Override
   public void create() {
     SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
     ContentValues v = new ContentValues();
