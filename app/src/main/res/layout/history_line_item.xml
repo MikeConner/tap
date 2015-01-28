@@ -20,7 +20,8 @@ Layout for a single line item in the history screen
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -31,7 +32,8 @@ Layout for a single line item in the history screen
                 style="@style/History.Text"
                 android:id="@+id/history_li_date"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
 
             <TextView
                 style="@style/History.Text"
