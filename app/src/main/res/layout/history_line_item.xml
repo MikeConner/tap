@@ -8,13 +8,14 @@ Layout for a single line item in the history screen
               xmlns:tools="http://schemas.android.com/tools"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="wrap_content"
+>
 
     <ImageView
         android:contentDescription="@string/yapa_thumbnail_alt"
         android:id="@+id/history_li_thumbnail"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -27,11 +28,13 @@ Layout for a single line item in the history screen
             android:layout_height="wrap_content">
 
             <TextView
+                style="@style/History.Text"
                 android:id="@+id/history_li_date"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
 
             <TextView
+                style="@style/History.Text"
                 android:id="@+id/history_li_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
@@ -39,6 +42,7 @@ Layout for a single line item in the history screen
         </LinearLayout>
 
         <TextView
+            style="@style/History.Text"
             android:id="@+id/history_li_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -54,10 +58,11 @@ Layout for a single line item in the history screen
         <ImageView
             tools:ignore="ContentDescription"
             android:id="@+id/history_li_recip_image"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
+            style="@style/History.Text"
             android:id="@+id/history_li_recip_nick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

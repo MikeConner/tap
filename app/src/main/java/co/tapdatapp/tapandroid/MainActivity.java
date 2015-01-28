@@ -36,7 +36,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
@@ -44,13 +43,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
-import co.tapdatapp.tapandroid.service.YapaAdapter;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends Activity implements AccountFragment.OnFragmentInteractionListener, HistoryFragment.OnFragmentInteractionListener, ArmFragment.OnFragmentInteractionListener, ActionBar.TabListener, DataLoaderFragment.ProgressListener {
+public class MainActivity extends Activity implements AccountFragment.OnFragmentInteractionListener, ArmFragment.OnFragmentInteractionListener, ActionBar.TabListener, DataLoaderFragment.ProgressListener {
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
 
