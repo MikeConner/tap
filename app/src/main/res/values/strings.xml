@@ -16,4 +16,6 @@
     <string name="load_address_text">load address:</string>
 
     <string name="withdraw_address_text">withdraw address:</string>
+
+    <string name="yapa_thumbnail_alt">Tap to download content</string>
 </resources>

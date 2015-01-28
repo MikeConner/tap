@@ -637,49 +637,6 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         }
     }
 
-
-
-    private class loadHistoryTask extends AsyncTask<String, Integer, Long> {
-        protected Long doInBackground(String... strings) {
-//            int count = strings.length;
-
-            long rv = 0;
-            TapUser mTapUser = TapCloud.getTapUser(MainActivity.this);
-            mTapUser.loadTxns(TapCloud.getAuthToken());
-            //mtagMap = mTapUser.getTags(mAuthToken);
-            return rv;
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-            //setProgressPercent(progress[0]);
-        }
-
-        protected void onPostExecute(Long result) {
-            GridView gridview = (GridView)  findViewById(R.id.gridHistory);
-            //ImageAdapter imgAdp = new ImageAdapter(MainActivity.this, mTapUser.myTransactions());
-            YapaAdapter imgAdp = new YapaAdapter(MainActivity.this, mTapUser.myTransactions());
-
-            gridview.setAdapter(imgAdp);
-            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                    Toast.makeText(MainActivity.this, "" + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
-                    //writeThisTag(mAuthToken, parent.getItemAtPosition(position).toString());
-                }
-            });
-        }
-    }
-    //HISTORY STUFF
-    private void loadTxnHistory(){
-
-    new loadHistoryTask().execute("now");
-
-
-
-
-    }
-
-
-
     private class ImageAdapter extends BaseAdapter {
         private Context mContext;
         ArrayList<TapTxn> mTapTxns;
@@ -813,9 +770,6 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         // When the given tab is selected, switch to the corresponding page in the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
-        if(tab.getText().equals("HISTORY")){
-            loadTxnHistory();
-        }
     }
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
@@ -861,8 +815,7 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
                     // frag = mTapFrag;
                     break;
                 case 2:
-                    frag = new HistoryFragment().newInstance();
-                    //frag = mHistoryFrag ;
+                    frag = new HistoryFragment();
                     break;
 
                 default: throw new IllegalArgumentException("Invalid Section Number");
