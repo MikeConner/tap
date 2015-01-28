@@ -16,6 +16,8 @@ public class Transaction implements SingleTable, TransactionDAO {
     public final static String TIMESTAMP = "timestamp";
     public final static String THUMB_URL = "thumb_url";
     public final static String THUMB_LOCAL = "thumb_local";
+    public final static String YAPA_THUMB_URL = "yapa_thumb_url";
+    public final static String YAPA_THUMB_LOCAL = "yapa_thumb_local";
     public final static String YAPA_URL = "yapa_url";
     public final static String YAPA_LOCAL = "yapa_local";
     public final static String DESCRIPTION = "description";
@@ -26,6 +28,8 @@ public class Transaction implements SingleTable, TransactionDAO {
     private Timestamp timestamp;
     private String thumb_url;
     private String thumb_local;
+    private String yapa_thumb_url;
+    private String yapa_thumb_local;
     private String yapa_url;
     private String yapa_local;
     private String description;
@@ -40,7 +44,9 @@ public class Transaction implements SingleTable, TransactionDAO {
                 TIMESTAMP + " TEXT NOT NULL, " +
                 THUMB_URL + " TEXT NOT NULL, " +
                 THUMB_LOCAL + " TEXT, " +
-                YAPA_URL + " TEXT NOT NULL, " +
+                YAPA_THUMB_URL + " TEXT, " +
+                YAPA_THUMB_LOCAL + " TEXT, " +
+                YAPA_URL + " TEXT, " +
                 YAPA_LOCAL + " TEXT, " +
                 DESCRIPTION + " TEXT NOT NULL, " +
                 AMOUNT + " DECIMAL NOT NULL, " +
@@ -90,8 +96,14 @@ public class Transaction implements SingleTable, TransactionDAO {
             SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
             c = db.query(
                 NAME,
-                new String[]{SLUG, TIMESTAMP, THUMB_URL, THUMB_LOCAL, YAPA_URL, YAPA_LOCAL, DESCRIPTION, AMOUNT, NICKNAME},
-                null, null, null, null, TIMESTAMP + " DESC", location + ", 1"
+                new String[]{
+                    SLUG, TIMESTAMP, THUMB_URL, THUMB_LOCAL, YAPA_URL,
+                    YAPA_LOCAL, DESCRIPTION, AMOUNT, NICKNAME,
+                    YAPA_THUMB_URL, YAPA_LOCAL
+                },
+                null, null, null, null,
+                TIMESTAMP + " DESC",
+                location + ", 1"
             );
             if (c.moveToFirst()) {
                 slug = c.getString(0);
@@ -103,6 +115,8 @@ public class Transaction implements SingleTable, TransactionDAO {
                 description = c.getString(6);
                 amount = c.getInt(7);
                 nickname = c.getString(8);
+                yapa_thumb_url = c.getString(9);
+                yapa_thumb_local = c.getString(10);
             } else {
                 throw new Error("No TX record at location " + location);
             }
@@ -126,6 +140,8 @@ public class Transaction implements SingleTable, TransactionDAO {
         v.put(DESCRIPTION, description);
         v.put(AMOUNT, amount);
         v.put(NICKNAME, nickname);
+        v.put(YAPA_THUMB_URL, yapa_thumb_url);
+        v.put(YAPA_THUMB_LOCAL, yapa_thumb_local);
         db.insertOrThrow(NAME, null, v);
     }
 
@@ -199,5 +215,21 @@ public class Transaction implements SingleTable, TransactionDAO {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public String getYapa_thumb_url() {
+        return yapa_thumb_url;
+    }
+
+    public void setYapa_thumb_url(String yapa_thumb_url) {
+        this.yapa_thumb_url = yapa_thumb_url;
+    }
+
+    public String getYapa_thumb_local() {
+        return yapa_thumb_local;
+    }
+
+    public void setYapa_thumb_local(String yapa_thumb_local) {
+        this.yapa_thumb_local = yapa_thumb_local;
     }
 }

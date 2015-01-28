@@ -6,16 +6,24 @@
 package co.tapdatapp.tapandroid.history;
 
 import android.os.AsyncTask;
+import android.os.Bundle;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Transaction;
+import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 
 public class HistorySyncTask
 extends AsyncTask<HistoryFragment, Void, Void> {
 
     private HistoryFragment historyFragment;
+    private boolean success = false;
+    private Exception exception;
 
     @Override
     protected Void doInBackground(HistoryFragment... historyFragments) {
@@ -25,17 +33,49 @@ extends AsyncTask<HistoryFragment, Void, Void> {
             );
         }
         historyFragment = historyFragments[0];
+        /*
+        // This section is intended to actually communicate with the
+        // server, but it doesn't look like all the pieces are in place
+        // to do that yet.
+        HttpHelper http = new HttpHelper();
+        try {
+            JSONObject response = http.HttpGetJSON(
+                http.getFullUrl(R.string.ENDPOINT_TRANSACTION_LIST),
+                new Bundle()
+            );
+            JSONArray responses = response.getJSONArray("response");
+            int responseNum = responses.length();
+
+            for (int i = 0; i < responseNum; i++) {
+                JSONObject oneResponse = responses.getJSONObject(i);
+
+            }
+            success = true;
+        }
+        catch (Exception e) {
+            exception = e;
+            success = false;
+        }
+        // End untested live code
+        */
         // This is a hack to provide something visible to look at until
         // We have actual network data to work with
         for (int i = 0; i < 15; i++) {
             createDummyRecord(i);
         }
+        success = true;
+        // end testing section
         return null;
     }
 
     @Override
     protected void onPostExecute(Void x) {
-        historyFragment.postSyncDisplay();
+        if (success) {
+            historyFragment.postSyncDisplay();
+        }
+        else {
+            historyFragment.syncFailure(exception);
+        }
     }
 
     /**

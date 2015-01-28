@@ -111,4 +111,15 @@ public class HistoryFragment extends Fragment {
         loaded = true;
     }
 
+    /**
+     * Called when the background sync job fails to do its work.
+     *
+     * @TODO make this a user-friendly error
+     */
+    public void syncFailure(Exception cause) {
+        AssertionError e = new AssertionError("Failed to sync: see @TODO");
+        e.initCause(cause);
+        throw e;
+    }
+
 }

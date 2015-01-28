@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="SERVER">http://www.tapdatapp.co/</string>
+    <string name="API_VERSION">mobile/1/</string>
+    <string name="ENDPOINT_TRANSACTION_LIST">transactions</string>
+</resources>

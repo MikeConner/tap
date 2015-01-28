@@ -47,6 +47,7 @@ import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
+import co.tapdatapp.tapandroid.user.Account;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends Activity implements AccountFragment.OnFragmentInteractionListener, ArmFragment.OnFragmentInteractionListener, ActionBar.TabListener, DataLoaderFragment.ProgressListener {
@@ -861,7 +862,7 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
     // NO LONGER USED -> MOVED TO LOADER FRAGMENT
     private void tap_init(){
 
-        mPreferences = getSharedPreferences("CurrentUser", MODE_PRIVATE);
+        mPreferences = getSharedPreferences(Account.PREFERENCES, MODE_PRIVATE);
         mTapCloud = new TapCloud();
         mTapUser = TapCloud.getTapUser(this);
         if (mPreferences.contains("PhoneSecret")) {
