@@ -6,21 +6,52 @@
 
 package co.tapdatapp.tapandroid.localdata;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+
 import co.tapdatapp.tapandroid.TapApplication;
 
 public class BaseDAO {
-  private static DatabaseHelper dbh;
+    private static DatabaseHelper dbh;
 
-  static {
-    dbh = new DatabaseHelper(TapApplication.get());
-  }
-
-  protected static DatabaseHelper getDatabaseHelper() {
-    if (dbh == null) {
-      throw new AssertionError("DatabaseHelper not yet initialized");
+    static {
+        dbh = new DatabaseHelper(TapApplication.get());
     }
-    return dbh;
-  }
 
+    /**
+     * Returns singleton of the DatabaseHelper class. This protects
+     * from deadlocks when multiple threads try to talk to the database
+     * at once, since a single SQLOpenHelper class is thread-safe and
+     * will serialize queries.
+     *
+     * @return DatabaseHelper object
+     */
+    protected static DatabaseHelper getDatabaseHelper() {
+        if (dbh == null) {
+            throw new AssertionError("DatabaseHelper not yet initialized");
+        }
+        return dbh;
+    }
+
+    /**
+     * Simplify the call to update a single column in a table
+     *
+     * @param table target table
+     * @param column column to update
+     * @param newValue new value for column
+     * @param where where clause
+     * @param whereArgs arguments to replace ? in where clause
+     */
+    protected void update(String table,
+                          String column,
+                          String newValue,
+                          String where,
+                          String[] whereArgs
+    ) {
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(column, newValue);
+        db.update(table, values, where, whereArgs);
+    }
 
 }
