@@ -3,4 +3,8 @@
     <string name="SERVER">http://www.tapdatapp.co/</string>
     <string name="API_VERSION">mobile/1/</string>
     <string name="ENDPOINT_TRANSACTION_LIST">transactions</string>
+
+    <!-- Feature enabling settings -->
+    <!-- User can create fake transactions (good for testing) -->
+    <string name="ALLOW_ARBITRARY_TRANSACTIONS">false</string>
 </resources>
