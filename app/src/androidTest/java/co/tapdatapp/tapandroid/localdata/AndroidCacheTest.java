@@ -191,6 +191,19 @@ public class AndroidCacheTest extends AndroidTestCase {
         );
     }
 
+    public void testGetOldest() {
+        final String OLDEST = "GET_OLDEST_OLDEST";
+        final String NEWER = "GET_OLDEST_NEWER";
+        byte[] data = randomData();
+        c.put(OLDEST, "", data);
+        SystemClock.sleep(3000);
+        c.put(NEWER, "", data);
+        String result = c.getOldest();
+        c.remove(OLDEST);
+        c.remove(NEWER);
+        assertEquals("Failed to select oldest", OLDEST, result);
+    }
+
     /**
      * Generate random binary data for testing
      * @return random length array of random bytes

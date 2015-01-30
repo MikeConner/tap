@@ -232,7 +232,30 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
 
     @Override
     public String getOldest() {
-        throw new NoSuchMethodError("Not implemented");
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+        Cursor c = null;
+        try {
+            c = db.query(
+                TABLE,
+                new String[] { NAME },
+                null, null, // Empty WHERE clause
+                null, null, // Empty GROUP BY/HAVING
+                LAST_ACCESS + " ASC",
+                "1" // LIMIT 1
+            );
+            if (c.getCount() != 1) {
+                throw new NoSuchElementException(
+                    c.getCount() + " records found for oldest"
+                );
+            }
+            c.moveToFirst();
+            return c.getString(0);
+        }
+        finally {
+            if (c != null) {
+                c.close();
+            }
+        }
     }
 
     /**
