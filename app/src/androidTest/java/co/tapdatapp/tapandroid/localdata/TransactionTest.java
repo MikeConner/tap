@@ -48,7 +48,6 @@ public class TransactionTest extends AndroidTestCase {
     assertEquals("Retrieval error", t.getThumb_url(), t1.getThumb_url());
     assertEquals("Retrieval error", t.getYapa_url(), t1.getYapa_url());
     assertEquals("Retrieval error", t.getTimestamp(), t1.getTimestamp());
-    assertEquals("Retrieval error", null, t1.getYapa_local());
   }
 
   private void createRandomTransaction(Transaction t) {
@@ -58,6 +57,7 @@ public class TransactionTest extends AndroidTestCase {
     t.setThumb_url("http://www.example.com");
     t.setYapa_url("http://www.example.com");
     t.setTimestamp(new Timestamp(50));
+    t.setNickname("TestNick");
   }
 
 }
