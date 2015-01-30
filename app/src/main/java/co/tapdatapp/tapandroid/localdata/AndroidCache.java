@@ -179,7 +179,26 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
 
     @Override
     public int getTotalSize() {
-        throw new NoSuchMethodError("Not implemented");
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+        Cursor c = null;
+        try {
+            c = db.rawQuery(
+                "SELECT sum(" +  SIZE + ") FROM " + TABLE,
+                null
+            );
+            if (c.getCount() != 1) {
+                throw new AssertionError(
+                    c.getCount() + " records totaling size"
+                );
+            }
+            c.moveToFirst();
+            return c.getInt(0);
+        }
+        finally {
+            if (c != null) {
+                c.close();
+            }
+        }
     }
 
     @Override

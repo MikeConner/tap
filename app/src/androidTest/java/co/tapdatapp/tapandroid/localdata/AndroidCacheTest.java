@@ -92,6 +92,43 @@ public class AndroidCacheTest extends AndroidTestCase {
         c.remove(NAME);
     }
 
+    public void testGetTotalSize0() {
+        // Cache should be empty, size should be 0
+        Cache c = new AndroidCache();
+        int result = c.getTotalSize();
+        assertEquals("Size should be 0", 0, result);
+    }
+
+    public void testGetTotalSize1() {
+        final String NAME = "TOTAL_SIZE_1";
+        byte[] data = randomData();
+        int expected = data.length;
+        Cache c = new AndroidCache();
+        c.put(NAME, "", data);
+        int result = c.getTotalSize();
+        c.remove(NAME);
+        assertEquals("Single element size failure", expected, result);
+    }
+
+    public void testGetTotalSize2() {
+        final String NAME0 = "TOTAL_SIZE_2_0";
+        final String NAME1 = "TOTAL_SIZE_2_1";
+        byte[] data0 = randomData();
+        byte[] data1 = randomData();
+        int expected = data0.length + data1.length;
+        Cache c = new AndroidCache();
+        c.put(NAME0, "", data0);
+        c.put(NAME1, "", data1);
+        int result = c.getTotalSize();
+        c.remove(NAME0);
+        c.remove(NAME1);
+        assertEquals("Multi element size failure", expected, result);
+    }
+
+    /**
+     * Generate random binary data for testing
+     * @return random length array of random bytes
+     */
     private byte[] randomData() {
         int length = r.nextInt(1024);
         byte[] rv = new byte[length];
