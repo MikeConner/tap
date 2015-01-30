@@ -41,17 +41,18 @@ public class BaseDAO {
      * @param newValue new value for column
      * @param where where clause
      * @param whereArgs arguments to replace ? in where clause
+     * @return Number of rows updated
      */
-    protected void update(String table,
+    protected int update(String table,
                           String column,
-                          String newValue,
+                          long newValue,
                           String where,
                           String[] whereArgs
     ) {
         SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put(column, newValue);
-        db.update(table, values, where, whereArgs);
+        return db.update(table, values, where, whereArgs);
     }
 
 }

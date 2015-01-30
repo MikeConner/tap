@@ -7,9 +7,14 @@
  * size might actually be much smaller than 2G, depending on Android's
  * memory limitations.
  *
+ * There are a lot of redundant queries, however, the fact that there
+ * are no instance variables means that this implementation is thread
+ * safe. The more I think about it, the more I think that safety is
+ * more important than any performance boost that would come from
+ * pre-loading cache objects into memory.
+ *
  * @TODO handle larger file sizes? (maybe)
  *
- * @TODO there are a lot of redundant queries
  */
 
 package co.tapdatapp.tapandroid.localdata;
@@ -203,7 +208,26 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
 
     @Override
     public long getLastAccessed(String name) {
-        throw new NoSuchMethodError("Not implemented");
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+        Cursor c = null;
+        try {
+            c = db.rawQuery(
+                "SELECT " + LAST_ACCESS + " FROM " + TABLE + " WHERE " + NAME + " = ?",
+                new String[]{name}
+            );
+            if (c.getCount() != 1) {
+                throw new NoSuchElementException(
+                    c.getCount() + " records found for " + name
+                );
+            }
+            c.moveToFirst();
+            return c.getLong(0);
+        }
+        finally {
+            if (c != null) {
+                c.close();
+            }
+        }
     }
 
     @Override
@@ -218,13 +242,18 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
      * @param name identifier of the file to be updated
      */
     private void updateLastModified(String name) {
-        update(
+        int rows = update(
             TABLE,
             LAST_ACCESS,
-            Long.toString(System.currentTimeMillis() / 1000),
+            System.currentTimeMillis() / 1000,
             NAME + " = ?",
             new String[] {name}
         );
+        if (rows != 1) {
+            throw new NoSuchElementException(
+                rows + " objects modified setting last update time"
+            );
+        }
     }
 
     /**

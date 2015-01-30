@@ -1,23 +1,36 @@
 package co.tapdatapp.tapandroid.localdata;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.SystemClock;
 import android.test.AndroidTestCase;
 import android.test.MoreAsserts;
 
 import com.amazonaws.services.s3.internal.Mimetypes;
 
+import org.junit.Before;
+
 import java.util.NoSuchElementException;
 import java.util.Random;
+
+import co.tapdatapp.tapandroid.TapApplication;
 
 public class AndroidCacheTest extends AndroidTestCase {
 
     private Random r = new Random();
+
+    private AndroidCache c;
+
+    @Before
+    public void setUp() {
+        c = new AndroidCache();
+    }
 
     /**
      * Broad strokes: Test put/get/remove in one test
      */
     public void testGeneralProcess() {
         final String NAME = "GENERAL_PROCESS_TEST";
-        Cache c = new AndroidCache();
         byte[] data = randomData();
         c.put(NAME, Mimetypes.MIMETYPE_OCTET_STREAM, data);
         byte[] out = c.get(NAME);
@@ -38,7 +51,6 @@ public class AndroidCacheTest extends AndroidTestCase {
      */
     public void testMimeType() {
         final String NAME = "MIME_TYPE_TEST";
-        Cache c = new AndroidCache();
         byte[] data = randomData();
         c.put(NAME, Mimetypes.MIMETYPE_OCTET_STREAM, data);
         String rv = c.getType(NAME);
@@ -55,7 +67,6 @@ public class AndroidCacheTest extends AndroidTestCase {
 
     public void testOverwrite() {
         final String NAME = "OVERWRITE_TEST";
-        Cache c = new AndroidCache();
         byte[] data = randomData();
         c.put(NAME, Mimetypes.MIMETYPE_OCTET_STREAM, randomData());
         try {
@@ -73,7 +84,6 @@ public class AndroidCacheTest extends AndroidTestCase {
 
     public void testNoSuchObject() {
         final String NAME = "NO_OBJECT_TEST";
-        Cache c = new AndroidCache();
         try {
             c.get(NAME);
             fail("Exception should be thrown for no object found");
@@ -88,13 +98,11 @@ public class AndroidCacheTest extends AndroidTestCase {
      */
     public void testRemovalSilent() {
         final String NAME = "SILENT_REMOVAL_TEST";
-        Cache c = new AndroidCache();
         c.remove(NAME);
     }
 
     public void testGetTotalSize0() {
         // Cache should be empty, size should be 0
-        Cache c = new AndroidCache();
         int result = c.getTotalSize();
         assertEquals("Size should be 0", 0, result);
     }
@@ -103,7 +111,6 @@ public class AndroidCacheTest extends AndroidTestCase {
         final String NAME = "TOTAL_SIZE_1";
         byte[] data = randomData();
         int expected = data.length;
-        Cache c = new AndroidCache();
         c.put(NAME, "", data);
         int result = c.getTotalSize();
         c.remove(NAME);
@@ -116,13 +123,72 @@ public class AndroidCacheTest extends AndroidTestCase {
         byte[] data0 = randomData();
         byte[] data1 = randomData();
         int expected = data0.length + data1.length;
-        Cache c = new AndroidCache();
         c.put(NAME0, "", data0);
         c.put(NAME1, "", data1);
         int result = c.getTotalSize();
         c.remove(NAME0);
         c.remove(NAME1);
         assertEquals("Multi element size failure", expected, result);
+    }
+
+    public void testGetLastAccessed() {
+        final String NAME = "LAST_ACCESSED";
+        byte[] data = randomData();
+        c.put(NAME, "", data);
+        long expected = 54321;
+        long result;
+        try {
+            SQLiteDatabase db = new DatabaseHelper(TapApplication.get()).getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("last_access", expected);
+            db.update("cache", values, "name = ?", new String[]{NAME});
+            result = c.getLastAccessed(NAME);
+        }
+        finally {
+            c.remove(NAME);
+        }
+        assertEquals("Last accessed time incorrect", expected, result);
+    }
+
+    public void testGetLastAccessedMulti() {
+        final String NAME0 = "LAST_ACCESSED_MULTI_0";
+        final String NAME1 = "LAST_ACCESSED_MULTI_1";
+        byte[] data = randomData();
+        c.put(NAME0, "", data);
+        c.put(NAME1, "", data);
+        long expected = 54321;
+        long result;
+        try {
+            SQLiteDatabase db = new DatabaseHelper(TapApplication.get()).getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("last_access", expected);
+            db.update("cache", values, "name = ?", new String[]{NAME0});
+            result = c.getLastAccessed(NAME0);
+        }
+        finally {
+            c.remove(NAME0);
+            c.remove(NAME1);
+        }
+        assertEquals("Last accessed time incorrect", expected, result);
+    }
+
+    /**
+     * Test that fetching an item actually updates the last accessed
+     * time
+     */
+    public void testGetLastAccessedChanges() {
+        final String NAME = "LAST_ACCESSED_CHANGES";
+        byte[] data = randomData();
+        c.put(NAME, "", data);
+        long result0 = c.getLastAccessed(NAME);
+        SystemClock.sleep(3000);
+        c.get(NAME);
+        long result1 = c.getLastAccessed(NAME);
+        c.remove(NAME);
+        assertTrue(
+            "Last accessed did not increase: " + result0 + " => " + result1,
+            result0 < result1
+        );
     }
 
     /**
