@@ -169,6 +169,10 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
     @Override
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void remove(String name) {
+        // By deleting the file first, a crash or interruption results
+        // in an orphaned DB record, which the code is designed to
+        // handle anyway, and not an orphaned file, which would leak
+        // storage space.
         try {
             File f = new File(getFullFilespec(getFilename(name)));
             f.delete();

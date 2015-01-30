@@ -4,7 +4,11 @@
 
 package co.tapdatapp.tapandroid.localdata;
 
-public class CacheManager {
+public class CacheManager extends Thread {
+
+    private static CacheManager thread;
+
+    private boolean enabled = true;
 
     private Cache cache;
 
@@ -73,5 +77,69 @@ public class CacheManager {
      */
     private int getExpire() {
         return 24 * 60 * 60;
+    }
+
+    /**
+     * The purpose of a dedicated CacheManager thread is to loop and
+     * do garbage collection as long as the thread is enabled.
+     *
+     * Garbage collection will run whenever explicitly requested, or
+     * every 30 seconds if no requests are made. Request are made
+     * simply by notify()ing the thread.
+     */
+    @Override
+    public void run() {
+        while (enabled) {
+            gc();
+            synchronized (this) {
+                try {
+                    wait(30, 0);
+                }
+                catch (InterruptedException ie) {
+                    // Just proceed through to the next iteration
+                }
+            }
+        }
+    }
+
+    /**
+     * Singleton instantiation. Start a dedicated thread for cache
+     * management to keep things sane when lots of threads are trying
+     * to use the cache.
+     *
+     * @param cache A cache object to actually store/retrieve the data
+     */
+    public static void startUp(Cache cache) {
+        if (thread != null) {
+            throw new AssertionError("CacheManager already started");
+        }
+        thread = new CacheManager(cache);
+        thread.start();
+    }
+
+    /**
+     * Request a GC event. Since there is only ever a single thread
+     * running GC, multiple requests in rapid succession from multiple
+     * threads will simply result in a single GC execution. (Or
+     * possibly a few in series, depending on timing) The important
+     * thing is that there will never be multiple GC threads running.
+     */
+    public static void scheduleGC() {
+        thread.notifyAll();
+    }
+
+    /**
+     * Stop the GC thread. This isn't currently used because Android
+     * eschews the typical process model and there's no way to know
+     * when a process is being shut down. It's good design to have it,
+     * but there's just no way to use it.
+     *
+     * @throws InterruptedException
+     */
+    public static void shutdown() throws InterruptedException {
+        thread.enabled = false;
+        thread.notifyAll();
+        thread.join();
+        thread = null;
     }
 }
