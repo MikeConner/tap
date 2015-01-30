@@ -8,7 +8,7 @@ import com.amazonaws.services.s3.internal.Mimetypes;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-public class CacheTest extends AndroidTestCase {
+public class AndroidCacheTest extends AndroidTestCase {
 
     private Random r = new Random();
 
@@ -17,7 +17,7 @@ public class CacheTest extends AndroidTestCase {
      */
     public void testGeneralProcess() {
         final String NAME = "GENERAL_PROCESS_TEST";
-        Cache c = new Cache();
+        Cache c = new AndroidCache();
         byte[] data = randomData();
         c.put(NAME, Mimetypes.MIMETYPE_OCTET_STREAM, data);
         byte[] out = c.get(NAME);
@@ -38,7 +38,7 @@ public class CacheTest extends AndroidTestCase {
      */
     public void testMimeType() {
         final String NAME = "MIME_TYPE_TEST";
-        Cache c = new Cache();
+        Cache c = new AndroidCache();
         byte[] data = randomData();
         c.put(NAME, Mimetypes.MIMETYPE_OCTET_STREAM, data);
         String rv = c.getType(NAME);
@@ -55,7 +55,7 @@ public class CacheTest extends AndroidTestCase {
 
     public void testOverwrite() {
         final String NAME = "OVERWRITE_TEST";
-        Cache c = new Cache();
+        Cache c = new AndroidCache();
         byte[] data = randomData();
         c.put(NAME, Mimetypes.MIMETYPE_OCTET_STREAM, randomData());
         try {
@@ -73,7 +73,7 @@ public class CacheTest extends AndroidTestCase {
 
     public void testNoSuchObject() {
         final String NAME = "NO_OBJECT_TEST";
-        Cache c = new Cache();
+        Cache c = new AndroidCache();
         try {
             c.get(NAME);
             fail("Exception should be thrown for no object found");
@@ -88,7 +88,7 @@ public class CacheTest extends AndroidTestCase {
      */
     public void testRemovalSilent() {
         final String NAME = "SILENT_REMOVAL_TEST";
-        Cache c = new Cache();
+        Cache c = new AndroidCache();
         c.remove(NAME);
     }
 

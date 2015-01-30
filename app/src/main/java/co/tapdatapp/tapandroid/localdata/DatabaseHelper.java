@@ -37,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
   @Override
   public void onCreate(SQLiteDatabase sqLiteDatabase) {
     new Transaction().onCreate(sqLiteDatabase);
-    new Cache().onCreate(sqLiteDatabase);
+    new AndroidCache().onCreate(sqLiteDatabase);
   }
 
   /**
@@ -55,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     int newVersion
   ) {
     new Transaction().onUpgrade(sqLiteDatabase, oldVersion, newVersion);
-    new Cache().onUpgrade(sqLiteDatabase, oldVersion, newVersion);
+    new AndroidCache().onUpgrade(sqLiteDatabase, oldVersion, newVersion);
     // This protects us from bizarre behaviour. As there are no
     // changes so far, this method should never get called, and if it
     // is, something is seriously wrong. As soon as there are actual
