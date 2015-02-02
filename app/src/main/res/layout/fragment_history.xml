@@ -2,19 +2,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="co.tapdatapp.tapandroid.HistoryFragment">
+    tools:context="co.tapdatapp.tapandroid.history.HistoryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/gridHistory"
-        android:columnWidth="125dp"
-        android:numColumns="2"
-        android:verticalSpacing="4dp"
-        android:horizontalSpacing="4dp"
-        android:stretchMode="spacingWidthUniform"
-        android:gravity="center"
-        android:layout_gravity="center_horizontal" />
+    <!-- On initial load, the ProgressBar is visible and the
+         ListView is "gone". When the code finishes syncing with the
+         server, it will set the ProgressBar to "gone" and the ListView
+         to visible, thus providing a loading screen
+    -->
+    <ProgressBar
+        android:layout_gravity="center"
+        android:id="@+id/history_progress_bar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        />
+
+    <ListView
+        android:id="@+id/history_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+    </ListView>
 
 </FrameLayout>
