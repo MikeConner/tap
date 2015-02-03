@@ -7,6 +7,7 @@
 package co.tapdatapp.tapandroid.localdata;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import co.tapdatapp.tapandroid.TapApplication;
@@ -44,15 +45,46 @@ public class BaseDAO {
      * @return Number of rows updated
      */
     protected int update(String table,
-                          String column,
-                          long newValue,
-                          String where,
-                          String[] whereArgs
+                         String column,
+                         long newValue,
+                         String where,
+                         String[] whereArgs
     ) {
         SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put(column, newValue);
         return db.update(table, values, where, whereArgs);
+    }
+
+    /**
+     * Simplify the call to fetch a single string value from a single
+     * row in a table.
+     */
+    protected String getString(String table,
+                               String column,
+                               String where,
+                               String[] whereArgs
+    ) {
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+        Cursor c = null;
+        try {
+            c = db.query(
+                table,
+                new String[]{column},
+                where,
+                whereArgs,
+                null, null, null, null
+            );
+            if (c.moveToFirst()) {
+                return c.getString(0);
+            } else {
+                throw new RuntimeException("Rows returned = " + c.getCount());
+            }
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
     }
 
 }

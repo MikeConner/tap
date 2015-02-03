@@ -3,7 +3,6 @@ package co.tapdatapp.tapandroid.localdata;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
-import android.test.AndroidTestCase;
 import android.test.MoreAsserts;
 
 import com.amazonaws.services.s3.internal.Mimetypes;
@@ -11,13 +10,11 @@ import com.amazonaws.services.s3.internal.Mimetypes;
 import org.junit.Before;
 
 import java.util.NoSuchElementException;
-import java.util.Random;
 
+import co.tapdatapp.tapandroid.BaseUnitTest;
 import co.tapdatapp.tapandroid.TapApplication;
 
-public class AndroidCacheTest extends AndroidTestCase {
-
-    private Random r = new Random();
+public class AndroidCacheTest extends BaseUnitTest {
 
     private AndroidCache c;
 
@@ -202,19 +199,6 @@ public class AndroidCacheTest extends AndroidTestCase {
         c.remove(OLDEST);
         c.remove(NEWER);
         assertEquals("Failed to select oldest", OLDEST, result);
-    }
-
-    /**
-     * Generate random binary data for testing
-     * @return random length array of random bytes
-     */
-    private byte[] randomData() {
-        int length = r.nextInt(1024);
-        byte[] rv = new byte[length];
-        for (int i = 0; i < length; i++) {
-            rv[i] = (byte)r.nextInt(255);
-        }
-        return rv;
     }
 
 }
