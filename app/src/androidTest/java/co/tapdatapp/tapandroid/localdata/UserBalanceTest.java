@@ -1,13 +1,18 @@
 package co.tapdatapp.tapandroid.localdata;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.test.MoreAsserts;
 
 import org.junit.After;
 import org.junit.Before;
 
+import java.io.ByteArrayOutputStream;
 import java.util.NoSuchElementException;
 
 import co.tapdatapp.tapandroid.BaseUnitTest;
+import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 
 public class UserBalanceTest extends BaseUnitTest {
@@ -148,6 +153,38 @@ public class UserBalanceTest extends BaseUnitTest {
         Denomination denomination = new Denomination();
         assertEquals("$1 did not match", "d1newImage", denomination.getURL(id, 1));
         assertEquals("$1 did not match", "d5newImage", denomination.getURL(id, 5));
+    }
+
+    public void testGetIconFromCache() throws Exception {
+        final int id = random.nextInt(999);
+        final String name = "testUpdateAllDenominations_deleteDenominations";
+        final String icon = "http://www.example.com/testGetIconFromCache.png";
+        final String symbol = "$";
+        UserBalance b = new UserBalance();
+        b.createOrUpdate(id, name, icon, symbol);
+        AndroidCache c = new AndroidCache();
+        try {
+            Bitmap bitmap = BitmapFactory.decodeResource(
+                TapApplication.get().getResources(),
+                R.drawable.loading_square
+            );
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+            c.put(icon, "image/png", os.toByteArray());
+            os.close();
+            byte[] expectedImage = getBitmapAsBytes(R.drawable.loading_square);
+            b = new UserBalance();
+            b.moveTo(id);
+            byte[] result = getBitmapAsBytes(b.getIcon());
+            MoreAsserts.assertEquals(
+                "Icons don't match",
+                expectedImage,
+                result
+            );
+        }
+        finally {
+            c.remove(icon);
+        }
     }
 
 }

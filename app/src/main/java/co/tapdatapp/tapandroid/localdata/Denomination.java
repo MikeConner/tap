@@ -7,13 +7,10 @@ package co.tapdatapp.tapandroid.localdata;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
 
 import java.util.NoSuchElementException;
 
-import co.tapdatapp.tapandroid.remotedata.HttpHelper;
-import co.tapdatapp.tapandroid.remotedata.WebResponse;
+import co.tapdatapp.tapandroid.helpers.TapBitmap;
 
 public class Denomination extends BaseDAO implements SingleTable {
 
@@ -88,42 +85,7 @@ public class Denomination extends BaseDAO implements SingleTable {
      * @throws Exception If the bitmap is not cached and can't be fetched
      */
     public Bitmap getBitmap(int currency, int amount) throws Exception {
-        Bitmap rv;
-        AndroidCache cache = new AndroidCache();
-        String url = getURL(currency, amount);
-        byte[] data = cache.get(url);
-        if (data == null) {
-            HttpHelper helper = new HttpHelper();
-            WebResponse wr = helper.HttpGet(url, new Bundle());
-            if (wr.isOK()) {
-                data = wr.getBody();
-                if (data == null) {
-                    throw new NullPointerException("Null data from cache");
-                }
-                if (data.length == 0) {
-                    throw new NullPointerException("0 length data from cache");
-                }
-                rv = BitmapFactory.decodeByteArray(data, 0, data.length);
-                if (rv == null) {
-                    throw new NullPointerException(
-                        "Null bitmap from webservice for " + url
-                    );
-                }
-                cache.put(url, wr.getMediaType(), data);
-            }
-            else {
-                throw new Exception("Failure to fetch image: " + wr.getError());
-            }
-        }
-        else {
-            rv = BitmapFactory.decodeByteArray(data, 0, data.length);
-            if (rv == null) {
-                throw new NullPointerException(
-                    "Null Bitmap from cache for " + url + " " + data.length
-                );
-            }
-        }
-        return rv;
+        return TapBitmap.fetchFromCacheOrWeb(getURL(currency, amount));
     }
 
     /**

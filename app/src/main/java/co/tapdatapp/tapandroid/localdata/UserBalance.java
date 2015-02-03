@@ -10,8 +10,11 @@ package co.tapdatapp.tapandroid.localdata;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 
 import java.util.NoSuchElementException;
+
+import co.tapdatapp.tapandroid.helpers.TapBitmap;
 
 public class UserBalance extends BaseDAO implements SingleTable {
 
@@ -143,6 +146,10 @@ public class UserBalance extends BaseDAO implements SingleTable {
             }
         }
 
+    }
+
+    public Bitmap getIcon() throws Exception {
+        return TapBitmap.fetchFromCacheOrWeb(getIconUrl());
     }
 
     public String getName() {
