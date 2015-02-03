@@ -58,5 +58,11 @@ public class HttpHelperTest extends AndroidTestCase {
         assertFalse("Response should have been an error", r.isOK());
     }
 
-
+    public void testMediaType() throws IOException {
+        WebResponse r = helper.HttpGet(
+            "http://www.tapdatapp.co",
+            new Bundle()
+        );
+        assertEquals("Wrong media type", "text/html", r.getMediaType());
+    }
 }

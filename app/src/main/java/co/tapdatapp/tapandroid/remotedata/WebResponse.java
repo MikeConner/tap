@@ -90,7 +90,7 @@ public class WebResponse {
         Header h = httpResponse.getFirstHeader("Content-Type");
         String value = h.getValue();
         if (value.contains(";")) {
-            return value.split("/;/")[0];
+            return value.split(";")[0];
         }
         else {
             return value;
