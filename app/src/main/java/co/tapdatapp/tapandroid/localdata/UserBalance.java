@@ -23,6 +23,7 @@ public class UserBalance extends BaseDAO implements SingleTable {
     public final static String NAME = "name";
     public final static String ICON = "icon";
     public final static String SYMBOL = "symbol";
+    public static final int CURRENCY_BITCOIN = -1;
 
     private String name;
     private String icon;

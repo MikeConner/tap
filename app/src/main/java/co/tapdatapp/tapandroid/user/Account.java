@@ -8,12 +8,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.localdata.UserBalance;
 
 public class Account {
 
     public final static String PREFERENCES = "CurrentUser";
 
     private final static String TOKEN = "AuthToken";
+    private final static String DEFAULT_CURRENCY = "DefaultCurrency";
 
     private SharedPreferences preferences;
     private SharedPreferences.Editor prefEditor;
@@ -43,6 +45,23 @@ public class Account {
             throw new AssertionError("Setting empty or null auth token");
         }
         prefEditor.putString(TOKEN, to);
+        prefEditor.commit();
+    }
+
+    public int getDefaultCurrency() {
+        if (preferences.contains(DEFAULT_CURRENCY)) {
+            return Integer.parseInt(
+                preferences.getString(
+                    DEFAULT_CURRENCY,
+                    Integer.toString(UserBalance.CURRENCY_BITCOIN)
+                )
+            );
+        }
+        return UserBalance.CURRENCY_BITCOIN;
+    }
+
+    public void setDefaultCurrency(int to) {
+        prefEditor.putString(DEFAULT_CURRENCY, Integer.toString(to));
         prefEditor.commit();
     }
 }
