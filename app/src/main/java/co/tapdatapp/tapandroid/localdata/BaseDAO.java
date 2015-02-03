@@ -87,4 +87,19 @@ public class BaseDAO {
         }
     }
 
+    protected Cursor getCursor(String table,
+                               String[] columns,
+                               String where,
+                               String[] whereArgs
+    ) {
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+        return db.query(
+            table,
+            columns,
+            where,
+            whereArgs,
+            null, null, null, null
+        );
+    }
+
 }
