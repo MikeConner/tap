@@ -4,23 +4,15 @@
 
 package co.tapdatapp.tapandroid.remotedata;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Set;
 
 import co.tapdatapp.tapandroid.R;
@@ -29,6 +21,14 @@ import co.tapdatapp.tapandroid.user.Account;
 
 public class HttpHelper {
 
+    /**
+     * Generate the full URL from a resource ID pointing to the
+     * specific resource. Adds in the server and API version and
+     * adds the auth token if an account exists.
+     *
+     * @param endpointId ID of a string resource to the endpoing
+     * @return full URL to the resource
+     */
     public String getFullUrl(int endpointId) {
         StringBuilder sb = new StringBuilder();
         sb.append(TapApplication.string(R.string.SERVER));
@@ -42,49 +42,48 @@ public class HttpHelper {
         return sb.toString();
     }
 
+    /**
+     * Returns a JSONObject extracted from the passed URL.
+     *
+     * @param url The full URL to the web resource
+     * @param headers HTTP headers, Accept header is not needed
+     * @return JSONObject of the returned data
+     * @throws WebServiceError If the requested resulted in an error
+     */
     public JSONObject
-    HttpGetJSON(String url, Bundle headers)
-    throws IOException, HttpException, JSONException {
+    HttpGetJSON(String url, Bundle headers) throws WebServiceError {
         headers.putString("Accept", "application/json");
-        return new JSONObject(HttpGet(url, headers));
+        try {
+            WebResponse response = HttpGet(url, headers);
+            if (response.isOK()) {
+                return response.getJSON();
+            } else {
+                throw new WebServiceError(response);
+            }
+        }
+        catch (Exception e) {
+            throw new WebServiceError(e);
+        }
     }
 
-    public String HttpGet(String url, Bundle headers)
-    throws IOException, HttpException {
+    /**
+     * Do an HTTP GET
+     *
+     * @param url The full URL to the web resource
+     * @param headers No headers are added by this method
+     * @return WebResponse containing the response
+     * @throws IOException Various network errors will cause this
+     */
+    public WebResponse HttpGet(String url, Bundle headers)
+    throws IOException {
         HttpClient webClient = new DefaultHttpClient();
         HttpGet get = new HttpGet(url);
         Set<String> keys = headers.keySet();
         for (String key : keys) {
             get.setHeader(key, headers.getString(key));
         }
-        StringBuilder responseText = new StringBuilder();
-        InputStream is = null;
-        try {
-            HttpResponse response = webClient.execute(get);
-            StatusLine status = response.getStatusLine();
-            if (status.getStatusCode() == 200) {
-                HttpEntity entity = response.getEntity();
-                is = entity.getContent();
-                BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(is)
-                );
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    responseText.append(line);
-                }
-            }
-            else {
-                throw new HttpException(
-                    "URL " + url + " returns HTTP status code " + status.getStatusCode()
-                );
-            }
-        }
-        finally {
-            if (is != null) {
-                is.close();
-            }
-        }
-        return responseText.toString();
+        HttpResponse response = webClient.execute(get);
+        return new WebResponse(response);
     }
 
 }
