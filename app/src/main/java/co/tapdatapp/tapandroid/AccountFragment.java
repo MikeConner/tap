@@ -7,12 +7,11 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.service.TapCloud;
-import co.tapdatapp.tapandroid.service.TapUser;
+import co.tapdatapp.tapandroid.user.Account;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -21,31 +20,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Activities that contain this fragment must implement the
  * {@link AccountFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AccountFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
  */
 public class AccountFragment extends Fragment {
 
-    private TapUser mTapUser;
-
     private OnFragmentInteractionListener mListener;
 
-
-
-    public static AccountFragment newInstance() {
-        AccountFragment fragment = new AccountFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-        return fragment;
-    }
     public AccountFragment() {
         // Required empty public constructor
-    }
-    public void setTapUser(TapUser tap_user){
-        mTapUser = tap_user;
     }
 
     @Override
@@ -55,16 +36,23 @@ public class AccountFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        MainActivity ma =  (MainActivity) getActivity();
-        mTapUser=  ma.mTapUser;
 
-
+        Account a = new Account();
+        if (!a.created()) {
+            try {
+                a.createNew();
+            }
+            catch (Exception e) {
+                // @TODO tie this all into centralized abort handling
+                throw new AssertionError(e);
+            }
+        }
 
         TextView nickName = (TextView)  getActivity().findViewById(R.id.etNickName);
-        nickName.setText( mTapUser.getNickname());
+        nickName.setText(new Account().getNickname());
 
         TextView email = (TextView)getActivity().findViewById(R.id.etEmail);
-        String mEmailAddy = mTapUser.getEmail();
+        String mEmailAddy = new Account().getEmail();
         if (mEmailAddy.equals("")){
             email.setText("no@email.addy");
         }else
@@ -75,18 +63,18 @@ public class AccountFragment extends Fragment {
         email.setEnabled(false);
         nickName.setEnabled(false);
         TextView balance = (TextView) getActivity().findViewById(R.id.txtBalance);
-        balance.setText(  String.valueOf(mTapUser.getSatoshiBalance()) + " S");
+        balance.setText( String.valueOf(new UserBalance().getBalance(UserBalance.CURRENCY_BITCOIN)) + " S");
 
         CircleImageView ivProfilePic = (CircleImageView) getActivity().findViewById(R.id.profile_image);
-        String mThumb = mTapUser.getProfilePicThumb();
-        if (mThumb.equals("") || mThumb.equals("null")){
+        String mThumb = a.getProfilePicThumbUrl();
+        if (mThumb.isEmpty()){
             //do nothing or set it to some image?
             ivProfilePic.setImageResource(R.drawable.brienne);
         }
         else{
             //TODO: Check to see if we've already done this.. if not get it again
             new TapCloud.DownloadImageTask(ivProfilePic)
-                    .execute(mTapUser.getProfilePicThumb());
+                    .execute(mThumb);
 
         }
 
@@ -108,19 +96,11 @@ public class AccountFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
     }
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-
-
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()

@@ -164,4 +164,9 @@ public class UserBalance extends BaseDAO implements SingleTable {
     public String getIconUrl() {
         return icon;
     }
+
+    public int getBalance(int currencyId) {
+        // @TODO implement this!
+        return 0;
+    }
 }

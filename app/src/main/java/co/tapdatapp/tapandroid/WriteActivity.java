@@ -38,6 +38,7 @@ import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapTag;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapYapa;
+import co.tapdatapp.tapandroid.user.Account;
 
 
 public class WriteActivity extends Activity {
@@ -214,12 +215,12 @@ public class WriteActivity extends Activity {
                 byte[] byteArray = stream.toByteArray();
 
 
-                String newFullImageURL = mTapCloud.uploadToS3withStream(byteArray, TapUser.getRandomString(16) + ".jpg", this);
+                String newFullImageURL = mTapCloud.uploadToS3withStream(byteArray, Account.getRandomString(16) + ".jpg", this);
                 Bitmap thumb = Bitmap.createScaledBitmap(bmp,512,512,false);
                 ByteArrayOutputStream thumbstream = new ByteArrayOutputStream();
                 thumb.compress(Bitmap.CompressFormat.PNG, 100, thumbstream);
                 byte[] thumbarray = thumbstream.toByteArray();
-                String newThumbImageURL = mTapCloud.uploadToS3withStream(thumbarray, TapUser.getRandomString(16) + ".jpg", this);
+                String newThumbImageURL = mTapCloud.uploadToS3withStream(thumbarray, Account.getRandomString(16) + ".jpg", this);
 
                 ArrayList<TapYapa> myYappas = mTapTag.myYappas();
                 if(myYappas.size() > 0) {
@@ -278,7 +279,7 @@ public class WriteActivity extends Activity {
                     mImageView = (ImageView) findViewById(R.id.yapa2);
 
                 }
-                String newFullImageURL = mTapCloud.uploadToS3withURI(mContentURI, TapUser.getRandomString(16) +".jpg", this);
+                String newFullImageURL = mTapCloud.uploadToS3withURI(mContentURI, Account.getRandomString(16) +".jpg", this);
                 String newFUllImagePath = TapCloud.getRealPathFromURI(this,mContentURI);
                 String newThumbImageURL = "";
                 try {
@@ -287,7 +288,7 @@ public class WriteActivity extends Activity {
                     Bitmap thumbnail = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
                     mImageView.setImageBitmap(thumbnail);
 
-                    newThumbImageURL = mTapCloud.uploadToS3withStream(imageData, TapUser.getRandomString(16) + ".jpg", this);
+                    newThumbImageURL = mTapCloud.uploadToS3withStream(imageData, Account.getRandomString(16) + ".jpg", this);
 
 
                     ArrayList<TapYapa> myYappas = mTapTag.myYappas();

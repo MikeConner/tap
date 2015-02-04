@@ -8,8 +8,6 @@ public class WebServiceError extends Exception {
 
     private WebResponse webResponse = null;
 
-    private Throwable cause = null;
-
     /**
      * Constructor for when a response was actually received, but was
      * in error for some reason.
@@ -28,7 +26,7 @@ public class WebServiceError extends Exception {
      */
     public WebServiceError(Throwable _cause) {
         super();
-        cause = _cause;
+        initCause(_cause);
     }
 
     /**
@@ -40,8 +38,8 @@ public class WebServiceError extends Exception {
         if (webResponse != null) {
             return webResponse.getError();
         }
-        if (cause != null) {
-            return cause.getMessage();
+        if (getCause() != null) {
+            return getCause().getMessage();
         }
         return "Unknown error";
     }

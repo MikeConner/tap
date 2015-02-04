@@ -6,9 +6,19 @@ package co.tapdatapp.tapandroid.user;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Random;
+
+import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
+import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+import co.tapdatapp.tapandroid.remotedata.UserAccountCodex;
+import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
 public class Account {
 
@@ -16,9 +26,12 @@ public class Account {
 
     private final static String TOKEN = "AuthToken";
     private final static String DEFAULT_CURRENCY = "DefaultCurrency";
+    private final static String PHONE_SECRET = "PhoneSecret";
+    private final static String NICKNAME = "NickName";
+    private final static String EMAIL = "eMail";
+    private final static String PROFILE_PIC_THUMB_URL = "ProfilePicThumbURL";
 
     private SharedPreferences preferences;
-    private SharedPreferences.Editor prefEditor;
 
     public Account() {
         super();
@@ -26,17 +39,34 @@ public class Account {
             PREFERENCES,
             Context.MODE_PRIVATE
         );
-        prefEditor = preferences.edit();
     }
 
     public boolean created() {
         return preferences.contains(TOKEN);
     }
 
-    public String getAuthToken() {
-        if (!created()) {
-            throw new AssertionError("Account not created");
+    public void createNew() throws WebServiceError {
+        String phoneSecret = generatePhoneSecret();
+        UserAccountCodex codex = new UserAccountCodex();
+        JSONObject request = codex.marshallCreateRequest(phoneSecret);
+        HttpHelper http = new HttpHelper();
+        JSONObject response = http.HttpPostJSON(
+            http.getFullUrl(R.string.ENDPOINT_REGISTRATION),
+            new Bundle(),
+            request
+        );
+        try {
+            setPhoneSecret(phoneSecret);
+            setNickname(codex.getNickname(response));
+            setAuthToken(codex.getAuthToken(response));
         }
+        catch (JSONException je) {
+            throw new WebServiceError(je);
+        }
+    }
+
+    public String getAuthToken() {
+        throwIfNoAccount();
         return preferences.getString(TOKEN, null);
     }
 
@@ -44,8 +74,46 @@ public class Account {
         if (to == null || to.isEmpty()) {
             throw new AssertionError("Setting empty or null auth token");
         }
-        prefEditor.putString(TOKEN, to);
-        prefEditor.commit();
+        set(TOKEN, to);
+    }
+
+    public String getPhoneSecret() {
+        throwIfNoAccount();
+        return preferences.getString(PHONE_SECRET, null);
+    }
+
+    public void setPhoneSecret(String to) {
+        if (to == null || to.isEmpty()) {
+            throw new AssertionError("Setting empty or null phone secret");
+        }
+        set(PHONE_SECRET, to);
+    }
+
+    public void setNickname(String to) {
+        set(NICKNAME, to);
+    }
+
+    public String getNickname() {
+        throwIfNoAccount();
+        return preferences.getString(NICKNAME, null);
+    }
+
+    public void setEmail(String to) {
+        set(EMAIL, to);
+    }
+
+    public String getEmail() {
+        throwIfNoAccount();
+        return preferences.getString(EMAIL, "");
+    }
+
+    public void setProfilePicThumbUrl(String to) {
+        set(PROFILE_PIC_THUMB_URL, to);
+    }
+
+    public String getProfilePicThumbUrl() {
+        throwIfNoAccount();
+        return preferences.getString(PROFILE_PIC_THUMB_URL, "");
     }
 
     public int getDefaultCurrency() {
@@ -61,7 +129,43 @@ public class Account {
     }
 
     public void setDefaultCurrency(int to) {
-        prefEditor.putString(DEFAULT_CURRENCY, Integer.toString(to));
-        prefEditor.commit();
+        set(DEFAULT_CURRENCY, Integer.toString(to));
+    }
+
+    private String generatePhoneSecret(){
+        return getRandomString(TapApplication.integer(R.string.PHONE_SECRET_SIZE));
+    }
+
+    public static String getRandomString(final int sizeOfRandomString)
+    {
+        final Random random=new Random();
+        final StringBuilder sb=new StringBuilder();
+        final char[] ALLOWED_CHARACTERS = TapApplication.charArray(
+            R.string.PHONE_SECRET_ALLOWED_CHARACTERS
+        );
+        for(int i=0;i<sizeOfRandomString;++i)
+            sb.append(ALLOWED_CHARACTERS[random.nextInt(ALLOWED_CHARACTERS.length)]);
+        return sb.toString();
+    }
+
+    /**
+     * Throw AssertionError if account not initialized
+     */
+    private void throwIfNoAccount() {
+        if (!created()) {
+            throw new AssertionError("Account not created");
+        }
+    }
+
+    /**
+     * Simplify setting a value in the preference editor
+     *
+     * @param key set this pair
+     * @param value set to this value
+     */
+    private void set(String key, String value) {
+        SharedPreferences.Editor prefEditor = preferences.edit();
+        prefEditor.putString(key, value);
+        prefEditor.apply();
     }
 }

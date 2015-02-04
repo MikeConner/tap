@@ -18,6 +18,7 @@ public class WebResponse {
 
     private final int responseCode;
     private final HttpResponse httpResponse;
+    private byte[] body = null;
 
     public WebResponse(HttpResponse r) {
         httpResponse = r;
@@ -30,38 +31,38 @@ public class WebResponse {
      * @return The bytes of the response body
      */
     public byte[] getBody() {
-        HttpEntity entity = httpResponse.getEntity();
-        byte[] bodyData = new byte[
-            (int) entity.getContentLength()
-            ];
-        InputStream is = null;
-        try {
-            is = entity.getContent();
-            int position = 0;
-            int bytesRead = 0;
-            while (bytesRead != -1) {
-                bytesRead = is.read(
-                    bodyData,
-                    position,
-                    bodyData.length - position
-                );
-                position += bytesRead;
-            }
-        } catch (IOException ioe) {
-            bodyData = null;
-        }
-        finally {
-            if (is != null) {
-                try {
-                    is.close();
+        if (body == null) {
+            HttpEntity entity = httpResponse.getEntity();
+            body = new byte[
+                (int) entity.getContentLength()
+                ];
+            InputStream is = null;
+            try {
+                is = entity.getContent();
+                int position = 0;
+                int bytesRead = 0;
+                while (bytesRead != -1) {
+                    bytesRead = is.read(
+                        body,
+                        position,
+                        body.length - position
+                    );
+                    position += bytesRead;
                 }
-                catch (IOException ioe) {
-                    // If this happens, there really isn't anything
-                    // that can be done.
+            } catch (IOException ioe) {
+                body = null;
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException ioe) {
+                        // If this happens, there really isn't anything
+                        // that can be done.
+                    }
                 }
             }
         }
-        return bodyData;
+        return body;
     }
 
     /**
@@ -107,8 +108,15 @@ public class WebResponse {
             return "";
         }
         else {
-            // @TODO: more detailed error information
-            return Integer.toString(responseCode);
+            String message;
+            try {
+                JSONObject error = getJSON();
+                message = error.getString("error_description");
+            }
+            catch (Exception e) {
+                message = e.getMessage();
+            }
+            return Integer.toString(responseCode) + ": " + message;
         }
     }
 }

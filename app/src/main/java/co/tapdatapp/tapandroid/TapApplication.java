@@ -46,12 +46,32 @@ public class TapApplication extends Application {
     }
 
     /**
-     * Conventience method to fetch a String resource
+     * Convenience method to fetch a String resource
      *
      * @param id resource ID
      * @return The string of the specified resource
      */
     public static String string(int id) {
         return app.getString(id);
+    }
+
+    /**
+     * Convenience method to get an integer from a string resource
+     *
+     * @param id resource ID
+     * @return String representation of the requested resource
+     */
+    public static int integer(int id) {
+        return Integer.parseInt(app.getString(id));
+    }
+
+    /**
+     * Convenience method to get a character array from a string resource
+     *
+     * @param id resource ID
+     * @return char[] of the resource string
+     */
+    public static char[] charArray(int id) {
+        return app.getString(id).toCharArray();
     }
 }

@@ -56,6 +56,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="co.tapdatapp.tapandroid.TagActivity" />
         </activity>
+        <activity android:name=".AccountStartActivity">
+
+        </activity>
     </application>
 
 </manifest>

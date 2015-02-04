@@ -22,6 +22,7 @@ import java.util.Map;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapTag;
 import co.tapdatapp.tapandroid.service.TapUser;
+import co.tapdatapp.tapandroid.user.Account;
 
 
 public class TagActivity extends Activity implements TagsFragment.OnFragmentInteractionListener {
@@ -113,7 +114,7 @@ public class TagActivity extends Activity implements TagsFragment.OnFragmentInte
         // do nothing
     }
     public void makeNewTag(View view){
-        mDefaultYapaString = TapCloud.getTapUser(this).getProfilePicThumb();
+        mDefaultYapaString = new Account().getProfilePicThumbUrl();
         new NewTagTask().execute(mDefaultYapaString);
     }
 

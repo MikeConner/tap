@@ -63,9 +63,6 @@ public class TapCloud {
     public final static String TAP_REMOTE = "www.tapdatapp.co";
     public final static String TAP_SERVER = TAP_REMOTE;
 
-
-    public final static String TAP_REGISTER_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/registrations.json";
-
     public final static String TAP_USER_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/users/me";
     public final static String TAP_USERNICK_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/users/reset_nickname";
     public final static String TAP_USERBALANCE_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/users/balance_inquiry";
@@ -309,19 +306,6 @@ public class TapCloud {
             return null;
         }
     }
-    public boolean isNetworkAvailable(Context mContext) {
-        ConnectivityManager cm = (ConnectivityManager)
-                mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        // if no network is available networkInfo will be null
-        // otherwise check if we are connected
-        if (networkInfo != null && networkInfo.isConnected()) {
-            return true;
-        }
-        return false;
-    }
-
-
 
     public static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;

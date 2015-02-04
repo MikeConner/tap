@@ -18,7 +18,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
@@ -50,12 +49,15 @@ import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.user.Account;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends Activity implements AccountFragment.OnFragmentInteractionListener, ArmFragment.OnFragmentInteractionListener, ActionBar.TabListener, DataLoaderFragment.ProgressListener {
+public class MainActivity
+extends Activity
+implements AccountFragment.OnFragmentInteractionListener,
+           ArmFragment.OnFragmentInteractionListener,
+           ActionBar.TabListener {
+
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
 
-    protected SharedPreferences mPreferences;
-    protected String mPhoneSecret;
     protected String mAuthToken;
 
     protected TapUser mTapUser;
@@ -78,15 +80,6 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
     String mCurrentPhotoPath;
     boolean mFromCamera = false;
     static final int REQUEST_TAKE_PHOTO = 1;
-
-
-    //splash screen and data loader fragment
-    private static final String TAG_DATA_LOADER = "TAPloader";
-    private static final String TAG_SPLASH_SCREEN = "TAPsplashScreen";
-
-    private DataLoaderFragment mDataLoaderFragment;
-    private SplashScreenFragment mSplashScreenFragment;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,78 +115,27 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         mNdefExchangeFilters = new IntentFilter[] { tapFilter };
     }
 
-
+    /**
+     * If no account, fire up the account creation screen, otherwise,
+     * start the app up.
+     */
     @Override
     protected void onStart() {
         super.onStart();
-
-
-
-
-        //Load Splash Fragment
-        final FragmentManager fm = getFragmentManager();
-        mDataLoaderFragment = (DataLoaderFragment) fm.findFragmentByTag(TAG_DATA_LOADER);
-        if (mDataLoaderFragment == null) {
-            mDataLoaderFragment = new DataLoaderFragment();
-            mDataLoaderFragment.setProgressListener(this);
-            mDataLoaderFragment.startLoading();
-            fm.beginTransaction().add(mDataLoaderFragment, TAG_DATA_LOADER).commit();
-        } else {
-            if (checkCompletionStatus()) {
-                return;
-            }
+        Account account = new Account();
+        if (!account.created()) {
+            Intent intent = new Intent(this, AccountStartActivity.class);
+            startActivity(intent);
         }
-
-        // Show loading fragment
-        mSplashScreenFragment = (SplashScreenFragment) fm.findFragmentByTag(TAG_SPLASH_SCREEN);
-        if (mSplashScreenFragment == null) {
-            mSplashScreenFragment = new SplashScreenFragment();
-            fm.beginTransaction().add(android.R.id.content, mSplashScreenFragment, TAG_SPLASH_SCREEN).commit();
-        }
-
-        if (mDataLoaderFragment != null) {
-            checkCompletionStatus();
+        else {
+            setupTabs();
         }
     }
 
-    @Override
-    public void onCompletion(Double result) {
-        setupTabs();
-        mDataLoaderFragment = null;
-    }
-
-
-
-    @Override
-    public void onProgressUpdate(int progress) {
-        mSplashScreenFragment.setProgress(progress);
-    }
     @Override
     protected void onStop() {
         super.onStop();
-        if (mDataLoaderFragment != null) {
-            mDataLoaderFragment.removeProgressListener();
-        }
     }
-    /**
-     * Checks if data is done loading, if it is, the result is handled
-     *
-     * @return true if data is done loading
-     */
-    private boolean checkCompletionStatus() {
-        if (mDataLoaderFragment.hasResult()) {
-            onCompletion(mDataLoaderFragment.getResult());
-            FragmentManager fm = getFragmentManager();
-            mSplashScreenFragment = (SplashScreenFragment) fm.findFragmentByTag(TAG_SPLASH_SCREEN);
-            if (mSplashScreenFragment != null) {
-                fm.beginTransaction().remove(mSplashScreenFragment). commit();
-            }
-            return true;
-        }
-        mDataLoaderFragment.setProgressListener(this);
-        return false;
-    }
-
 
     private void setupTabs(){
         //TODO: In teh case where balance is zero open up a load phone fragment
@@ -353,12 +295,12 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
                 byte[] byteArray = stream.toByteArray();
 
 
-                String newFullImageURL = mTapCloud.uploadToS3withStream(byteArray, TapUser.getRandomString(16) + ".jpg", this);
+                String newFullImageURL = mTapCloud.uploadToS3withStream(byteArray, Account.getRandomString(16) + ".jpg", this);
                 Bitmap thumb = Bitmap.createScaledBitmap(bmp,512,512,false);
                 ByteArrayOutputStream thumbstream = new ByteArrayOutputStream();
                 thumb.compress(Bitmap.CompressFormat.PNG, 100, thumbstream);
                 byte[] thumbarray = thumbstream.toByteArray();
-                String newThumbImageURL = mTapCloud.uploadToS3withStream(thumbarray, TapUser.getRandomString(16) + ".jpg", this);
+                String newThumbImageURL = mTapCloud.uploadToS3withStream(thumbarray, Account.getRandomString(16) + ".jpg", this);
 
 
   //              BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -398,13 +340,13 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
       //              //TODO: not sure what to catch here?
       //          }
                 mTapUser.setProfilePicFull(newFullImageURL );
-                mTapUser.setProfilePicThumb(newThumbImageURL );
+                new Account().setProfilePicThumbUrl(newThumbImageURL );
                 mTapUser.UpdateUser(mAuthToken);
             }
             else {
                 Uri mContentURI = data.getData();
                 //ImageView mImageView = (ImageView) findViewById(R.id.profile_image);
-                String newFullImageURL = mTapCloud.uploadToS3withURI(mContentURI, TapUser.getRandomString(16) +".jpg", this);
+                String newFullImageURL = mTapCloud.uploadToS3withURI(mContentURI, Account.getRandomString(16) +".jpg", this);
                 String newFUllImagePath = TapCloud.getRealPathFromURI(this,mContentURI);
                 String newThumbImageURL = "";
                 try {
@@ -412,13 +354,13 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
                     byte[] imageData = exif.getThumbnail();
                     Bitmap thumbnail = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
                     //mImageView.setImageBitmap(thumbnail);
-                     newThumbImageURL = mTapCloud.uploadToS3withStream(imageData, TapUser.getRandomString(16) + ".jpg", this);
+                     newThumbImageURL = mTapCloud.uploadToS3withStream(imageData, Account.getRandomString(16) + ".jpg", this);
                 }
                 catch (Exception e){
                     //TODO: not sure what to catch here?
                 }
                 mTapUser.setProfilePicFull(newFullImageURL );
-                mTapUser.setProfilePicThumb(newThumbImageURL );
+                new Account().setProfilePicThumbUrl(newThumbImageURL );
                 mTapUser.UpdateUser(mAuthToken);
             }
         }
@@ -751,9 +693,9 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
         TextView edName = (TextView) findViewById(R.id.etNickName);
         TextView edEmail = (TextView) findViewById(R.id.etEmail);
         //EditText edWithDraw = (EditText) findViewById(R.id.etWithdraw);
-        mTapUser.setNickName(edName.getText().toString());
+        new Account().setNickname(edName.getText().toString());
         //mTapUser.setBTCoutbound( edWithDraw.getText().toString());
-        mTapUser.setEmail(edEmail.getText().toString());
+        new Account().setEmail(edEmail.getText().toString());
         mTapUser.UpdateUser(mAuthToken);
 
     }
@@ -807,8 +749,7 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
             Fragment frag;
             switch (position) {
                 case 0:
-                    frag = new AccountFragment().newInstance();
-                    //frag = mAccountFrag;
+                    frag = new AccountFragment();
                     break;
                 case 1:
                     frag = new ArmFragment().newInstance();
@@ -848,77 +789,6 @@ public class MainActivity extends Activity implements AccountFragment.OnFragment
     public void onFragmentInteraction(Uri uri) {
         // we need this for fragments / menus
         //not sure what we have to do here if anything
-    }
-
-
-
-
-
-
-
-
-
-
-    // NO LONGER USED -> MOVED TO LOADER FRAGMENT
-    private void tap_init(){
-
-        mPreferences = getSharedPreferences(Account.PREFERENCES, MODE_PRIVATE);
-        mTapCloud = new TapCloud();
-        mTapUser = TapCloud.getTapUser(this);
-        if (mPreferences.contains("PhoneSecret")) {
-            mPhoneSecret = mPreferences.getString("PhoneSecret", "");
-        }
-        else {
-            mPhoneSecret =  mTapUser.generatePhoneSecret();
-            SharedPreferences.Editor editor = mPreferences.edit();
-            editor.putString("PhoneSecret", mPhoneSecret);
-            editor.commit();
-        }
-        // at this point we have a Phone Secret, let's try some network shit
-
-        Boolean mNetwork = mTapCloud.isNetworkAvailable(this);
-        if (mNetwork) {
-
-            if (mPreferences.contains("AuthToken")) {
-                if (!mPreferences.getString("AuthToken", "").isEmpty()){
-                    mAuthToken = mPreferences.getString("AuthToken", "");
-                    mTapCloud.setAuthToken(mAuthToken);
-                    mTapUser.LoadUser(mAuthToken);
-                    //TODO: Failure case for when auth token has expired -> get error, get new auth token based on secret
-                    //TODO: Failure case in case we can't get to tap or tap is down
-                }
-                else {
-                    mAuthToken =  mTapUser.CreateUser(mPhoneSecret);
-                    SharedPreferences.Editor editor = mPreferences.edit();
-                    editor.putString("AuthToken", mAuthToken);
-                    //editor.putString("NickName", mTapUser.getNickname());
-                    editor.commit();
-                    mTapCloud.setAuthToken(mAuthToken);
-
-
-                }
-            }
-            else{
-                //Get Auth Token
-                mAuthToken =  mTapUser.CreateUser(mPhoneSecret);
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putString("AuthToken", mAuthToken);
-                //editor.putString("NickName", mTapUser.getNickname());
-                editor.commit();
-
-
-                //We know user is null, but let's load user anyway to be consistent with above
-                mTapCloud.setAuthToken(mAuthToken);
-                mTapUser.LoadUser(mAuthToken);
-
-                //TODO: Delete Auth Token on kill of application, so it gets a new one when it comes back OR NOT?
-            }
-        }
-        else {
-            Toast.makeText(this, (CharSequence) ("No NETWORK!  Going Home!"), Toast.LENGTH_SHORT).show();
-            //TODO: Code to send message, kill app, or figure out what to do next?
-        }
-        //end of Tap network Ops
     }
 
 }
