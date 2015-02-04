@@ -1,35 +1,25 @@
 package co.tapdatapp.tapandroid;
 
-import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.FragmentTransaction;
 import android.graphics.Point;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.IOException;
 
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
+import co.tapdatapp.tapandroid.user.Account;
 
 
 public class DepositFragment extends DialogFragment {
-
-    private String mAuthToken;
-
 
     public  void setValues (String message, String payload_url){
 
@@ -44,11 +34,7 @@ public class DepositFragment extends DialogFragment {
     public DepositFragment() {
         // Required empty public constructor
     }
-    public DepositFragment(String auth_token ) {
-        mAuthToken = auth_token;
 
-        // Required empty public constructor
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -113,7 +99,7 @@ public class DepositFragment extends DialogFragment {
             // params comes from the execute() call: params[0] is the url.
             try {
                 TapUser mTapUser = TapCloud.getTapUser(getActivity());
-                mTapUser.RedeemVoucherCode(TapCloud.getAuthToken(),vouchers[0]);
+                mTapUser.RedeemVoucherCode(new Account().getAuthToken(),vouchers[0]);
                 return vouchers[0];
             } catch (Exception e) {
                 return "Unable to retrieve web page. URL may be invalid.";

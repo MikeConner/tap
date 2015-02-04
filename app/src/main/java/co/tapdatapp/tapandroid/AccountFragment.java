@@ -37,17 +37,6 @@ public class AccountFragment extends Fragment {
     public void onResume(){
         super.onResume();
 
-        Account a = new Account();
-        if (!a.created()) {
-            try {
-                a.createNew();
-            }
-            catch (Exception e) {
-                // @TODO tie this all into centralized abort handling
-                throw new AssertionError(e);
-            }
-        }
-
         TextView nickName = (TextView)  getActivity().findViewById(R.id.etNickName);
         nickName.setText(new Account().getNickname());
 
@@ -66,7 +55,7 @@ public class AccountFragment extends Fragment {
         balance.setText( String.valueOf(new UserBalance().getBalance(UserBalance.CURRENCY_BITCOIN)) + " S");
 
         CircleImageView ivProfilePic = (CircleImageView) getActivity().findViewById(R.id.profile_image);
-        String mThumb = a.getProfilePicThumbUrl();
+        String mThumb = new Account().getProfilePicThumbUrl();
         if (mThumb.isEmpty()){
             //do nothing or set it to some image?
             ivProfilePic.setImageResource(R.drawable.brienne);

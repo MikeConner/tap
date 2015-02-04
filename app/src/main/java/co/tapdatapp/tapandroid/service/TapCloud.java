@@ -93,13 +93,6 @@ public class TapCloud {
     private final static String TAP_USERNICK_API_ENDPOINT_URL = "http://192.168.1.132/mobile/1/users/reset_nickname";
 //*/
 
-    private static String mAuthToken;
-    public static String getAuthToken(){
-        return mAuthToken;
-    }
-    public static void setAuthToken(String new_value){
-        mAuthToken = new_value;
-    }
     private static TapUser mTapUser;
     public static TapUser getTapUser(Context context){
         if (mTapUser == null){

@@ -14,9 +14,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.Map;
 
 import co.tapdatapp.tapandroid.service.TapCloud;
@@ -26,7 +24,6 @@ import co.tapdatapp.tapandroid.user.Account;
 
 
 public class TagActivity extends Activity implements TagsFragment.OnFragmentInteractionListener {
-    private String mAuthToken;
     private TapUser mTapUser;
     private TapTag mTapTag;
     private Map<String, String> mtagMap;
@@ -38,8 +35,6 @@ public class TagActivity extends Activity implements TagsFragment.OnFragmentInte
         setContentView(R.layout.activity_tag);
 
 //        Intent intent = getIntent();
-//        mAuthToken = intent.getStringExtra("AuthToken");
-        mAuthToken = TapCloud.getAuthToken();
         //TODO: error checking to make sure auth token is not expired
         mTapUser = TapCloud.getTapUser(this);
 //        loadTags();
@@ -52,24 +47,26 @@ public class TagActivity extends Activity implements TagsFragment.OnFragmentInte
     }
 
     private void loadTags(){
-        if (!mAuthToken.isEmpty()) {
+        final Account account = new Account();
+        if (account.created()) {
 //            mTapUser.LoadUser(AccountActivity.this, mAuthToken);
             mtagMap = mTapUser.myTagHash();
-            GridView gridview = (GridView) findViewById(R.id.gridView);
-            ImageAdapter imgAdp = new ImageAdapter(this, mtagMap);
+            // @TODO: this is incomplete and should handle zero tags gracefully
+            if (mtagMap != null) {
+                GridView gridview = (GridView) findViewById(R.id.gridView);
+                ImageAdapter imgAdp = new ImageAdapter(this, mtagMap);
 
 
-            gridview.setAdapter(imgAdp);
-            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                   // Toast.makeText(TagActivity.this, "" + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
-                    writeThisTag(mAuthToken, parent.getItemAtPosition(position).toString());
+                gridview.setAdapter(imgAdp);
+                gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                        // Toast.makeText(TagActivity.this, "" + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
+                        writeThisTag(account.getAuthToken(), parent.getItemAtPosition(position).toString());
 
 
-
-
-                }
-            });
+                    }
+                });
+            }
             // Toast.makeText(this, (CharSequence) mtagMap.toString(), Toast.LENGTH_LONG).show();
         }
     }
@@ -85,7 +82,7 @@ public class TagActivity extends Activity implements TagsFragment.OnFragmentInte
             String[] mTagValues = tag_id.split(",");
 
             Intent i = new Intent(this, WriteActivity.class);
-            i.putExtra("AuthToken",mAuthToken);
+            i.putExtra("AuthToken", new Account().getAuthToken());
             i.putExtra("TagID",mTagValues[0]);
             i.putExtra("TagName",mTagValues[1]);
 
@@ -126,8 +123,9 @@ public class TagActivity extends Activity implements TagsFragment.OnFragmentInte
             // params comes from the execute() call: params[0] is the url.
             try {
                 mTapTag = new TapTag();
-                mTapTag.generateNewTag(mAuthToken, mDefaultYapaString);
-                mTapUser.getTags(mAuthToken);
+                String authToken = new Account().getAuthToken();
+                mTapTag.generateNewTag(authToken, mDefaultYapaString);
+                mTapUser.getTags(authToken);
                 return mDefaultYapaString;  
             } catch (Exception e) {
                 return "Unable to retrieve web page. URL may be invalid.";
