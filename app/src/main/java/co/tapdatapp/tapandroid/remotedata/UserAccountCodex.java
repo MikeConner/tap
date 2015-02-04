@@ -1,3 +1,7 @@
+/**
+ * Translate user accounts between different representations
+ */
+
 package co.tapdatapp.tapandroid.remotedata;
 
 import org.json.JSONException;
@@ -11,6 +15,12 @@ public class UserAccountCodex {
     private final static String AUTH_TOKEN = "auth_token";
     private final static String NICKNAME = "nickname";
 
+    /**
+     * Create a JSON request for creating a new account
+     *
+     * @param phoneSecret Phone secret
+     * @return JSONObject to pass on to the server
+     */
     public JSONObject marshallCreateRequest(String phoneSecret) {
         JSONObject rv = new JSONObject();
         try {
@@ -24,11 +34,25 @@ public class UserAccountCodex {
         return rv;
     }
 
+    /**
+     * Extract the auth token element from a create account response
+     *
+     * @param httpResponse response to a create account HTTP call
+     * @return the auth token element
+     * @throws JSONException if anything goes wrong
+     */
     public String getAuthToken(JSONObject httpResponse)
     throws JSONException {
         return httpResponse.getJSONObject(RESPONSE).getString(AUTH_TOKEN);
     }
 
+    /**
+     * Extract the nickname portion from a create account response
+     *
+     * @param httpResponse response to a creat account HTTP call
+     * @return the nickname element
+     * @throws JSONException if anything goes wrong
+     */
     public String getNickname(JSONObject httpResponse)
     throws JSONException {
         return httpResponse.getJSONObject(RESPONSE).getString(NICKNAME);

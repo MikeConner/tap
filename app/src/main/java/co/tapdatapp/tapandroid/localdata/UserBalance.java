@@ -149,22 +149,47 @@ public class UserBalance extends BaseDAO implements SingleTable {
 
     }
 
+    /**
+     * Retrieve an actual Bitmap of the currency icon
+     *
+     * @return Bitmap of the currency icon
+     * @throws Exception if the file can't be accessed
+     */
     public Bitmap getIcon() throws Exception {
         return TapBitmap.fetchFromCacheOrWeb(getIconUrl());
     }
 
+    /**
+     * @return the display name of the currency
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return The currency symbol (such as "$")
+     */
     public String getSymbol() {
         return symbol;
     }
 
+    /**
+     * @return The URL from which to fetch this currency's icon image
+     */
     public String getIconUrl() {
         return icon;
     }
 
+    /**
+     * Get current balance for the requested currency
+     *
+     * This will take some figuring. Since the balance is actually a
+     * call to the web service, there will need to be a callback
+     * mechanism to avoid blocking on the UI thread.
+     *
+     * @param currencyId currency ID
+     * @return The balance
+     */
     public int getBalance(int currencyId) {
         // @TODO implement this!
         return 0;

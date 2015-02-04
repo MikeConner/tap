@@ -12,4 +12,7 @@
         android:layout_height="100dp"
         />
 
+    <!-- @TODO: this will have a way to choose to create a new
+         account or connect to an existing account -->
+
 </FrameLayout>

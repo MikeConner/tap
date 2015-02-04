@@ -1,3 +1,11 @@
+/**
+ * This activity is launched if the app does not have an account
+ * configured. At this time, it simply presents a busy spinner and
+ * creates a random account on the server.
+ *
+ * @TODO allow this to connect to an existing account
+ */
+
 package co.tapdatapp.tapandroid;
 
 import android.app.Activity;

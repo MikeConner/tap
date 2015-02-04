@@ -1,3 +1,7 @@
+/**
+ * AsyncTask that creates a new account on the server in the background
+ */
+
 package co.tapdatapp.tapandroid.remotedata;
 
 import android.os.AsyncTask;

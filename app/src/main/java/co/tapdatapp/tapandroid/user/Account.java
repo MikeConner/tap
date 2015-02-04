@@ -41,10 +41,18 @@ public class Account {
         );
     }
 
+    /**
+     * @return true if the account exists, false if no account
+     */
     public boolean created() {
         return preferences.contains(TOKEN);
     }
 
+    /**
+     * Create a new account with random data
+     *
+     * @throws WebServiceError on network problems
+     */
     public void createNew() throws WebServiceError {
         String phoneSecret = generatePhoneSecret();
         UserAccountCodex codex = new UserAccountCodex();
@@ -65,11 +73,23 @@ public class Account {
         }
     }
 
+    /**
+     * Get the authentication token for talking to the web service
+     *
+     * @TODO make this check the expiration and get a new token as needed
+     *
+     * @return authentication token
+     */
     public String getAuthToken() {
         throwIfNoAccount();
         return preferences.getString(TOKEN, null);
     }
 
+    /**
+     * Set the authentication token
+     *
+     * @param to the authentication token
+     */
     public void setAuthToken(String to) {
         if (to == null || to.isEmpty()) {
             throw new AssertionError("Setting empty or null auth token");
@@ -77,11 +97,21 @@ public class Account {
         set(TOKEN, to);
     }
 
+    /**
+     * Phone secret is actually the key used to identify the account
+     *
+     * @return phone secret
+     */
     public String getPhoneSecret() {
         throwIfNoAccount();
         return preferences.getString(PHONE_SECRET, null);
     }
 
+    /**
+     * Set the phone secret
+     *
+     * @param to new phone secret
+     */
     public void setPhoneSecret(String to) {
         if (to == null || to.isEmpty()) {
             throw new AssertionError("Setting empty or null phone secret");
@@ -89,33 +119,58 @@ public class Account {
         set(PHONE_SECRET, to);
     }
 
+    /**
+     * Set the user's nickname
+     *
+     * @param to user's nickname
+     */
     public void setNickname(String to) {
         set(NICKNAME, to);
     }
 
+    /**
+     * @return the user's nickname
+     */
     public String getNickname() {
         throwIfNoAccount();
         return preferences.getString(NICKNAME, null);
     }
 
+    /**
+     * Set user's email
+     *
+     * @param to user's email
+     */
     public void setEmail(String to) {
         set(EMAIL, to);
     }
 
+    /**
+     * @return user's email
+     */
     public String getEmail() {
         throwIfNoAccount();
         return preferences.getString(EMAIL, "");
     }
 
+    /**
+     * @param to URL of the thumbnail version of the profile picture
+     */
     public void setProfilePicThumbUrl(String to) {
         set(PROFILE_PIC_THUMB_URL, to);
     }
 
+    /**
+     * @return URL of the thumbnail version of the profile picture
+     */
     public String getProfilePicThumbUrl() {
         throwIfNoAccount();
         return preferences.getString(PROFILE_PIC_THUMB_URL, "");
     }
 
+    /**
+     * @return currency ID for the currency this device will use
+     */
     public int getDefaultCurrency() {
         if (preferences.contains(DEFAULT_CURRENCY)) {
             return Integer.parseInt(
@@ -128,14 +183,31 @@ public class Account {
         return UserBalance.CURRENCY_BITCOIN;
     }
 
+    /**
+     * Change the currency that this device will attempt to use for
+     * all transactions.
+     *
+     * @param to currency ID to set
+     */
     public void setDefaultCurrency(int to) {
         set(DEFAULT_CURRENCY, Integer.toString(to));
     }
 
+    /**
+     * Generate a phone secret
+     *
+     * @return random String to use as a key
+     */
     private String generatePhoneSecret(){
         return getRandomString(TapApplication.integer(R.string.PHONE_SECRET_SIZE));
     }
 
+    /**
+     * Generate a random string of the requested length
+     *
+     * @param sizeOfRandomString # of characters in returned string
+     * @return Random string of requested length
+     */
     public static String getRandomString(final int sizeOfRandomString)
     {
         final Random random=new Random();
