@@ -5,7 +5,6 @@
 
 package co.tapdatapp.tapandroid.history;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
@@ -85,18 +84,19 @@ public class HistoryAdapter implements ListAdapter {
         return false;
     }
 
-    @SuppressLint("ViewHolder")
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        LayoutInflater inflater =
-            (LayoutInflater) TapApplication.get().getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE
+    public View getView(int i, View v, ViewGroup viewGroup) {
+        if (v == null) {
+            LayoutInflater inflater =
+                (LayoutInflater) TapApplication.get().getSystemService(
+                    Context.LAYOUT_INFLATER_SERVICE
+                );
+            v = inflater.inflate(
+                R.layout.history_line_item,
+                viewGroup,
+                false
             );
-        View v = inflater.inflate(
-            R.layout.history_line_item,
-            viewGroup,
-            false
-        );
+        }
         Transaction t = new Transaction();
         t.moveTo(i);
         ((TextView)v.findViewById(R.id.history_li_date)).setText(t.getTimestamp().toString());
