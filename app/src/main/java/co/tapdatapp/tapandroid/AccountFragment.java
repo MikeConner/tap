@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import co.tapdatapp.tapandroid.localdata.MockCurrency;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.user.Account;
@@ -52,7 +53,7 @@ public class AccountFragment extends Fragment {
         email.setEnabled(false);
         nickName.setEnabled(false);
         TextView balance = (TextView) getActivity().findViewById(R.id.txtBalance);
-        balance.setText( String.valueOf(new UserBalance().getBalance(UserBalance.CURRENCY_BITCOIN)) + " S");
+        balance.setText( String.valueOf(new MockCurrency().getBalance(UserBalance.CURRENCY_BITCOIN)) + " S");
 
         CircleImageView ivProfilePic = (CircleImageView) getActivity().findViewById(R.id.profile_image);
         String mThumb = new Account().getProfilePicThumbUrl();

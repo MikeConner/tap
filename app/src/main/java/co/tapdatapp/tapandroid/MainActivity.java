@@ -42,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import co.tapdatapp.tapandroid.currency.BalancesActivity;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
@@ -340,7 +341,7 @@ implements AccountFragment.OnFragmentInteractionListener,
       //              //TODO: not sure what to catch here?
       //          }
                 mTapUser.setProfilePicFull(newFullImageURL );
-                new Account().setProfilePicThumbUrl(newThumbImageURL );
+                new Account().setProfilePicThumbUrl(newThumbImageURL);
                 mTapUser.UpdateUser(mAuthToken);
             }
             else {
@@ -360,7 +361,7 @@ implements AccountFragment.OnFragmentInteractionListener,
                     //TODO: not sure what to catch here?
                 }
                 mTapUser.setProfilePicFull(newFullImageURL );
-                new Account().setProfilePicThumbUrl(newThumbImageURL );
+                new Account().setProfilePicThumbUrl(newThumbImageURL);
                 mTapUser.UpdateUser(mAuthToken);
             }
         }
@@ -789,6 +790,11 @@ implements AccountFragment.OnFragmentInteractionListener,
     public void onFragmentInteraction(Uri uri) {
         // we need this for fragments / menus
         //not sure what we have to do here if anything
+    }
+
+    public void startBalancesActivity(View v) {
+        Intent i = new Intent(this, BalancesActivity.class);
+        startActivity(i);
     }
 
 }

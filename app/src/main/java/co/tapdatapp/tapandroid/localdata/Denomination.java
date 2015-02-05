@@ -28,6 +28,7 @@ public class Denomination extends BaseDAO implements SingleTable {
     }
 
     public Denomination(int cid, int a, String i) {
+        super();
         currency_id = cid;
         amount = a;
         image = i;
@@ -51,7 +52,9 @@ public class Denomination extends BaseDAO implements SingleTable {
     }
 
     /**
-     * Get the URL of the image for the requested denomination
+     * Get the URL of the image for the requested denomination. This
+     * version is not dependent on the data in the object, and changes
+     * nothing about the object's data.
      *
      * @param currency the currency ID of the desired URL
      * @param amount The amount of the desired URL
@@ -74,6 +77,26 @@ public class Denomination extends BaseDAO implements SingleTable {
                 "Currency Id = " + currency + ", amount = " + amount
             );
         }
+    }
+
+    public int getCurrencyId() {
+        return currency_id;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    /**
+     * Get the image URL for this object.
+     *
+     * @return URL for the icon for the denomination in this object
+     */
+    public String getURL() {
+        if (image == null) {
+            throw new AssertionError("This object does not have a URL");
+        }
+        return image;
     }
 
     /**

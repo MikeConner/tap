@@ -14,9 +14,12 @@ import android.graphics.Bitmap;
 
 import java.util.NoSuchElementException;
 
+import co.tapdatapp.tapandroid.currency.BalanceList;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 
-public class UserBalance extends BaseDAO implements SingleTable {
+public class UserBalance
+extends BaseDAO
+implements SingleTable, CurrencyDAO {
 
     public final static String TABLE = "currency";
     public final static String ID = "_id";
@@ -25,6 +28,7 @@ public class UserBalance extends BaseDAO implements SingleTable {
     public final static String SYMBOL = "symbol";
     public static final int CURRENCY_BITCOIN = -1;
 
+    private int currencyId;
     private String name;
     private String icon;
     private String symbol;
@@ -116,12 +120,7 @@ public class UserBalance extends BaseDAO implements SingleTable {
         updateAllDenominations(id, denominations);
     }
 
-    /**
-     * Load this class up with the parameters from the specified
-     * currency ID
-     *
-     * @param id Currency ID
-     */
+    @Override
     public void moveTo(int id) {
         Cursor c = null;
         try {
@@ -137,6 +136,7 @@ public class UserBalance extends BaseDAO implements SingleTable {
                 );
             }
             c.moveToFirst();
+            currencyId = id;
             name = c.getString(0);
             icon = c.getString(1);
             symbol = c.getString(2);
@@ -146,52 +146,122 @@ public class UserBalance extends BaseDAO implements SingleTable {
                 c.close();
             }
         }
-
     }
 
-    /**
-     * Retrieve an actual Bitmap of the currency icon
-     *
-     * @return Bitmap of the currency icon
-     * @throws Exception if the file can't be accessed
-     */
+    @Override
+    public CurrencyDAO getByNameOrder(int index) {
+        Cursor c = null;
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+        try {
+            c = db.query(
+                TABLE,
+                new String[] { ID, NAME, ICON, SYMBOL },
+                null, null,
+                null, null,
+                NAME + " ASC",
+                index + ", 1"
+            );
+            if (c.getCount() != 1) {
+                throw new NoSuchElementException(
+                    "No record at location " + index
+                );
+            }
+            c.moveToFirst();
+            UserBalance rv = new UserBalance();
+            rv.currencyId = c.getInt(0);
+            rv.name = c.getString(1);
+            rv.icon = c.getString(2);
+            rv.symbol = c.getString(3);
+            return rv;
+        }
+        finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+    }
+
+    @Override
     public Bitmap getIcon() throws Exception {
         return TapBitmap.fetchFromCacheOrWeb(getIconUrl());
     }
 
-    /**
-     * @return the display name of the currency
-     */
+    @Override
+    public int getCurrencyId() {
+        return currencyId;
+    }
+
+    @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * @return The currency symbol (such as "$")
-     */
+    @Override
     public String getSymbol() {
         return symbol;
     }
 
-    /**
-     * @return The URL from which to fetch this currency's icon image
-     */
+    @Override
     public String getIconUrl() {
         return icon;
     }
 
-    /**
-     * Get current balance for the requested currency
-     *
-     * This will take some figuring. Since the balance is actually a
-     * call to the web service, there will need to be a callback
-     * mechanism to avoid blocking on the UI thread.
-     *
-     * @param currencyId currency ID
-     * @return The balance
-     */
+    @Override
     public int getBalance(int currencyId) {
-        // @TODO implement this!
-        return 0;
+        BalanceList balances = getAllBalances();
+        if (balances.containsKey(currencyId)) {
+            return balances.get(currencyId);
+        }
+        else {
+            throw new NoSuchElementException(
+                "No balance for currency " + currencyId
+            );
+        }
     }
+
+    /**
+     * This implementation always fetches balances from the webservice
+     *
+     * @return List of currencies and balances
+     */
+    @Override
+    public BalanceList getAllBalances() {
+        BalanceList balances = new BalanceList();
+        // @TODO implement webservice call
+        return balances;
+    }
+
+    /**
+     * Ensure that all the details of every currency listed in
+     * the provide BalanceList are in the database.
+     *
+     * @param list list of Currencies to update
+     */
+    public void ensureLocalCurrencyDetails(BalanceList list) {
+        for (int currencyId : list.keySet()) {
+            ensureLocalCurrencyDetails(currencyId);
+        }
+    }
+
+    /**
+     * Ensure that the provided currency has all of its details in
+     * the local database.
+     *
+     * @param currencyId Currency ID to operate on
+     */
+    // @TODO may need an expiration time on the currency to refresh
+    public void ensureLocalCurrencyDetails(int currencyId) {
+        CurrencyDAO ub = new UserBalance();
+        try {
+            ub.moveTo(currencyId);
+            // If this succeeds, the currency is already local,
+            // nothing else needs to be done
+        }
+        catch (NoSuchElementException nsee) {
+            // Exception indicates that the currency isn't stored
+            // locally, must fetch it remotely.
+            // @TODO
+        }
+    }
+
 }
