@@ -7,27 +7,25 @@ package co.tapdatapp.tapandroid.history;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.TapBitmap;
+import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.localdata.TransactionDAO;
 
-public class HistoryAdapter implements ListAdapter {
+public class HistoryAdapter extends BaseAdapter {
 
     private static Bitmap rewardBitmap;
     private static Bitmap iconBitmap;
 
-    private DataSetObserver dso;
     private Integer recordCount = null;
     private TransactionDAO dao;
     private Activity activity;
@@ -45,22 +43,6 @@ public class HistoryAdapter implements ListAdapter {
     @Override
     public boolean isEnabled(int i) {
         return false;
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver dataSetObserver) {
-        if (dso != null) {
-            throw new AssertionError("Attempt to set DataSetObserver 2x");
-        }
-        dso = dataSetObserver;
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
-        if (dso != dataSetObserver) {
-            throw new AssertionError("Attempt to unregister non-registered DSO");
-        }
-        dso = null;
     }
 
     @Override
@@ -143,13 +125,13 @@ public class HistoryAdapter implements ListAdapter {
      * @return default Bitmap
      */
     private Bitmap getRewardBitmap() {
-        int size = getScreenWidth() / 6;
+        final int size = getScreenWidth(activity) / 6;
         if (rewardBitmap == null) {
-            rewardBitmap = scaleBitmap(R.drawable.loading_square, size);
+            rewardBitmap = TapBitmap.getLoadingBitmapAtSize(size);
         }
         else {
             if (rewardBitmap.getWidth() != size) {
-                rewardBitmap = scaleBitmap(R.drawable.loading_square, size);
+                rewardBitmap = TapBitmap.getLoadingBitmapAtSize(size);
             }
         }
         return rewardBitmap;
@@ -163,37 +145,16 @@ public class HistoryAdapter implements ListAdapter {
      * @return default bitmap
      */
     private Bitmap getIconBitmap() {
-        int size = getScreenWidth() / 7;
+        final int size = getScreenWidth(activity) / 7;
         if (iconBitmap == null) {
-            iconBitmap = scaleBitmap(R.drawable.loading_square, size);
+            iconBitmap = TapBitmap.getLoadingBitmapAtSize(size);
         }
         else {
             if (iconBitmap.getWidth() != size) {
-                iconBitmap = scaleBitmap(R.drawable.loading_square, size);
+                iconBitmap = TapBitmap.getLoadingBitmapAtSize(size);
             }
         }
         return iconBitmap;
-    }
-
-    /**
-     * Convenience wrapper to scale a square bitmap
-     *
-     * @param bitmap drawable ID
-     * @param size desired size
-     * @return Bitmap object of the resource resized to the target size
-     */
-    private Bitmap scaleBitmap(int bitmap, int size) {
-        return Bitmap.createScaledBitmap(
-            BitmapFactory.decodeResource(activity.getResources(), bitmap),
-            size,
-            size,
-            true
-        );
-    }
-
-    @SuppressWarnings("deprecation")
-    private int getScreenWidth() {
-        return activity.getWindowManager().getDefaultDisplay().getWidth();
     }
 
 }

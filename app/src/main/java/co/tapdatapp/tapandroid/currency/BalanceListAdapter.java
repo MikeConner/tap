@@ -5,24 +5,30 @@
 
 package co.tapdatapp.tapandroid.currency;
 
+import android.app.Activity;
 import android.content.Context;
-import android.database.DataSetObserver;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.TapBitmap;
+import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 
-public class BalanceListAdapter implements ListAdapter {
+public class BalanceListAdapter extends BaseAdapter {
 
     private final CurrencyDAO userBalance;
     private final BalanceList balanceList;
+    private Bitmap loadingImage;
+    private Activity activity;
 
-    public BalanceListAdapter(CurrencyDAO dao, BalanceList list) {
+    public BalanceListAdapter(Activity a, CurrencyDAO dao, BalanceList list) {
+        activity = a;
         balanceList = list;
         userBalance = dao;
     }
@@ -35,18 +41,6 @@ public class BalanceListAdapter implements ListAdapter {
     @Override
     public boolean isEnabled(int i) {
         return true;
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver dataSetObserver) {
-        // The dataset is static. When it changes a new adapter is
-        // created, so DSOs don't need to be tracked.
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
-        // The dataset is static. When it changes a new adapter is
-        // created, so DSOs don't need to be tracked.
     }
 
     @Override
@@ -87,8 +81,7 @@ public class BalanceListAdapter implements ListAdapter {
         ((TextView)view.findViewById(R.id.balance_line_item_balance)).setText(
             currency.getSymbol() + balanceList.get(currency.getCurrencyId()).toString()
         );
-        // @TODO set loading image and background fetch to real image
-        //((ImageView)view.findViewById(R.id.balance_line_item_icon)).setImageBitmap(R.drawable.loading_square);
+        ((ImageView)view.findViewById(R.id.balance_line_item_icon)).setImageBitmap(getLoadingImage());
         return view;
     }
 
@@ -105,6 +98,19 @@ public class BalanceListAdapter implements ListAdapter {
     @Override
     public boolean isEmpty() {
         return getCount() != 0;
+    }
+
+    private Bitmap getLoadingImage() {
+        final int size = getScreenWidth(activity) / 10;
+        if (loadingImage == null) {
+            loadingImage = TapBitmap.getLoadingBitmapAtSize(size);
+        }
+        else {
+            if (loadingImage.getWidth() != size) {
+                loadingImage = TapBitmap.getLoadingBitmapAtSize(size);
+            }
+        }
+        return loadingImage;
     }
 
 }

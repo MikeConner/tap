@@ -8,6 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.WebResponse;
@@ -61,4 +63,32 @@ public class TapBitmap {
         return rv;
     }
 
+    /**
+     * Convenience wrapper to scale a square bitmap
+     *
+     * @param bitmap drawable ID
+     * @param size desired size
+     * @return Bitmap object of the resource resized to the target size
+     */
+    public static Bitmap scaleBitmap(int bitmap, int size) {
+        return Bitmap.createScaledBitmap(
+            BitmapFactory.decodeResource(
+                TapApplication.get().getResources(),
+                bitmap
+            ),
+            size,
+            size,
+            true
+        );
+    }
+
+    /**
+     * Get the square "loading" image scaled to the specified size
+     *
+     * @param size in pixels
+     * @return bitmap "Loading" at the specified size
+     */
+    public static Bitmap getLoadingBitmapAtSize(int size) {
+        return scaleBitmap(R.drawable.loading_square, size);
+    }
 }

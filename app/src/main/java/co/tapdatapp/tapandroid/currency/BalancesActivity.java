@@ -51,6 +51,7 @@ public class BalancesActivity extends Activity {
      */
     public void onBalancesLoaded(BalanceList list) {
         BalanceListAdapter adapter = new BalanceListAdapter(
+            this,
             new MockCurrency(),
             list
         );
