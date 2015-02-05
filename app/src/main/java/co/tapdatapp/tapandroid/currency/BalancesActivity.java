@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 
 import co.tapdatapp.tapandroid.R;
@@ -36,6 +37,8 @@ public class BalancesActivity extends Activity {
      * Fill in the list with balances
      */
     private void fillInList() {
+        findViewById(R.id.balances_progress_bar).setVisibility(View.VISIBLE);
+        balanceList.setVisibility(View.GONE);
         onBalancesLoaded(new MockCurrency().getAllBalances());
         //new GetAllBalancesTask().execute(this);
     }
@@ -52,6 +55,8 @@ public class BalancesActivity extends Activity {
             list
         );
         balanceList.setAdapter(adapter);
+        findViewById(R.id.balances_progress_bar).setVisibility(View.GONE);
+        balanceList.setVisibility(View.VISIBLE);
     }
 
     @Override
