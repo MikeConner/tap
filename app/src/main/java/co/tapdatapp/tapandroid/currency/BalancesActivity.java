@@ -92,7 +92,7 @@ implements AdapterView.OnItemClickListener{
         if (l > Integer.MAX_VALUE) {
             throw new AssertionError("Currency ID exceeds int size");
         }
-        new Account().setDefaultCurrency((int)l);
+        new Account().setActiveCurrency((int) l);
         finish();
     }
 }

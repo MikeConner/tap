@@ -76,10 +76,9 @@ public class Account {
     /**
      * Get the authentication token for talking to the web service
      *
-     * @TODO make this check the expiration and get a new token as needed
-     *
      * @return authentication token
      */
+    // @TODO make this check the expiration and get a new token as needed
     public String getAuthToken() {
         throwIfNoAccount();
         return preferences.getString(TOKEN, null);
@@ -171,7 +170,7 @@ public class Account {
     /**
      * @return currency ID for the currency this device will use
      */
-    public int getDefaultCurrency() {
+    public int getActiveCurrency() {
         if (preferences.contains(DEFAULT_CURRENCY)) {
             return Integer.parseInt(
                 preferences.getString(
@@ -189,7 +188,7 @@ public class Account {
      *
      * @param to currency ID to set
      */
-    public void setDefaultCurrency(int to) {
+    public void setActiveCurrency(int to) {
         set(DEFAULT_CURRENCY, Integer.toString(to));
     }
 

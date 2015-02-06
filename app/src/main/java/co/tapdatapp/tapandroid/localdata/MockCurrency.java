@@ -6,6 +6,7 @@
 package co.tapdatapp.tapandroid.localdata;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import co.tapdatapp.tapandroid.currency.BalanceList;
 
@@ -45,6 +46,10 @@ public class MockCurrency implements CurrencyDAO {
         return currencies[currentLocation].symbol;
     }
 
+    private String getSymbol(int currencyId) {
+        return currencies[currencyId].symbol;
+    }
+
     @Override
     public String getIconUrl() {
         return currencies[currentLocation].icon;
@@ -74,6 +79,11 @@ public class MockCurrency implements CurrencyDAO {
         return getAllBalances().get(currencyId);
     }
 
+    @Override
+    public String getBalanceAsString(int currencyId) {
+        return getSymbol(currencyId) + Integer.toString(getBalance(currencyId));
+    }
+
     public static class CurrencyHolder {
 
         public int currencyId;
@@ -87,7 +97,6 @@ public class MockCurrency implements CurrencyDAO {
             symbol = s;
             icon = _icon;
         }
-
 
     }
 
@@ -104,6 +113,6 @@ public class MockCurrency implements CurrencyDAO {
         currencies[6] = new CurrencyHolder(6, "Mine Dollars", "E", "http://www.example.com/6.jpg");
         currencies[7] = new CurrencyHolder(7, "Monies", "M", "http://www.example.com/7.jpg");
         currencies[8] = new CurrencyHolder(8, "Pounds", "\u00a3", "http://www.example.com/8.jpg");
-        currencies[9] = new CurrencyHolder(9, "Yen", "\00a5", "http://www.example.com/9.jpg");
+        currencies[9] = new CurrencyHolder(9, "Yen", "\u00a5", "http://www.example.com/9.jpg");
     }
 }

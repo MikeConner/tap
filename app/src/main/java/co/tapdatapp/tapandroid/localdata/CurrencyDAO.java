@@ -65,4 +65,9 @@ public interface CurrencyDAO {
      * @return the balance of that Currency ID
      */
     int getBalance(int currencyId);
+
+    /**
+     * @return String of the currency symbol + balance
+     */
+    String getBalanceAsString(int currencyId);
 }

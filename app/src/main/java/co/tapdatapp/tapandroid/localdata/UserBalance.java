@@ -219,6 +219,11 @@ implements SingleTable, CurrencyDAO {
         }
     }
 
+    @Override
+    public String getBalanceAsString(int currencyId) {
+        return getSymbol() + Integer.toString(getBalance(currencyId));
+    }
+
     /**
      * This implementation always fetches balances from the webservice
      *
