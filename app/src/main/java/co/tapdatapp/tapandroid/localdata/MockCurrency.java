@@ -6,7 +6,6 @@
 package co.tapdatapp.tapandroid.localdata;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import co.tapdatapp.tapandroid.currency.BalanceList;
 
