@@ -101,7 +101,7 @@ public class BalanceListAdapter extends BaseAdapter {
     }
 
     private Bitmap getLoadingImage() {
-        final int size = getScreenWidth(activity) / 10;
+        final int size = getScreenWidth(activity) / 7;
         if (loadingImage == null) {
             loadingImage = TapBitmap.getLoadingBitmapAtSize(size);
         }
