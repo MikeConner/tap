@@ -10,13 +10,17 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.MockCurrency;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
+//import co.tapdatapp.tapandroid.localdata.UserBalance;
+import co.tapdatapp.tapandroid.user.Account;
 
-public class BalancesActivity extends Activity {
+public class BalancesActivity
+extends Activity
+implements AdapterView.OnItemClickListener{
 
     private ListView balanceList;
 
@@ -25,6 +29,7 @@ public class BalancesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balances);
         balanceList = (ListView)findViewById(R.id.balances_list);
+        balanceList.setOnItemClickListener(this);
     }
 
     @Override
@@ -80,5 +85,14 @@ public class BalancesActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if (l > Integer.MAX_VALUE) {
+            throw new AssertionError("Currency ID exceeds int size");
+        }
+        new Account().setDefaultCurrency((int)l);
+        finish();
     }
 }
