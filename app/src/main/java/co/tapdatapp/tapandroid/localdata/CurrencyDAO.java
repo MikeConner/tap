@@ -9,6 +9,9 @@ import android.graphics.Bitmap;
 import co.tapdatapp.tapandroid.currency.BalanceList;
 
 public interface CurrencyDAO {
+
+    public static final int CURRENCY_BITCOIN = -1;
+
     /**
      * Load this class up with the parameters from the specified
      * currency ID

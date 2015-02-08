@@ -33,6 +33,9 @@ public class Account {
 
     private SharedPreferences preferences;
 
+    // @TODO I don't think this belongs in this class ...
+    private static int armedAmount = 1;
+
     public Account() {
         super();
         preferences = TapApplication.get().getSharedPreferences(
@@ -190,6 +193,31 @@ public class Account {
      */
     public void setActiveCurrency(int to) {
         set(DEFAULT_CURRENCY, Integer.toString(to));
+    }
+
+    /**
+     * Set the current amount the system is armed to pay on tap
+     *
+     * @param to Amount to arm to (absolute)
+     */
+    // @TODO I'm not confident that this class is the right place for
+    // this informaiton, but it's a decent placeholder for the time
+    // being
+    public void setArmedAmount(int to) {
+        synchronized (Account.class) {
+            armedAmount = to;
+        }
+    }
+
+    /**
+     * Get the amount the system is armed to pay
+     *
+     * @return Amount the system is armed to pay
+     */
+    public int getArmedAmount() {
+        synchronized (Account.class) {
+            return armedAmount;
+        }
     }
 
     /**

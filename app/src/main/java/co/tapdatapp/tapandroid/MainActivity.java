@@ -36,7 +36,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,6 +43,7 @@ import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.currency.BalancesActivity;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
+import co.tapdatapp.tapandroid.localdata.MockCurrency;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
@@ -53,7 +53,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity
 extends Activity
 implements AccountFragment.OnFragmentInteractionListener,
-           ArmFragment.OnFragmentInteractionListener,
            ActionBar.TabListener {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
@@ -64,14 +63,11 @@ implements AccountFragment.OnFragmentInteractionListener,
     protected TapUser mTapUser;
     protected TapCloud mTapCloud;
 
-    protected float fAmount;
-    protected int fUnit;
-
-    private TextView txAmount;
-
     private NfcAdapter mNfcAdapter;
     private IntentFilter[] mNdefExchangeFilters;
     private PendingIntent mNfcPendingIntent;
+
+    private TextView txAmount = null;
 
     private boolean mArmed = false;
     private ArmedFragment mArmFrag;
@@ -84,9 +80,6 @@ implements AccountFragment.OnFragmentInteractionListener,
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //Default Amounts / Units for Tap Screen
-        fAmount = 1;
-        fUnit = 1;
         captureNFC();
 
         //TODO: REMOVE THIS - Make sure all NETWORK TXNS are async
@@ -186,8 +179,6 @@ implements AccountFragment.OnFragmentInteractionListener,
     @Override
     public void onResume(){
         super.onResume();
-
-        txAmount = (TextView) findViewById(R.id.txtAmount);
 
         if (mNfcAdapter != null) {
             mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
@@ -412,96 +403,47 @@ implements AccountFragment.OnFragmentInteractionListener,
         ft.addToBackStack(null);
 
         // Create and show the dialog.
-        mArmFrag =  new ArmedFragment(mAuthToken, fAmount);
+        mArmFrag =  new ArmedFragment(mAuthToken, new Account().getArmedAmount());
         mArmFrag.show(ft, "armed");
     }
-    private void changeAmount(int change_value, boolean addition){
+
+    public void setArmedAmount(int to) {
+        if (txAmount == null) {
+            txAmount = (TextView)findViewById(R.id.txtAmount);
+        }
+        new Account().setArmedAmount(to);
+        txAmount.setText(new MockCurrency().getSymbol(new Account().getActiveCurrency()) + String.valueOf(to));
+    }
+
+    private void changeAmount(int amount, boolean addition){
+        int tapAmount = new Account().getArmedAmount();
         if (addition) {
-            fUnit = change_value;
-            fAmount += fUnit;
-
-            if (fAmount > 500 ) {fAmount = 500;} //MAX VALUE FOR TIP
-            txAmount = (TextView) findViewById(R.id.txtAmount);
-            txAmount.setText("$" + String.valueOf(fAmount));
+            tapAmount += amount;
+            if (tapAmount > 500 ) {
+                tapAmount = 500;} //MAX VALUE FOR TIP
         }
-        else{
-            fUnit = change_value;
-            fAmount-= fUnit;
-            if (fAmount < 1) {fAmount = 1;}
-            txAmount = (TextView) findViewById(R.id.txtAmount);
-            txAmount.setText("$" + String.valueOf(fAmount));
+        else {
+            tapAmount -= amount;
+            if (tapAmount < 1) {
+                tapAmount = 1;}
         }
-
-
+        setArmedAmount(tapAmount);
     }
     public void tapPlus(View v){
-        changeAmount(fUnit, true);
+        changeAmount(1, true);
     }
     public void tapMinus(View v){
-        changeAmount(fUnit, false);
-    }
-    private void selectMe(View v){
-        Button btnOne = (Button) findViewById(R.id.btnOne);
-        Button btnFive = (Button) findViewById(R.id.btnFive);
-        Button btnTen = (Button) findViewById(R.id.btnTen);
-        //Button btnTwenty = (Button) findViewById(R.id.btnTwenty);
-        //Button btnFifty = (Button) findViewById(R.id.btnFifty);
-        //Button btnHundred = (Button) findViewById(R.id.btnHundred);
-
-        //Resources res = getResources();
-        //Drawable selected = res.getDrawable(R.drawable.circleselected);
-        //Drawable normal = res.getDrawable(R.drawable.circle);
-        //btnOne.setBackground(normal);
-        ///btnFive.setBackground(normal);
-        //btnTen.setBackground(normal);
-        //btnTwenty.setBackground(normal);
-        //btnFifty.setBackground(normal);
-        //btnHundred.setBackground(normal);
-
-        //v.setBackground(selected);
-
+        changeAmount(1, false);
     }
     public void tapOne(View v){
-        selectMe(v);
         changeAmount(1,true);
     }
     public void tapFive(View v){
-        selectMe(v);
         changeAmount(5,true);
-
-
     }
     public void tapTen(View v){
-        selectMe(v);
-
         changeAmount(10,true);
-
-
     }
-    public void tapTwenty(View v){
-        selectMe(v);
-
-        changeAmount(20, true);
-
-    }
-    public void tapFifty(View v){
-        selectMe(v);
-
-        changeAmount(50,true);
-
-
-    }
-    public void tapHundred(View v){
-        selectMe(v);
-
-        changeAmount(100,true);
-
-
-    }
-
-    //LOAD VOUCHER
-
-
 
     //NFC STUFF
     @Override
@@ -530,7 +472,7 @@ implements AccountFragment.OnFragmentInteractionListener,
                     TapTxn txn = new TapTxn();
                     txn.setAuthToken(mAuthToken);
                     txn.setTagID(result.replaceAll("-",""));
-                    txn.setTxnAmount(fAmount);
+                    txn.setTxnAmount(new Account().getArmedAmount());
                     new TapTxnTask().execute(txn);
 
 
@@ -753,8 +695,7 @@ implements AccountFragment.OnFragmentInteractionListener,
                     frag = new AccountFragment();
                     break;
                 case 1:
-                    frag = new ArmFragment().newInstance();
-                    // frag = mTapFrag;
+                    frag = new ArmFragment();
                     break;
                 case 2:
                     frag = new HistoryFragment();

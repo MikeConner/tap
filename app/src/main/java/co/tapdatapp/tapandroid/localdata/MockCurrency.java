@@ -45,7 +45,10 @@ public class MockCurrency implements CurrencyDAO {
         return currencies[currentLocation].symbol;
     }
 
-    private String getSymbol(int currencyId) {
+    public String getSymbol(int currencyId) {
+        if (currencyId == CurrencyDAO.CURRENCY_BITCOIN) {
+            return "S";
+        }
         return currencies[currencyId].symbol;
     }
 
@@ -72,7 +75,7 @@ public class MockCurrency implements CurrencyDAO {
 
     @Override
     public int getBalance(int currencyId) {
-        if (currencyId == UserBalance.CURRENCY_BITCOIN) {
+        if (currencyId == CurrencyDAO.CURRENCY_BITCOIN) {
             return 5432;
         }
         return getAllBalances().get(currencyId);
