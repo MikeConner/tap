@@ -32,6 +32,7 @@ implements SingleTable, CurrencyDAO {
     private String icon;
     private String symbol;
 
+    // @TODO currency needs to expire after 1 week, store last update time
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
@@ -253,7 +254,7 @@ implements SingleTable, CurrencyDAO {
      *
      * @param currencyId Currency ID to operate on
      */
-    // @TODO may need an expiration time on the currency to refresh
+    // @TODO needs an expiration time on the currency to refresh
     public void ensureLocalCurrencyDetails(int currencyId) {
         CurrencyDAO ub = new UserBalance();
         try {
@@ -266,6 +267,11 @@ implements SingleTable, CurrencyDAO {
             // locally, must fetch it remotely.
             // @TODO
         }
+    }
+
+    @Override
+    public int getMaxPayout(int currencyId) {
+        throw new NoSuchMethodError("Not implemented");
     }
 
 }

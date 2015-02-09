@@ -86,6 +86,11 @@ public class MockCurrency implements CurrencyDAO {
         return getSymbol(currencyId) + Integer.toString(getBalance(currencyId));
     }
 
+    @Override
+    public int getMaxPayout(int currencyId) {
+        return 500;
+    }
+
     public static class CurrencyHolder {
 
         public int currencyId;

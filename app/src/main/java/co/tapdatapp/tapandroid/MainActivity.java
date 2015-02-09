@@ -416,11 +416,14 @@ implements AccountFragment.OnFragmentInteractionListener,
     }
 
     private void changeAmount(int amount, boolean addition){
-        int tapAmount = new Account().getArmedAmount();
+        Account account = new Account();
+        int tapAmount = account.getArmedAmount();
         if (addition) {
             tapAmount += amount;
-            if (tapAmount > 500 ) {
-                tapAmount = 500;} //MAX VALUE FOR TIP
+            int max = new MockCurrency().getMaxPayout(account.getActiveCurrency());
+            if (tapAmount > max ) {
+                tapAmount = max;
+            }
         }
         else {
             tapAmount -= amount;

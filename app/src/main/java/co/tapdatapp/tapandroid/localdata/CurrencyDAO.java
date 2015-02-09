@@ -73,4 +73,13 @@ public interface CurrencyDAO {
      * @return String of the currency symbol + balance
      */
     String getBalanceAsString(int currencyId);
+
+    /**
+     * Return the maximum amount that a single payout can be. This is
+     * a per-currency value
+     *
+     * @param currencyId Currency ID to get the value for
+     * @return Maximum allowed single payout
+     */
+    int getMaxPayout(int currencyId);
 }
