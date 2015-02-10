@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
-public class TransactionCodex {
+public class TransactionCodec {
 
     public Transaction unmarshall(String input)
     throws JSONException {

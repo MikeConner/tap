@@ -7,7 +7,7 @@ import java.util.List;
 import co.tapdatapp.tapandroid.BaseUnitTest;
 import co.tapdatapp.tapandroid.localdata.Denomination;
 
-public class CurrencyCodexTest extends BaseUnitTest {
+public class CurrencyCodecTest extends BaseUnitTest {
 
     /**
      * Just put variations on valid JSON through this to make sure
@@ -16,7 +16,7 @@ public class CurrencyCodexTest extends BaseUnitTest {
      * @throws Exception
      */
     public void testParseJSON() throws Exception {
-        CurrencyCodex cc = new CurrencyCodex();
+        CurrencyCodec cc = new CurrencyCodec();
         for (String testValue : in) {
             cc.parse(1, new JSONObject(testValue));
         }
@@ -31,7 +31,7 @@ public class CurrencyCodexTest extends BaseUnitTest {
      * @throws Exception
      */
     public void testFieldsCorrect() throws Exception {
-        CurrencyCodex cc = new CurrencyCodex();
+        CurrencyCodec cc = new CurrencyCodec();
         cc.parse(1, new JSONObject(in[0]));
         assertEquals("Fun Bucks", cc.getName());
         assertEquals("http://www.tapdatapp.co/mobile/v1/icons?id=134", cc.getIcon());
