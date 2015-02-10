@@ -5,22 +5,4 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <!-- Style the history page independently of anything else, as
-         and overall style for this app is going to take some fixing
-    -->
-
-    <style name="History" parent="AppTheme">
-
-    </style>
-
-    <style name="History.Text">
-        <item name="android:textColor">#666666</item>
-
-    </style>
-
-    <style name="AppTheme.LargeText">
-        <item name="android:textSize">24sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
 </resources>
