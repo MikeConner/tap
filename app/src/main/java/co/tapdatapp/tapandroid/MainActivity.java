@@ -43,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.currency.BalancesActivity;
+import co.tapdatapp.tapandroid.history.HistoryActivity;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.MockCurrency;
 import co.tapdatapp.tapandroid.service.TapCloud;

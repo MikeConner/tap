@@ -6,11 +6,13 @@
 package co.tapdatapp.tapandroid.history;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -120,6 +122,11 @@ public class HistoryFragment extends Fragment {
         AssertionError e = new AssertionError("Failed to sync: see @TODO");
         e.initCause(cause);
         throw e;
+    }
+
+    public void goToNew(View view){
+        Intent intent = new Intent(HistoryFragment.this.getActivity(), HistoryActivity.class);
+        startActivity(intent);
     }
 
 }
