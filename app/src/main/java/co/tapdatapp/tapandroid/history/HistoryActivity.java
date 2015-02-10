@@ -11,12 +11,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
+/**
+ * @TODO Remove all the list view references and replace with grid view
+ */
 public class HistoryActivity extends Activity {
 
     private Activity parentActivity;
@@ -101,5 +105,6 @@ public class HistoryActivity extends Activity {
         e.initCause(cause);
         throw e;
     }
+
 
 }
