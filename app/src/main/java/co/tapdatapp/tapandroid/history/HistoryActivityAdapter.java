@@ -16,11 +16,6 @@ import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.localdata.TransactionDAO;
 
-/**
- * New adapter for the Yapa history. Incorporates a grid layout
- *
- * @TODO: change references to history_line_item.xml to a grid view equivilant
- */
 public class HistoryActivityAdapter extends BaseAdapter{
 
     private static Bitmap rewardBitmap;
@@ -79,14 +74,17 @@ public class HistoryActivityAdapter extends BaseAdapter{
                     false
             );
         }
+        /**
+         * Commented out a lot of text. It now only displays a picture a single piece of text.
+         */
         Transaction t = new Transaction();
         t.moveTo(i);
-        ((TextView)v.findViewById(R.id.history_li_date)).setText(t.getTimestamp().toString());
-        ((TextView)v.findViewById(R.id.history_li_amount)).setText(Integer.toString(t.getAmount()));
-        ((TextView)v.findViewById(R.id.history_li_description)).setText(t.getDescription());
-        ((TextView)v.findViewById(R.id.history_li_recip_nick)).setText(t.getNickname());
-        ((ImageView)v.findViewById(R.id.history_li_thumbnail)).setImageBitmap(getRewardBitmap());
-        ((ImageView)v.findViewById(R.id.history_li_recip_image)).setImageBitmap(getIconBitmap());
+        //((TextView)v.findViewById(R.id.history_li_date)).setText(t.getTimestamp().toString());
+        //((TextView)v.findViewById(R.id.history_li_amount)).setText(Integer.toString(t.getAmount()));
+        ((TextView)v.findViewById(R.id.history_text)).setText(t.getDescription());
+        //((TextView)v.findViewById(R.id.history_li_recip_nick)).setText(t.getNickname());
+        ((ImageView)v.findViewById(R.id.history_picture)).setImageBitmap(getRewardBitmap());
+        //((ImageView)v.findViewById(R.id.history_li_recip_image)).setImageBitmap(getIconBitmap());
         LoadHistoryImagesTask asyncLoad = new LoadHistoryImagesTask();
         asyncLoad.execute(v);
         return v;

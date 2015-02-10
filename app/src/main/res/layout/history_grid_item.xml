@@ -5,13 +5,13 @@
     android:layout_height="match_parent">
 
     <com.example.graphicstest.SquareImageView
-        android:id="@+id/picture"
+        android:id="@+id/history_picture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"/>
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/history_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
@@ -20,6 +20,10 @@
         android:paddingBottom="15dp"
         android:layout_gravity="bottom"
         android:textColor="@android:color/white"
+        android:shadowColor="#000000"
+        android:shadowDx="0.0"
+        android:shadowDy="0.0"
+        android:shadowRadius="2.0"
         android:background="#55000000"/>
 
 </FrameLayout>

@@ -18,14 +18,11 @@ import android.widget.ProgressBar;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
-/**
- * @TODO Remove all the list view references and replace with grid view
- */
 public class HistoryActivity extends Activity {
 
     private Activity parentActivity;
     private ProgressBar progressBar;
-    private ListView listView;
+    private GridView gridView;
     private boolean loaded = false;
 
     public HistoryActivity() {
@@ -46,8 +43,8 @@ public class HistoryActivity extends Activity {
         super.onResume();
         progressBar =
             (ProgressBar)parentActivity.findViewById(R.id.history_progress_bar);
-        listView =
-            (ListView)parentActivity.findViewById(R.id.history_list_view);
+        gridView =
+            (GridView)parentActivity.findViewById(R.id.history_grid_view);
 
         if (!loaded) {
             fillInList();
@@ -63,9 +60,9 @@ public class HistoryActivity extends Activity {
         if (progressBar != null) {
             progressBar.setVisibility(ProgressBar.VISIBLE);
         }
-        if (listView != null) {
-            listView.setVisibility(ListView.GONE);
-            listView.setAdapter(null);
+        if (gridView != null) {
+            gridView.setVisibility(ListView.GONE);
+            gridView.setAdapter(null);
         }
         loaded = false;
     }
@@ -76,7 +73,7 @@ public class HistoryActivity extends Activity {
      */
     private void fillInList() {
         progressBar.setVisibility(ProgressBar.VISIBLE);
-        listView.setVisibility(ListView.GONE);
+        gridView.setVisibility(ListView.GONE);
         new HistoryActivitySyncTask().execute(this);
     }
 
@@ -86,12 +83,9 @@ public class HistoryActivity extends Activity {
      */
     public void postSyncDisplay() {
         progressBar.setVisibility(ProgressBar.GONE);
-        listView.setVisibility(ListView.VISIBLE);
-        HistoryAdapter adapter = new HistoryAdapter(
-            new Transaction(),
-            parentActivity
-        );
-        listView.setAdapter(adapter);
+        gridView.setVisibility(GridView.VISIBLE);
+        gridView = (GridView) findViewById(R.id.history_grid_view);
+        gridView.setAdapter(new HistoryActivityAdapter(new Transaction(), parentActivity));
         loaded = true;
     }
 

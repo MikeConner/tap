@@ -1,4 +1,4 @@
-package co.tapdatapp.tapandroid;
+package co.tapdatapp.tapandroid.history;
 
 import android.content.Context;
 import android.widget.ImageView;

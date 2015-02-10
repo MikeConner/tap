@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:columnWidth="90dp"
-        android:id="@+id/gridView"
+        android:id="@+id/history_grid_view"
         android:layout_gravity="center"
         android:numColumns="3"
         android:verticalSpacing="10dp"
