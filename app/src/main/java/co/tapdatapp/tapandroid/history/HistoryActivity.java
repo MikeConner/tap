@@ -1,5 +1,5 @@
 /**
- * Fragment that displays the transaction history, also provides links
+ * Activity that displays the transaction history, also provides links
  * to rewards
  */
 
@@ -31,7 +31,7 @@ public class HistoryActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_history);
+        setContentView(R.layout.activity_history);
     }
 
     /**
@@ -73,7 +73,7 @@ public class HistoryActivity extends Activity {
     private void fillInList() {
         progressBar.setVisibility(ProgressBar.VISIBLE);
         listView.setVisibility(ListView.GONE);
-        new HistorySyncTask().execute(this);
+        new HistoryActivitySyncTask().execute(this);
     }
 
     /**
