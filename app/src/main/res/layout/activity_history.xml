@@ -22,7 +22,7 @@
         android:columnWidth="90dp"
         android:id="@+id/gridView"
         android:layout_gravity="center"
-        android:numColumns="auto_fit"
+        android:numColumns="3"
         android:verticalSpacing="10dp"
         android:horizontalSpacing="10dp"
         android:stretchMode="columnWidth"
