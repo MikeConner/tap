@@ -7,7 +7,7 @@ package co.tapdatapp.tapandroid.remotedata;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class UserAccountCodex {
+public class UserAccountCodec {
 
     private final static String PHONE_SECRET_KEY = "phone_secret_key";
     private final static String CREATE_USER_KEY = "user";

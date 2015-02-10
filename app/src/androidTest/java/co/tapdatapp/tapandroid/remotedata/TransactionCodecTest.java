@@ -4,10 +4,10 @@ import android.test.AndroidTestCase;
 
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
-public class TransactionCodexTest extends AndroidTestCase {
+public class TransactionCodecTest extends AndroidTestCase {
 
     public void testUnmarshall() throws Exception {
-        TransactionCodex tc = new TransactionCodex();
+        TransactionCodec tc = new TransactionCodec();
         for (String testValue : in) {
             Transaction t = tc.unmarshall(testValue);
         }

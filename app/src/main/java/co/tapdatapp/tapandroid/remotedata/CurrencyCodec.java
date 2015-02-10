@@ -13,7 +13,7 @@ import java.util.List;
 
 import co.tapdatapp.tapandroid.localdata.Denomination;
 
-public class CurrencyCodex {
+public class CurrencyCodec {
     private int id;
     private String name;
     private String icon;

@@ -17,7 +17,7 @@ import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
-import co.tapdatapp.tapandroid.remotedata.UserAccountCodex;
+import co.tapdatapp.tapandroid.remotedata.UserAccountCodec;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
 public class Account {
@@ -58,7 +58,7 @@ public class Account {
      */
     public void createNew() throws WebServiceError {
         String phoneSecret = generatePhoneSecret();
-        UserAccountCodex codex = new UserAccountCodex();
+        UserAccountCodec codex = new UserAccountCodec();
         JSONObject request = codex.marshallCreateRequest(phoneSecret);
         HttpHelper http = new HttpHelper();
         JSONObject response = http.HttpPostJSON(
