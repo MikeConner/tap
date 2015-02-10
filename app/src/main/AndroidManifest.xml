@@ -62,6 +62,7 @@
             android:name=".currency.BalancesActivity"
             android:label="@string/title_activity_balances" >
         </activity>
+        <activity android:name=".voucher.RedeemVoucherActivity" />
     </application>
 
 </manifest>
