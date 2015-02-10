@@ -5,8 +5,8 @@
     tools:context="co.tapdatapp.tapandroid.history.HistoryActivity">
 
     <!-- On initial load, the ProgressBar is visible and the
-         ListView is "gone". When the code finishes syncing with the
-         server, it will set the ProgressBar to "gone" and the ListView
+         GridView is "gone". When the code finishes syncing with the
+         server, it will set the ProgressBar to "gone" and the GridView
          to visible, thus providing a loading screen
     -->
     <ProgressBar
@@ -16,11 +16,16 @@
         android:layout_height="100dp"
         />
 
-    <ListView
-        android:id="@+id/history_list_view"
+     <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
-    </ListView>
+        android:columnWidth="90dp"
+        android:id="@+id/gridView"
+        android:layout_gravity="center"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        />
 
 </FrameLayout>
