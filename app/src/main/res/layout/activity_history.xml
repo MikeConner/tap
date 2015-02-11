@@ -23,8 +23,8 @@
         android:id="@+id/history_grid_view"
         android:layout_gravity="center"
         android:numColumns="3"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
+        android:verticalSpacing="3dp"
+        android:horizontalSpacing="3dp"
         android:stretchMode="columnWidth"
         />
 
