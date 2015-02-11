@@ -69,7 +69,7 @@ public class HistoryActivityAdapter extends BaseAdapter{
                             Context.LAYOUT_INFLATER_SERVICE
                     );
             v = inflater.inflate(
-                    R.layout.history_line_item,
+                    R.layout.history_grid_item,
                     viewGroup,
                     false
             );
@@ -92,7 +92,7 @@ public class HistoryActivityAdapter extends BaseAdapter{
 
     @Override
     public int getItemViewType(int i) {
-        return R.layout.history_line_item;
+        return R.layout.history_grid_item;
     }
 
     @Override
