@@ -6,13 +6,8 @@
 package co.tapdatapp.tapandroid.history;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import co.tapdatapp.tapandroid.R;
@@ -20,7 +15,6 @@ import co.tapdatapp.tapandroid.localdata.Transaction;
 
 public class HistoryActivity extends Activity implements HistorySyncCallback {
 
-    private Activity parentActivity;
     private ProgressBar progressBar;
     private GridView gridView;
     private boolean loaded = false;
@@ -41,10 +35,8 @@ public class HistoryActivity extends Activity implements HistorySyncCallback {
     @Override
     public void onResume() {
         super.onResume();
-        progressBar =
-           (ProgressBar)parentActivity.findViewById(R.id.history_grid_progress_bar);
-        gridView =
-            (GridView)parentActivity.findViewById(R.id.history_grid_view);
+        progressBar = (ProgressBar)findViewById(R.id.history_grid_progress_bar);
+        gridView = (GridView)findViewById(R.id.history_grid_view);
 
         if (!loaded) {
             fillInList();
@@ -85,15 +77,16 @@ public class HistoryActivity extends Activity implements HistorySyncCallback {
         progressBar.setVisibility(ProgressBar.GONE);
         gridView.setVisibility(GridView.VISIBLE);
         gridView = (GridView) findViewById(R.id.history_grid_view);
-        gridView.setAdapter(new HistoryActivityAdapter(new Transaction(), parentActivity));
+        gridView.setAdapter(new HistoryActivityAdapter(new Transaction(), this));
         loaded = true;
     }
 
     /**
      * Called when the background sync job fails to do its work.
      *
-     * @TODO make this a user-friendly error
+     * @param cause The exception that caused the failure
      */
+    // @TODO make this a user-friendly error
     public void syncFailure(Exception cause) {
         AssertionError e = new AssertionError("Failed to sync: see @TODO");
         e.initCause(cause);
