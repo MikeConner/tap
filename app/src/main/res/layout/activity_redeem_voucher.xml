@@ -15,20 +15,19 @@
     <ImageView
         android:contentDescription="@string/voucher_qr_code_description"
         android:src="@drawable/b"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"/>
 
     <TextView
-        android:layout_centerHorizontal="true"
         android:text="[what goes here?]"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"/>
 
     <Button
+        style="@style/AppTheme.Button"
         android:text="@string/uppercase_load"
-        android:layout_centerHorizontal="true"
         android:onClick="clickLoadVoucher"
         android:layout_margin="15dp"
         android:layout_width="match_parent"

@@ -19,5 +19,9 @@
     <string name="uppercase_load">LOAD</string>
     <string name="voucher_qr_code_description">What is this?</string>
     <string name="arm">ARM</string>
+    <string name="button_balances">BALANCES</string>
+    <string name="button_load">LOAD</string>
+    <string name="button_my_tags">MY TAGS</string>
+    <string name="description_profile_picture">Profile Piture</string>
 
 </resources>

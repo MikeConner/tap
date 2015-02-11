@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -31,7 +30,6 @@ import android.provider.MediaStore;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,7 +48,6 @@ import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.user.Account;
 import co.tapdatapp.tapandroid.voucher.RedeemVoucherActivity;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity
 extends Activity
@@ -190,13 +187,6 @@ implements AccountFragment.OnFragmentInteractionListener {
         if(mNfcAdapter != null) mNfcAdapter.disableForegroundDispatch(this);
     }
 
-
-
-
-    //Image Stuff
-    public void getImage(View view){
-        selectImage();
-    }
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -335,7 +325,7 @@ implements AccountFragment.OnFragmentInteractionListener {
         }
     }
     private void setPic() {
-        CircleImageView mImageView = (CircleImageView) findViewById(R.id.profile_image);
+        ImageView mImageView = (ImageView) findViewById(R.id.profile_image);
         // Get the dimensions of the View
         int targetW = mImageView.getWidth();
         int targetH = mImageView.getHeight();
@@ -408,21 +398,6 @@ implements AccountFragment.OnFragmentInteractionListener {
                 tapAmount = 1;}
         }
         setArmedAmount(tapAmount);
-    }
-    public void tapPlus(View v){
-        changeAmount(1, true);
-    }
-    public void tapMinus(View v){
-        changeAmount(1, false);
-    }
-    public void tapOne(View v){
-        changeAmount(1,true);
-    }
-    public void tapFive(View v){
-        changeAmount(5,true);
-    }
-    public void tapTen(View v){
-        changeAmount(10,true);
     }
 
     //NFC STUFF
