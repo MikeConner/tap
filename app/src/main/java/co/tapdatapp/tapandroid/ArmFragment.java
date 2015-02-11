@@ -33,21 +33,6 @@ public class ArmFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        View v = getView();
-        String symbol = new MockCurrency().getSymbol(new Account().getActiveCurrency());
-        ((Button)v.findViewById(R.id.btnOne)).setText(symbol + "1");
-        ((Button)v.findViewById(R.id.btnFive)).setText(symbol + "5");
-        ((Button)v.findViewById(R.id.btnTen)).setText(symbol + "10");
-        v.findViewById(R.id.btnOne).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                ClipData data = ClipData.newPlainText("","");
-                View.DragShadowBuilder shadow = new View.DragShadowBuilder(getView().findViewById(R.id.btnOne));
-                view.startDrag(data,shadow,null,0);
-                return false;
-            }
-        });
-        v.findViewById(R.id.btnOne).setOnDragListener(new myDragEventListener());
         ((MainActivity)getActivity()).setArmedAmount(new Account().getArmedAmount());
     }
 
