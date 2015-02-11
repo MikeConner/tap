@@ -15,6 +15,12 @@
         <item name="android:textSize">24sp</item>
     </style>
 
+    <style name="AppTheme.circular_button">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/button_circular_text</item>
+        <item name="android:background">@drawable/button_circular</item>
+    </style>
+
     <style name="AppTheme.header1">
         <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
