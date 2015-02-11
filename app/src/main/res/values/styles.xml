@@ -3,7 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light">
         <item name="android:textColor">@color/text_color</item>
-        <item name="android:buttonStyle">@style/AppTheme.Button</item>
+        <!--<item name="android:buttonStyle">@style/AppTheme.Button</item>-->
     </style>
 
     <style name="AppTheme.Button">
