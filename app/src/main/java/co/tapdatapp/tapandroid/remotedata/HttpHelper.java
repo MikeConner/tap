@@ -39,12 +39,21 @@ public class HttpHelper {
         sb.append(TapApplication.string(R.string.SERVER));
         sb.append(TapApplication.string(R.string.API_VERSION));
         sb.append(TapApplication.string(endpointId));
+        appendAuthTokenIfExists(sb);
+        return sb.toString();
+    }
+
+    /**
+     * Append an auth token to the URL if the config has one
+     *
+     * @param sb StringBuilder to append to
+     */
+    public void appendAuthTokenIfExists(StringBuilder sb) {
         Account a = new Account();
         if (a.created()) {
             sb.append("?auth_token=");
             sb.append(a.getAuthToken());
         }
-        return sb.toString();
     }
 
     /**

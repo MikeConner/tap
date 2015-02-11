@@ -5,7 +5,6 @@
               android:layout_height="match_parent">
 
     <TextView
-        style="@style/AppTheme.LargeText"
         android:layout_marginTop="48sp"
         android:gravity="center"
         android:text="@string/scan_voucher"
@@ -25,7 +24,6 @@
         android:layout_height="wrap_content"/>
 
     <Button
-        style="@style/AppTheme.LargeText"
         android:gravity="center"
         android:text="@string/uppercase_load"
         android:layout_width="match_parent"

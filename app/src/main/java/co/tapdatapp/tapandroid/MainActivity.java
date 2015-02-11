@@ -50,6 +50,7 @@ import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.user.Account;
+import co.tapdatapp.tapandroid.voucher.RedeemVoucherActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity
@@ -558,19 +559,10 @@ implements AccountFragment.OnFragmentInteractionListener {
 
     //ACCOUNT Stuff
     public void showDeposit(View view){
-        //show fragment with qr code and details
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("deposit");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        // Create and show the dialog.
-
-        DepositFragment mDepositFrag =  new DepositFragment();
-        mDepositFrag.show(ft, "deposit");
+        Intent i = new Intent(this, RedeemVoucherActivity.class);
+        startActivity(i);
     }
+
     public void showWithdraw(View view){
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("withdraw");

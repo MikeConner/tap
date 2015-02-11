@@ -15,7 +15,7 @@ public class RedeemVoucherActivity extends Activity {
     @Override
     public void onCreate(Bundle b) {
         super.onCreate(b);
-        setContentView(R.layout.redeem_voucher_activity);
+        setContentView(R.layout.activity_redeem_voucher);
     }
 
     /**

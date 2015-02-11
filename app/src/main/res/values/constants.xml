@@ -4,6 +4,11 @@
     <string name="API_VERSION">mobile/1/</string>
     <string name="ENDPOINT_TRANSACTION_LIST">transactions</string>
     <string name="ENDPOINT_REGISTRATION">registrations.json</string>
+    <!-- This is not a complete URL, the correct form is
+         users/$voucher_id/redeem_voucher
+         See RedeemVoucherTask.getRedeemVoucherURL()
+      -->
+    <string name="ENDPOINT_REDEEM_VOUCHER">users</string>
     <string name="PHONE_SECRET_SIZE">16</string>
     <string name="PHONE_SECRET_ALLOWED_CHARACTERS">0123456789qwertyuiopasdfghjklzxcvbnm</string>
 
