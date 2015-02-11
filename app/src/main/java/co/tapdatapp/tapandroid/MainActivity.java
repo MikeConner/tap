@@ -699,4 +699,9 @@ implements AccountFragment.OnFragmentInteractionListener {
         startActivity(i);
     }
 
+    public void goToNew(View view){
+        Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+        startActivity(intent);
+    }
+
 }

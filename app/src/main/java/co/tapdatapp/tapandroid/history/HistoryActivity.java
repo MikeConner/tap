@@ -42,7 +42,7 @@ public class HistoryActivity extends Activity implements HistorySyncCallback {
     public void onResume() {
         super.onResume();
         progressBar =
-            (ProgressBar)parentActivity.findViewById(R.id.history_progress_bar);
+           (ProgressBar)parentActivity.findViewById(R.id.history_grid_progress_bar);
         gridView =
             (GridView)parentActivity.findViewById(R.id.history_grid_view);
 
@@ -61,7 +61,7 @@ public class HistoryActivity extends Activity implements HistorySyncCallback {
             progressBar.setVisibility(ProgressBar.VISIBLE);
         }
         if (gridView != null) {
-            gridView.setVisibility(ListView.GONE);
+            gridView.setVisibility(GridView.GONE);
             gridView.setAdapter(null);
         }
         loaded = false;

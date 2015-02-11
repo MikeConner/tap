@@ -28,5 +28,5 @@
         android:layout_height="wrap_content"
         android:id="@+id/transfer_button"
         android:text="New History Screen"
-        android:onClick="goToView"/>
+        android:onClick="goToNew"/>
 </FrameLayout>

@@ -11,7 +11,7 @@
     -->
     <ProgressBar
         android:layout_gravity="center"
-        android:id="@+id/history_progress_bar"
+        android:id="@+id/history_grid_progress_bar"
         android:layout_width="100dp"
         android:layout_height="100dp"
         />

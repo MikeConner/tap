@@ -124,9 +124,4 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
         throw e;
     }
 
-    public void goToNew(View view){
-        Intent intent = new Intent(HistoryFragment.this.getActivity(), HistoryActivity.class);
-        startActivity(intent);
-    }
-
 }
