@@ -31,7 +31,7 @@
 
         <Button
             style="@style/AppTheme.circular_button"
-            android:text="<-"
+            android:text="&lt;-"
             android:layout_width="48dp"
             android:layout_height="48dp"/>
 
@@ -42,7 +42,7 @@
 
         <Button
             style="@style/AppTheme.circular_button"
-            android:text="->"
+            android:text="-&gt;"
             android:layout_width="48dp"
             android:layout_height="48dp"/>
 
