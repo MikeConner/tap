@@ -73,13 +73,12 @@ public class BalanceListAdapter extends BaseAdapter {
                     Context.LAYOUT_INFLATER_SERVICE
                 );
             view = inflater.inflate(
-                R.layout.balance_line_item,
+                R.layout.line_item_balance,
                 viewGroup,
                 false
             );
         }
         CurrencyDAO currency = userBalance.getByNameOrder(i);
-        ((TextView)view.findViewById(R.id.balance_line_item_name)).setText(currency.getName());
         ((TextView)view.findViewById(R.id.balance_line_item_balance)).setText(
             currency.getSymbol() + balanceList.get(currency.getCurrencyId()).toString()
         );
@@ -89,7 +88,7 @@ public class BalanceListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int i) {
-        return R.layout.balance_line_item;
+        return R.layout.line_item_balance;
     }
 
     @Override
