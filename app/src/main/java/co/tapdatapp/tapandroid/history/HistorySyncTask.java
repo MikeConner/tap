@@ -19,14 +19,14 @@ import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 
 public class HistorySyncTask
-extends AsyncTask<HistoryFragment, Void, Void> {
+extends AsyncTask<HistorySyncCallback, Void, Void> {
 
-    private HistoryFragment historyFragment;
+    private HistorySyncCallback historyFragment;
     private boolean success = false;
     private Exception exception;
 
     @Override
-    protected Void doInBackground(HistoryFragment... historyFragments) {
+    protected Void doInBackground(HistorySyncCallback...historyFragments) {
         if (historyFragments.length != 1) {
             throw new AssertionError(
                 "Must be called with single HistoryFragment"

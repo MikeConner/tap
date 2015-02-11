@@ -19,7 +19,7 @@ import android.widget.ProgressBar;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements HistorySyncCallback {
 
     private Activity parentActivity;
     private ProgressBar progressBar;
@@ -92,7 +92,7 @@ public class HistoryFragment extends Fragment {
      * Set the display to the progress spinner and kick off the
      * background job to synchronize data
      */
-    private void fillInList() {
+    public void fillInList() {
         progressBar.setVisibility(ProgressBar.VISIBLE);
         listView.setVisibility(ListView.GONE);
         new HistorySyncTask().execute(this);
