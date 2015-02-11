@@ -1,5 +1,6 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -7,109 +8,51 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity"
-
     >
 
-
-
-
-    <Button
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:text="-"
-        android:id="@+id/btnMinus"
-        android:background="@drawable/circlenotnumber"
-        android:gravity="center_vertical|center_horizontal"
-        android:textColor="#fff"
-        android:layout_gravity="left|center_vertical"
-        android:onClick="tapMinus"
-        android:layout_alignParentTop="true"
-        android:layout_alignEnd="@+id/btnArm" />
-
-    <Button
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:text="+"
-        android:id="@+id/btnPlus"
-        android:background="@drawable/circlenotnumber"
-        android:gravity="center_vertical|center_horizontal"
-        android:textColor="#fff"
-        android:layout_gravity="right|center_vertical"
-        android:onClick="tapPlus"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
-
     <TextView
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:textStyle="bold"
+        android:textSize="140sp"
+        android:text="$999"
+        android:id="@+id/txtAmount" />
+
+    <LinearLayout
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="60sp"
-        android:text="$1"
-        android:id="@+id/txtAmount"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp" />
+        android:paddingBottom="25dp"
+        >
 
+        <Button
+            style="@style/AppTheme.circular_button"
+            android:text="&lt;-"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" amount here "/>
+
+        <Button
+            style="@style/AppTheme.circular_button"
+            android:text="-&gt;"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
+
+    </LinearLayout>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ARM"
+        android:text="@string/arm"
         android:id="@+id/btnArm"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:background="#FF9800"
         android:onClick="armOrSend" />
 
-    <Button
-        android:layout_width="235dp"
-        android:layout_height="100dp"
-        android:text="$1"
-        android:id="@+id/btnOne"
-        android:background="#B2FF59"
-        android:gravity="center_vertical|center_horizontal"
-        android:textColor="#33691E"
-        android:textSize="30sp"
-        android:layout_gravity="center_horizontal|bottom"
-        android:onClick="tapOne"
-        android:layout_above="@+id/btnTen"
-        android:layout_marginBottom="20dp"
-        android:layout_centerHorizontal="true"
-        android:enabled="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:clickable="true"
-        android:longClickable="true" />
-
-    <Button
-        android:layout_width="117dp"
-        android:layout_height="60dp"
-        android:text="$10"
-        android:id="@+id/btnTen"
-        android:background="#B2FF59"
-        android:gravity="center_vertical|center_horizontal"
-        android:textColor="#33691E"
-        android:textSize="30sp"
-        android:layout_gravity="left|bottom"
-        android:onClick="tapTen"
-        android:layout_above="@+id/btnArm"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="20dp" />
-
-    <Button
-        android:layout_width="117dp"
-        android:layout_height="60dp"
-        android:text="$5"
-        android:id="@+id/btnFive"
-        android:background="#B2FF59"
-        android:gravity="center_vertical|center_horizontal"
-        android:textColor="#33691E"
-        android:textSize="30sp"
-        android:layout_gravity="right|bottom"
-        android:onClick="tapFive"
-        android:layout_above="@+id/btnArm"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="20dp" />
-
-</RelativeLayout>
+</LinearLayout>
