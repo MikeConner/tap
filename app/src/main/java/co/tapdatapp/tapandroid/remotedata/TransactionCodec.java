@@ -8,11 +8,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.util.Currency;
 
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Transaction;
+import co.tapdatapp.tapandroid.user.Account;
 
 public class TransactionCodec {
 
+    /**
+     * Turn the respone to a get transaction web request into a
+     * Transaction object
+     *
+     * @param input the payload of a web request
+     * @return Transaciton object
+     * @throws JSONException in various situations
+     */
     public Transaction unmarshall(String input)
     throws JSONException {
         return unmarshall(new JSONObject(input));
@@ -29,6 +40,31 @@ public class TransactionCodec {
         rv.setDescription(input.getString("comment"));
         rv.setThumb_url(input.getString("other_user_thumb"));
         rv.setNickname(input.getString("other_user_nickname"));
+        return rv;
+    }
+
+    /**
+     * Create the JSON needed to send a transaction
+     *
+     * @param tagId The tag ID to send money to
+     * @param amount The amount to send
+     * @param currencyId Currency ID the request is to be sent for
+     * @return JSONObject of the serialized request
+     */
+    public JSONObject
+    marshallNewTransaction(String tagId, int amount, int currencyId) {
+        JSONObject rv = new JSONObject();
+        try {
+            rv.put("auth_token", new Account().getAuthToken());
+            rv.put("tag_id", tagId);
+            rv.put("amount", Integer.toString(amount));
+            if (currencyId != CurrencyDAO.CURRENCY_BITCOIN) {
+                rv.put("currency_id", currencyId);
+            }
+        }
+        catch (JSONException je) {
+            throw new AssertionError(je);
+        }
         return rv;
     }
 }
