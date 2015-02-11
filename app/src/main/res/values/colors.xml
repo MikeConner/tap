@@ -1,5 +1,6 @@
 <resources>
 
-    <color name="black_overlay">#66000000</color>
-
+    <color name="button_background">#ff0000</color>
+    <color name="button_text">#cccccc</color>
+    <color name="text_color">#666666</color>
 </resources>

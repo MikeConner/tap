@@ -5,29 +5,33 @@
               android:layout_height="match_parent">
 
     <TextView
+        style="@style/AppTheme.header1"
         android:layout_marginTop="48sp"
-        android:gravity="center"
         android:text="@string/scan_voucher"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"/>
 
     <ImageView
         android:contentDescription="@string/voucher_qr_code_description"
-        android:gravity="center"
+        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"/>
 
     <TextView
-        android:gravity="center"
+        android:layout_centerHorizontal="true"
         android:text="[what goes here?]"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"/>
 
     <Button
-        android:gravity="center"
         android:text="@string/uppercase_load"
+        android:layout_centerHorizontal="true"
+        android:onClick="clickLoadVoucher"
+        android:layout_margin="15dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="clickLoadVoucher"/>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
