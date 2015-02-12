@@ -4,6 +4,8 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
+    <include layout="@layout/title_bar" />
+
     <TextView
         style="@style/AppTheme.header1"
         android:layout_marginTop="48sp"
