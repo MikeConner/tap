@@ -76,7 +76,6 @@ public class HistoryActivity extends Activity implements HistorySyncCallback {
     public void postSyncDisplay() {
         progressBar.setVisibility(ProgressBar.GONE);
         gridView.setVisibility(GridView.VISIBLE);
-        gridView = (GridView) findViewById(R.id.history_grid_view);
         gridView.setAdapter(new HistoryActivityAdapter(new Transaction(), this));
         loaded = true;
     }
