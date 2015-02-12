@@ -23,5 +23,6 @@
     <string name="button_load">LOAD</string>
     <string name="button_my_tags">MY TAGS</string>
     <string name="description_profile_picture">Profile Piture</string>
+    <string name="calculating">calculating...</string>
 
 </resources>
