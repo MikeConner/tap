@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ALLOW_ARBITRARY_TRANSACTIONS">true</string>
+    <string name="CREATE_FAKE_DATA_ON_SERVER">true</string>
 </resources>

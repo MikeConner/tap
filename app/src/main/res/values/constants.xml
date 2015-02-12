@@ -9,10 +9,12 @@
          See RedeemVoucherTask.getRedeemVoucherURL()
       -->
     <string name="ENDPOINT_REDEEM_VOUCHER">users</string>
+    <string name="ENDPOINT_NEW_TAG">nfc_tags.json</string>
     <string name="PHONE_SECRET_SIZE">16</string>
     <string name="PHONE_SECRET_ALLOWED_CHARACTERS">0123456789qwertyuiopasdfghjklzxcvbnm</string>
 
     <!-- Feature enabling settings -->
-    <!-- User can create fake transactions (good for testing) -->
-    <string name="ALLOW_ARBITRARY_TRANSACTIONS">false</string>
+    <!-- User can create fake data (good for testing) -->
+    <string name="CREATE_FAKE_DATA_ON_SERVER">false</string>
+
 </resources>

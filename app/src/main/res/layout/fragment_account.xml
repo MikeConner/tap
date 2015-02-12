@@ -1,217 +1,95 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     tools:context=".profile_main"
-    tools:ignore="MergeRootFrame"
-    android:background="#f5f4f4">
-    <ImageView
-        android:layout_width="190dp"
-        android:layout_height="147dp"
-        android:id="@+id/left_square"
-        android:layout_marginBottom="40dp"
-        android:src="@drawable/white_rectangle"
-        android:layout_gravity="left|bottom" />
-
-    <ImageView
-        android:layout_width="190dp"
-        android:layout_height="147dp"
-        android:id="@+id/right_square"
-        android:src="@drawable/white_rectangle"
-        android:layout_marginBottom="40dp"
-        android:layout_gravity="right|bottom" />
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:src="@drawable/white_rectangle"
-        android:layout_marginTop="51dp"
-        android:id="@+id/center_rectangle"
-        android:layout_gravity="center" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:textSize="9pt"
-        android:text="angry helicopter"
-        android:id="@+id/etNickName"
-        android:layout_gravity="center" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:text="random@random.com"
-        android:textColor="#f6938b"
-        android:id="@+id/etEmail"
-        android:layout_gravity="center" />
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/profile_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:src="@drawable/b"
-        app:border_width="2dp"
-        app:border_color="#FF000000"
-        android:onClick="getImage"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_marginTop="35dp"/>
-
-    <ImageView
-        android:visibility="invisible"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_marginTop="90dp"
-        android:src="@drawable/profile_picture_circle"
-        android:id="@+id/yapa1"
-        android:layout_gravity="center_horizontal|top"
-        android:onClick="getImage"/>
-
-    <ImageButton
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginStart="50dp"
-        android:id="@+id/edit_profile"
-        android:src="@drawable/edit_profile"
-        android:layout_gravity="center_horizontal|top"
-        android:adjustViewBounds="false" />
-
-    <ImageButton
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginBottom="85dp"
-        android:id="@+id/load_button"
-        android:onClick="showDeposit"
-        android:src="@drawable/qr_code_icon"
-        android:layout_gravity="left|bottom" />
-
-    <ImageButton
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginBottom="80dp"
-        android:id="@+id/withdraw_button"
-        android:onClick="showWithdraw"
-        android:src="@drawable/withdraw_icon"
-        android:layout_gravity="right|bottom" />
-
-    <TextView
-        android:layout_width="150dp"
-        android:layout_height="45dp"
-        android:layout_marginBottom="40dp"
-        android:layout_marginStart="50dp"
-        android:textAllCaps="true"
-        android:textColor="#605563"
-        android:textStyle="bold"
-        android:textSize="8pt"
-        android:text="withdraw"
-        android:onClick="showWithdraw"
-        android:id="@+id/withdraw_text"
-        android:layout_gravity="right|bottom" />
-
-    <TextView
-        android:layout_width="150dp"
-        android:layout_height="45dp"
-        android:text="load phone"
-        android:onClick="showDeposit"
-        android:id="@+id/load_text"
-        android:layout_marginBottom="40dp"
-        android:layout_marginStart="45dp"
-        android:textColor="#605563"
-        android:textStyle="bold"
-        android:textSize="8pt"
-        android:textAllCaps="true"
-        android:layout_gravity="left|bottom" />
+    tools:ignore="MergeRootFrame">
 
     <Button
-        android:layout_width="200dp"
-        android:layout_height="39dp"
-        android:layout_marginTop="30dp"
-        android:text="$94"
-        android:paddingBottom="2dp"
-        android:paddingTop="7dp"
-        android:paddingStart="60dp"
-        android:paddingEnd="50dp"
-        android:background="@drawable/balance_bg"
-        android:textColor="#ffffff"
-        android:textColorHighlight="#77ffffff"
-        android:textStyle="bold"
-        android:textSize="10pt"
-        android:id="@+id/txtBalance"
-        android:layout_gravity="center"
+        style="@style/AppTheme.Button"
+        android:text="up"
+        android:layout_margin="5dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:src="@drawable/brienne"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/description_profile_picture"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="n"
+            android:textSize="48sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="9pt"
+            android:text="angry helicopter"
+            android:id="@+id/etNickName"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="e"
+            android:textSize="48sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="random@random.com"
+            android:id="@+id/etEmail"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"/>
+
+    <Button
+        style="@style/AppTheme.Button"
+        android:layout_margin="5dp"
+        android:text="@string/button_load"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="showDeposit"/>
+
+    <Button
+        style="@style/AppTheme.Button"
+        android:layout_margin="5dp"
+        android:text="@string/button_my_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="myTags"/>
+
+    <Button
+        style="@style/AppTheme.Button"
+        android:layout_margin="5dp"
+        android:text="@string/button_balances"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:onClick="startBalancesActivity"/>
 
-    <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:src="@drawable/your_tags_bar"
-        android:id="@+id/your_tags_bar"
-        android:layout_gravity="center_horizontal|bottom"
-        android:onClick="myTags"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2 confirmations"
-        android:textAllCaps="true"
-        android:textSize="5pt"
-        android:layout_marginTop="60dp"
-        android:id="@+id/textView"
-        android:layout_gravity="center" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="View Your Tags"
-        android:id="@+id/your_tags_text"
-        android:textAllCaps="true"
-        android:textSize="9pt"
-        android:textColor="#88ffffff"
-        android:layout_marginTop="60dp"
-        android:layout_marginStart="25dp"
-        android:layout_gravity="center_horizontal|bottom"
-        android:onClick="myTags"/>
-
-    <ImageButton
-        android:layout_width="56dp"
-        android:layout_height="49dp"
-        android:id="@+id/tags_button"
-        android:src="@drawable/tag_image"
-        android:onClick="myTags"
-        android:background="#99605563"
-        android:layout_gravity="left|bottom" />
-
-
-    <ImageView
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView36"
-
-        android:src="@drawable/ic_action_refresh"
-        android:onClick="newNickNameMe" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</FrameLayout>
+</LinearLayout>
 

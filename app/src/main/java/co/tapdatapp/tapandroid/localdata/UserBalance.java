@@ -221,6 +221,7 @@ implements SingleTable, CurrencyDAO {
 
     @Override
     public String getBalanceAsString(int currencyId) {
+        moveTo(currencyId);
         return getSymbol() + Integer.toString(getBalance(currencyId));
     }
 
@@ -231,9 +232,7 @@ implements SingleTable, CurrencyDAO {
      */
     @Override
     public BalanceList getAllBalances() {
-        BalanceList balances = new BalanceList();
-        // @TODO implement webservice call
-        return balances;
+        throw new NoSuchMethodError("Not yet implemented");
     }
 
     /**

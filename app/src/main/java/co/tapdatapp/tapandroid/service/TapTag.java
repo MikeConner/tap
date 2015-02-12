@@ -136,39 +136,7 @@ public class TapTag {
         }
 
     }
-    //TODO: this does not work currently! Not really needed since we're passing everything in manually to the view
-    public void loadTag(String auth_token, String tag_id){
-        mAuthToken=auth_token;
-        mTagID = tag_id;
-        //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
-        mTapCloud = new TapCloud();
-        //END
 
-
-        String mURL = TapCloud.TAP_TAGS_API_ENDPOINT_URL + "?auth_token=" + mAuthToken;
-        //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
-        mTapCloud = new TapCloud();
-        JSONObject output;
-        try {
-            output = mTapCloud.httpGet(mURL);
-                //TODO: get individual tag load here? (with count etc?) + any yapa it may have?
-//            mTagName = output.getJSONObject("response").getString("name");
-//            mInboundBTCaddress = output.getJSONObject("response").getString("inbound_btc_address");
-//            mOutboundBTCaddress = output.getJSONObject("response").getString("outbound_btc_address");
-//            mBalance = output.getJSONObject("response").getInt("satoshi_balance");
-//            mUserEmail = output.getJSONObject("response").getString("email");
-        }
-        catch (Exception e)
-        {
-            //TODO: any errors possible here?
-        }
-
-        loadYapa(auth_token);
-
-
-
-
-    }
     public String generateNewTag(String auth_token, String default_yapa_thumb){
         mAuthToken = auth_token;
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy

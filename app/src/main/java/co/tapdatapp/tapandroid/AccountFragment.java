@@ -1,20 +1,16 @@
 package co.tapdatapp.tapandroid;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import co.tapdatapp.tapandroid.localdata.MockCurrency;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.user.Account;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
@@ -24,12 +20,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * to handle interaction events.
  */
 public class AccountFragment extends Fragment {
-
-    private OnFragmentInteractionListener mListener;
-
-    public AccountFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,11 +43,8 @@ public class AccountFragment extends Fragment {
         }
         email.setEnabled(false);
         nickName.setEnabled(false);
-        TextView balance = (Button)getActivity().findViewById(R.id.txtBalance);
-        Log.d(this.getClass().toString(), new MockCurrency().getBalanceAsString(new Account().getActiveCurrency()));
-        balance.setText(new MockCurrency().getBalanceAsString(new Account().getActiveCurrency()));
 
-        CircleImageView ivProfilePic = (CircleImageView) getActivity().findViewById(R.id.profile_image);
+        ImageView ivProfilePic = (ImageView) getActivity().findViewById(R.id.profile_image);
         String mThumb = new Account().getProfilePicThumbUrl();
         if (mThumb.isEmpty()){
             //do nothing or set it to some image?
@@ -81,29 +68,6 @@ public class AccountFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_account, container, false);
 
 
-    }
-
-    @Override
-    public void onActivityCreated (Bundle savedInstanceState){
-        super.onActivityCreated(savedInstanceState);
-
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     /**

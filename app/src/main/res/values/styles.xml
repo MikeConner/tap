@@ -3,15 +3,17 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light">
         <item name="android:textColor">@color/text_color</item>
+        <!-- buttonStyle seems to break onClick() on pre-L, do it the hard
+             way until I figure out what's going on -->
         <!--<item name="android:buttonStyle">@style/AppTheme.Button</item>-->
     </style>
 
     <style name="AppTheme.Button">
         <item name="android:gravity">center</item>
-        <item name="android:background">@drawable/button</item>
+        <item name="android:background">@drawable/button_selector</item>
         <item name="android:textColor">@color/button_text</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:padding">5dp</item>
+        <item name="android:padding">3dp</item>
         <item name="android:textSize">24sp</item>
     </style>
 
