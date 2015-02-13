@@ -41,7 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.currency.BalancesActivity;
-import co.tapdatapp.tapandroid.history.HistoryActivity;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.MockCurrency;
 import co.tapdatapp.tapandroid.service.TapCloud;
@@ -672,11 +671,6 @@ implements AccountFragment.OnFragmentInteractionListener {
     public void startBalancesActivity(View v) {
         Intent i = new Intent(this, BalancesActivity.class);
         startActivity(i);
-    }
-
-    public void goToNew(View view){
-        Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
-        startActivity(intent);
     }
 
 }
