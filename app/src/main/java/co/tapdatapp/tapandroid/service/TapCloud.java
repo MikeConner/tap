@@ -48,6 +48,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -57,11 +59,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class TapCloud {
     DefaultHttpClient client;
 
+    static {
+        // intermediate fix until all code is reorganized into the
+        // HttpHelper class
+        TAP_SERVER = TapApplication.string(R.string.SERVER);
+    }
 
-    //*/
-    public final static String TAP_LOCAL = "192.168.1.135:3000";
-    public final static String TAP_REMOTE = "www.tapdatapp.co";
-    public final static String TAP_SERVER = TAP_REMOTE;
+    public final static String TAP_SERVER;
 
     public final static String TAP_USER_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/users/me";
     public final static String TAP_USERNICK_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/users/reset_nickname";
