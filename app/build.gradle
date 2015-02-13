@@ -20,6 +20,12 @@ android {
         production {
             applicationId "co.tapdatapp.tapandroid"
         }
+        demo {
+            applicationId "co.tapdatapp.tapandroid.demo"
+        }
+        testing {
+            applicationId "co.tapdatapp.tapandroid.test"
+        }
         dev {
             applicationId "co.tapdatapp.tapandroid.dev"
         }

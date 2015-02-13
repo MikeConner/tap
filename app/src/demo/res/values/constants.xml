@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="SERVER">http://demo.tapdatapp.co/</string>
+    <string name="CREATE_FAKE_DATA_ON_SERVER">false</string>
+</resources>
