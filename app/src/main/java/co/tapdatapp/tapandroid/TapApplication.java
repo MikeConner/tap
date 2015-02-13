@@ -74,4 +74,27 @@ public class TapApplication extends Application {
     public static char[] charArray(int id) {
         return app.getString(id).toCharArray();
     }
+
+    /**
+     * Call this method when a completely unexpected error (such as an
+     * OOM or NPE) happens.
+     *
+     * DO NOT call this method with typical errors such as a network
+     * failure or NFC unavailable problem (which should be handled
+     * by telling the user to find a network or telling them to
+     * turn on their NFC). This method is purely for catching and
+     * handling things that we would never expect to happen.
+     *
+     * This method will eventually perform 3 actions
+     * 1) Handle known exceptions in a sane way when possible
+     * 2) Present a friendly, generic error message to the user when necessary
+     * 3) Push error data to the server when it can't be managed locally
+     *
+     * @param t Exception that caused the problem
+     */
+    // @TODO bounce this up to the error reporting service on the server
+    // @TODO show a generic "unknown error" message to the user
+    public static void unknownFailure(Throwable t) {
+        throw new AssertionError(t);
+    }
 }
