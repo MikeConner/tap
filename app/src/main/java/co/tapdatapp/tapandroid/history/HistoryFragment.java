@@ -12,13 +12,16 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.GridView;
 
+import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Transaction;
+import co.tapdatapp.tapandroid.yapa.YapaImage;
 
 public class HistoryFragment extends Fragment implements HistorySyncCallback {
 
@@ -60,6 +63,19 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
             (ProgressBar)parentActivity.findViewById(R.id.history_grid_progress_bar);
         gridView =
             (GridView)parentActivity.findViewById(R.id.history_grid_view);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                /**
+                 * openYapa is currently set to null so that, in the future, different things will
+                 * happen depending on the type of yapa.
+                 */
+                Intent openYapa = null;
+                openYapa = new Intent(getActivity(), YapaImage.class);
+                startActivity(openYapa);
+            }
+        });
     }
 
     /**
