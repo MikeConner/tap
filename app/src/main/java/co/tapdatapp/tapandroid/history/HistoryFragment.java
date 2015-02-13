@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.GridView;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Transaction;
@@ -23,7 +24,7 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
 
     private Activity parentActivity;
     private ProgressBar progressBar;
-    private ListView listView;
+    private GridView gridView;
     private boolean loaded = false;
 
     public HistoryFragment() {
@@ -56,9 +57,9 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
     public void onResume() {
         super.onResume();
         progressBar =
-            (ProgressBar)parentActivity.findViewById(R.id.history_progress_bar);
-        listView =
-            (ListView)parentActivity.findViewById(R.id.history_list_view);
+            (ProgressBar)parentActivity.findViewById(R.id.history_grid_progress_bar);
+        gridView =
+            (GridView)parentActivity.findViewById(R.id.history_grid_view);
     }
 
     /**
@@ -80,9 +81,9 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
             if (progressBar != null) {
                 progressBar.setVisibility(ProgressBar.VISIBLE);
             }
-            if (listView != null) {
-                listView.setVisibility(ListView.GONE);
-                listView.setAdapter(null);
+            if (gridView != null) {
+                gridView.setVisibility(GridView.GONE);
+                gridView.setAdapter(null);
             }
             loaded = false;
         }
@@ -94,7 +95,7 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
      */
     public void fillInList() {
         progressBar.setVisibility(ProgressBar.VISIBLE);
-        listView.setVisibility(ListView.GONE);
+        gridView.setVisibility(GridView.GONE);
         new HistorySyncTask().execute(this);
     }
 
@@ -104,12 +105,12 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
      */
     public void postSyncDisplay() {
         progressBar.setVisibility(ProgressBar.GONE);
-        listView.setVisibility(ListView.VISIBLE);
+        gridView.setVisibility(GridView.VISIBLE);
         HistoryAdapter adapter = new HistoryAdapter(
             new Transaction(),
             parentActivity
         );
-        listView.setAdapter(adapter);
+        gridView.setAdapter(adapter);
         loaded = true;
     }
 
