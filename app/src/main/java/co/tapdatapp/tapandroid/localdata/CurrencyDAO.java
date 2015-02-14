@@ -7,10 +7,13 @@ package co.tapdatapp.tapandroid.localdata;
 import android.graphics.Bitmap;
 
 import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
 public interface CurrencyDAO {
 
     public static final int CURRENCY_BITCOIN = -1;
+    public static final String BITCOIN_SYMBOL = "S";
+    public static final int BITCOIN_MAX_TAP = 500;
 
     /**
      * Load this class up with the parameters from the specified
@@ -52,6 +55,12 @@ public interface CurrencyDAO {
     String getSymbol();
 
     /**
+     * @param currencyId Pass a currency ID to get the symbol for it
+     * @return Currency symbol for the specified currency (such as "$")
+     */
+    String getSymbol(int currencyId);
+
+    /**
      * @return The URL from which to fetch this currency's icon image
      */
     String getIconUrl();
@@ -61,18 +70,18 @@ public interface CurrencyDAO {
      *
      * @return  BalanceList
      */
-    BalanceList getAllBalances();
+    BalanceList getAllBalances() throws WebServiceError;
 
     /**
      * @param currencyId Currency ID
      * @return the balance of that Currency ID
      */
-    int getBalance(int currencyId);
+    int getBalance(int currencyId) throws WebServiceError;
 
     /**
      * @return String of the currency symbol + balance
      */
-    String getBalanceAsString(int currencyId);
+    String getBalanceAsString(int currencyId) throws WebServiceError;
 
     /**
      * Return the maximum amount that a single payout can be. This is

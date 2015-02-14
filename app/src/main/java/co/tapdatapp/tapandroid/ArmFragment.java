@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import co.tapdatapp.tapandroid.localdata.MockCurrency;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class ArmFragment extends Fragment {

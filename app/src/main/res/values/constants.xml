@@ -10,6 +10,9 @@
       -->
     <string name="ENDPOINT_REDEEM_VOUCHER">users</string>
     <string name="ENDPOINT_NEW_TAG">nfc_tags.json</string>
+    <string name="ENDPOINT_GET_CURRENCY">currencies.json</string>
+    <string name="ENDPOINT_GET_BALANCES">users/balance_inquiry</string>
+
     <string name="PHONE_SECRET_SIZE">16</string>
     <string name="PHONE_SECRET_ALLOWED_CHARACTERS">0123456789qwertyuiopasdfghjklzxcvbnm</string>
 

@@ -42,7 +42,8 @@ import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.currency.BalancesActivity;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
-import co.tapdatapp.tapandroid.localdata.MockCurrency;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
+import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
@@ -76,16 +77,13 @@ implements AccountFragment.OnFragmentInteractionListener {
     boolean mFromCamera = false;
     static final int REQUEST_TAKE_PHOTO = 1;
 
+    CurrencyDAO currency;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        captureNFC();
-
-        //TODO: REMOVE THIS - Make sure all NETWORK TXNS are async
-        //StrictMode.ThreadPolicy tp = StrictMode.ThreadPolicy.LAX;
-        //StrictMode.setThreadPolicy(tp);
-
         super.onCreate(savedInstanceState);
-
+        captureNFC();
+        currency = new UserBalance();
     }
 
     //TODO: Move this to DataLoaderFragment
@@ -379,7 +377,7 @@ implements AccountFragment.OnFragmentInteractionListener {
             txAmount = (TextView)findViewById(R.id.txtAmount);
         }
         new Account().setArmedAmount(to);
-        txAmount.setText(new MockCurrency().getSymbol(new Account().getActiveCurrency()) + String.valueOf(to));
+        txAmount.setText(currency.getSymbol(new Account().getActiveCurrency()) + String.valueOf(to));
     }
 
     private void changeAmount(int amount, boolean addition){
@@ -387,7 +385,7 @@ implements AccountFragment.OnFragmentInteractionListener {
         int tapAmount = account.getArmedAmount();
         if (addition) {
             tapAmount += amount;
-            int max = new MockCurrency().getMaxPayout(account.getActiveCurrency());
+            int max = currency.getMaxPayout(account.getActiveCurrency());
             if (tapAmount > max ) {
                 tapAmount = max;
             }

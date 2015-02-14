@@ -9,7 +9,9 @@ package co.tapdatapp.tapandroid.currency;
 
 import android.os.AsyncTask;
 
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
+import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
 public class GetAllBalancesTask
 extends AsyncTask<BalancesActivity, Void, Void> {
@@ -25,8 +27,13 @@ extends AsyncTask<BalancesActivity, Void, Void> {
         }
         callback = balancesActivities[0];
         UserBalance userBalance = new UserBalance();
-        balanceList = userBalance.getAllBalances();
-        userBalance.ensureLocalCurrencyDetails(balanceList);
+        try {
+            balanceList = userBalance.getAllBalances();
+            userBalance.ensureLocalCurrencyDetails(balanceList);
+        }
+        catch (WebServiceError wse) {
+            TapApplication.unknownFailure(wse);
+        }
         return null;
     }
 

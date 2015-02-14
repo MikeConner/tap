@@ -15,6 +15,7 @@ import java.util.Random;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.currency.BalanceList;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.UserAccountCodec;
@@ -70,9 +71,33 @@ public class Account {
             setPhoneSecret(phoneSecret);
             setNickname(codex.getNickname(response));
             setAuthToken(codex.getAuthToken(response));
+            setCurrencyOnNewUser();
         }
         catch (JSONException je) {
             throw new WebServiceError(je);
+        }
+    }
+
+    /**
+     * For a new user, set the default currency to whatever has the
+     * highest balance. Remains to be seen whether this becomes a
+     * production behavior, but it's probably a good idea, so that
+     * any promo balance the user gets by creating a new account
+     * automatically becomes the default
+     */
+    private void setCurrencyOnNewUser() throws WebServiceError {
+        BalanceList balances = new UserBalance().getAllBalances();
+        Integer currencyId = null;
+        int highestBalance = 0;
+        for (int currentId : balances.keySet()) {
+            int currentBalance = balances.get(currentId);
+            if (currentBalance >= highestBalance) {
+                highestBalance = currentBalance;
+                currencyId = currentId;
+            }
+        }
+        if (currencyId != null) {
+            setActiveCurrency(currencyId);
         }
     }
 
