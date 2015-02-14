@@ -29,20 +29,22 @@ public class HistoryAdapter extends BaseAdapter {
     private Integer recordCount = null;
     private TransactionDAO dao;
     private Activity activity;
+    private Transaction transaction;
 
     public HistoryAdapter(TransactionDAO t, Activity a) {
         dao = t;
         activity = a;
+        transaction = new Transaction();
     }
 
     @Override
     public boolean areAllItemsEnabled() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled(int i) {
-        return false;
+        return true;
     }
 
     @Override
@@ -79,9 +81,8 @@ public class HistoryAdapter extends BaseAdapter {
                 false
             );
         }
-        Transaction t = new Transaction();
-        t.moveTo(i);
-        ((TextView)v.findViewById(R.id.history_text)).setText(t.getDescription());
+        transaction.moveTo(i);
+        ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getDescription());
         ((ImageView)v.findViewById(R.id.history_picture)).setImageBitmap(getRewardBitmap());
         LoadHistoryImagesTask asyncLoad = new LoadHistoryImagesTask();
         asyncLoad.execute(v);
