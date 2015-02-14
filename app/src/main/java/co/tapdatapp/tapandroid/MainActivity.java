@@ -83,7 +83,6 @@ implements AccountFragment.OnFragmentInteractionListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         captureNFC();
-        currency = new UserBalance();
     }
 
     //TODO: Move this to DataLoaderFragment
@@ -151,7 +150,7 @@ implements AccountFragment.OnFragmentInteractionListener {
     @Override
     public void onResume(){
         super.onResume();
-
+        currency = new UserBalance();
         if (mNfcAdapter != null) {
             mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
                     mNdefExchangeFilters, null);
