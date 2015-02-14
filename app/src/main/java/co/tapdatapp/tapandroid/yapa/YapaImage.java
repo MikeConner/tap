@@ -14,14 +14,31 @@ import android.widget.LinearLayout;
 
 import co.tapdatapp.tapandroid.R;
 
-/**
- * Created by Vince on 2/13/2015.
- */
 public class YapaImage extends Activity {
+
+    private boolean isImageFitToScreen = false;
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_yapa_image);
+        final ImageView imageView = (ImageView) findViewById(R.id.yapaImage);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isImageFitToScreen) {
+                    isImageFitToScreen=false;
+                    imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    imageView.setAdjustViewBounds(true);
+                }else{
+                    isImageFitToScreen=true;
+                    imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                }
+            }
+        });
+
+
     }
 
     public void onResume() {
@@ -30,12 +47,5 @@ public class YapaImage extends Activity {
 
     public void onPause(){
         super.onPause();
-    }
-
-    /**
-     * Doesn't work yet
-     */
-    public void goFullscreen(){
-
     }
 }
