@@ -1,22 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/yapaImageLayout"
     android:weightSum="1">
 
+    <ImageView
+        android:layout_width="3654dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/yapaImage"
+        android:src="@drawable/aretha"
+        android:scaleType="fitCenter"
+        android:cropToPadding="false"
+        android:layout_weight="0.39" />
+
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="YAPA"
-        android:id="@+id/textView2"
-        android:layout_gravity="center_horizontal" />
+        android:text="Large Text"
+        android:id="@+id/sender_name"
+        android:layout_gravity="center_horizontal|left"
+        android:layout_weight="0.18" />
 
-    <ImageView
-        android:layout_width="240dp"
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.66"
-        android:src="@drawable/brienne" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/additional_info"
+        android:layout_weight="0.44" />
+
 </LinearLayout>
