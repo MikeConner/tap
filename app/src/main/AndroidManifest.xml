@@ -63,6 +63,7 @@
             android:label="@string/title_activity_balances" >
         </activity>
         <activity android:name=".voucher.RedeemVoucherActivity" />
+        <activity android:name=".yapa.YapaImage"/>
 
     </application>
 
