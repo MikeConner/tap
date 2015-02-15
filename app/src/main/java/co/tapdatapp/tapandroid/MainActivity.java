@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -27,8 +29,8 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
+import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,7 +54,8 @@ import co.tapdatapp.tapandroid.voucher.RedeemVoucherActivity;
 
 public class MainActivity
 extends Activity
-implements AccountFragment.OnFragmentInteractionListener {
+implements AccountFragment.OnFragmentInteractionListener,
+           ActionBar.TabListener {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
@@ -135,17 +138,59 @@ implements AccountFragment.OnFragmentInteractionListener {
 
             //set up action bar and nav tabs
             mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+            // Set up the action bar.
+            final ActionBar actionBar = getActionBar();
+            if (actionBar == null) {
+                throw new AssertionError("null ActionBar on MainActivity");
+            }
 
+            // Specify that the Home/Up button should not be enabled, since there is no hierarchical
+            // parent.
+            actionBar.setHomeButtonEnabled(false);
+            // Specify that we will be displaying tabs in the action bar.
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
             // Set up the ViewPager with the sections adapter.
             mViewPager = (ViewPager) findViewById(R.id.pager);
             mViewPager.setAdapter(mSectionsPagerAdapter);
-
+            mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                @Override
+                public void onPageSelected(int position) {
+                    // When swiping between different app sections, select the corresponding tab.
+                    // We can also use ActionBar.Tab#select() to do this if we have a reference to the
+                    // Tab.
+                    actionBar.setSelectedNavigationItem(position);
+                }
+            });
+            for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+                // Create a tab with text corresponding to the page title defined by the adapter.
+                // Also specify this Activity object, which implements the TabListener interface, as the
+                // listener for when this tab is selected.
+                actionBar.addTab(
+                        actionBar.newTab()
+                                .setText(mSectionsPagerAdapter.getPageTitle(i))
+                                .setTabListener(this));
+            }
             //sets home page to tap
 
             mViewPager.setCurrentItem(1);
         }
     }
 
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        // When the given tab is selected, switch to the corresponding page in the ViewPager.
+        mViewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+    }
 
     @Override
     public void onResume(){
@@ -445,7 +490,6 @@ implements AccountFragment.OnFragmentInteractionListener {
             }
         }
     }
-
 
     private class TapTxnTask extends AsyncTask<TapTxn, Integer, TapTxn> {
         protected TapTxn doInBackground(TapTxn... taptxn) {
