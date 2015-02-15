@@ -141,12 +141,6 @@ implements SingleTable, CurrencyDAO {
         updateAllDenominations(id, denominations);
     }
 
-    @Override
-    public void moveTo(int id) {
-        ensureLocalCurrencyDetails(id);
-        _moveTo(id);
-    }
-
     /**
      * Does the legwork of moveTo() but does not ensure the currency
      * is already loaded, thus preventing endless loops in
@@ -154,7 +148,8 @@ implements SingleTable, CurrencyDAO {
      *
      * @param id currency ID
      */
-    private void _moveTo(int id) {
+    @Override
+    public void moveTo(int id) {
         Cursor c = null;
         try {
             c = getCursor(
@@ -322,7 +317,7 @@ implements SingleTable, CurrencyDAO {
             return;
         }
         try {
-            _moveTo(currencyId);
+            moveTo(currencyId);
             // If this succeeds, the currency is already local,
             // nothing else needs to be done
         }
