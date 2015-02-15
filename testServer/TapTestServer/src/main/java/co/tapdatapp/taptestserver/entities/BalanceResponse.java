@@ -1,5 +1,5 @@
 
-package co.tapdatapp.taptestserver.json;
+package co.tapdatapp.taptestserver.entities;
 
 public class BalanceResponse {
   public int id;

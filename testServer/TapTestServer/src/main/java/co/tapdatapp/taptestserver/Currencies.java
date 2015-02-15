@@ -3,8 +3,8 @@
  */
 package co.tapdatapp.taptestserver;
 
-import co.tapdatapp.taptestserver.json.CurrencyResponse;
-import co.tapdatapp.taptestserver.json.DenominationResponse;
+import co.tapdatapp.taptestserver.entities.CurrencyResponse;
+import co.tapdatapp.taptestserver.entities.DenominationResponse;
 
 public class Currencies {
   

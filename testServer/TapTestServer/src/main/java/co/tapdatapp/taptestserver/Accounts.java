@@ -3,10 +3,10 @@
  */
 package co.tapdatapp.taptestserver;
 
-import co.tapdatapp.taptestserver.json.BalanceResponse;
-import co.tapdatapp.taptestserver.json.CreateAccountResponse;
-import co.tapdatapp.taptestserver.json.GetBalancesResponse;
-import co.tapdatapp.taptestserver.json.ResponseResponse;
+import co.tapdatapp.taptestserver.entities.BalanceResponse;
+import co.tapdatapp.taptestserver.entities.CreateAccountResponse;
+import co.tapdatapp.taptestserver.entities.GetBalancesResponse;
+import co.tapdatapp.taptestserver.entities.ResponseResponse;
 import java.util.HashMap;
 import java.util.UUID;
 

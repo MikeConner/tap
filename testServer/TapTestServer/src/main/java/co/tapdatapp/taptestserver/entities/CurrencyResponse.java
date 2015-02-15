@@ -9,7 +9,7 @@
  * }
  * 
  */
-package co.tapdatapp.taptestserver.json;
+package co.tapdatapp.taptestserver.entities;
 
 public class CurrencyResponse {
   public String name;

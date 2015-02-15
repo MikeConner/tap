@@ -3,7 +3,7 @@
  */
 package co.tapdatapp.taptestserver;
 
-import co.tapdatapp.taptestserver.json.CreateAccountRequest;
+import co.tapdatapp.taptestserver.entities.CreateAccountRequest;
 import dev.Monitor;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
