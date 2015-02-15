@@ -7,7 +7,7 @@ import co.tapdatapp.taptestserver.controllers.Accounts;
 import co.tapdatapp.taptestserver.controllers.Currencies;
 import co.tapdatapp.taptestserver.controllers.Balances;
 import co.tapdatapp.taptestserver.entities.CreateAccountRequest;
-import dev.Monitor;
+import co.tapdatapp.taptestserver.dev.Monitor;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -31,13 +31,6 @@ public class ServiceEndpoint {
     currencies = new Currencies();
     balances = new Balances(currencies);
     accounts = new Accounts(balances);
-  }
-  
-  @GET
-  @Path("/ping")
-  public Response ping() {
-    Monitor.trace("ping was called");
-    return Response.ok().build();
   }
   
   @POST
