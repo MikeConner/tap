@@ -7,6 +7,7 @@ package co.tapdatapp.tapandroid.remotedata;
 import android.os.AsyncTask;
 
 import co.tapdatapp.tapandroid.AccountStartActivity;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class NewAccountTask extends AsyncTask<AccountStartActivity, Void, Void> {
@@ -24,7 +25,7 @@ public class NewAccountTask extends AsyncTask<AccountStartActivity, Void, Void> 
         }
         catch (Exception e) {
             // @TODO tie in to better UI handling for errors
-            throw new AssertionError(e);
+            TapApplication.unknownFailure(e);
         }
         return null;
     }
