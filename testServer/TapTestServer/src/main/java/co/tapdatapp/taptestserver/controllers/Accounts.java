@@ -1,7 +1,7 @@
 /**
  * Keep track of all accounts
  */
-package co.tapdatapp.taptestserver;
+package co.tapdatapp.taptestserver.controllers;
 
 import co.tapdatapp.taptestserver.entities.BalanceResponse;
 import co.tapdatapp.taptestserver.entities.CreateAccountResponse;
@@ -10,7 +10,7 @@ import co.tapdatapp.taptestserver.entities.ResponseResponse;
 import java.util.HashMap;
 import java.util.UUID;
 
-class Accounts {
+public class Accounts {
   
   private final HashMap<String, CreateAccountResponse> accounts = new HashMap<>();
   

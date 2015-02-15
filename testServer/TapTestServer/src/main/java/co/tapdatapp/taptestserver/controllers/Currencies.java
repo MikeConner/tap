@@ -1,7 +1,7 @@
 /**
  * Dummy currencies ...
  */
-package co.tapdatapp.taptestserver;
+package co.tapdatapp.taptestserver.controllers;
 
 import co.tapdatapp.taptestserver.entities.CurrencyResponse;
 import co.tapdatapp.taptestserver.entities.DenominationResponse;

@@ -3,6 +3,9 @@
  */
 package co.tapdatapp.taptestserver;
 
+import co.tapdatapp.taptestserver.controllers.Accounts;
+import co.tapdatapp.taptestserver.controllers.Currencies;
+import co.tapdatapp.taptestserver.controllers.Balances;
 import co.tapdatapp.taptestserver.entities.CreateAccountRequest;
 import dev.Monitor;
 import javax.ws.rs.Consumes;

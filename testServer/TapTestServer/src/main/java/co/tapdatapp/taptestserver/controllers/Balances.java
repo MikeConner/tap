@@ -1,12 +1,12 @@
 /**
  * Keep track of balances for accounts
  */
-package co.tapdatapp.taptestserver;
+package co.tapdatapp.taptestserver.controllers;
 
 import dev.Monitor;
 import java.util.HashMap;
 
-class Balances {
+public class Balances {
   
   private final HashMap<String, HashMap<Integer, Integer>> balances;
   
