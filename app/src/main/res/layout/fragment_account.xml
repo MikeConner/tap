@@ -7,13 +7,6 @@
     tools:context=".profile_main"
     tools:ignore="MergeRootFrame">
 
-    <Button
-        style="@style/AppTheme.Button"
-        android:text="up"
-        android:layout_margin="5dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"/>
-
     <ImageView
         android:id="@+id/profile_image"
         android:src="@drawable/brienne"
