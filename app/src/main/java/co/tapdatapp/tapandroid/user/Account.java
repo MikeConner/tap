@@ -86,7 +86,9 @@ public class Account {
      * automatically becomes the default
      */
     private void setCurrencyOnNewUser() throws WebServiceError {
-        BalanceList balances = new UserBalance().getAllBalances();
+        UserBalance balance = new UserBalance();
+        BalanceList balances = balance.getAllBalances();
+        balance.ensureLocalCurrencyDetails(balances);
         Integer currencyId = null;
         int highestBalance = 0;
         for (int currentId : balances.keySet()) {
