@@ -16,6 +16,7 @@ import java.util.Random;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.UserAccountCodec;
@@ -88,6 +89,8 @@ public class Account {
     private void setCurrencyOnNewUser() throws WebServiceError {
         UserBalance balance = new UserBalance();
         BalanceList balances = balance.getAllBalances();
+        // Bitcoin is a special case
+        balance.ensureLocalCurrencyDetails(CurrencyDAO.CURRENCY_BITCOIN);
         balance.ensureLocalCurrencyDetails(balances);
         Integer currencyId = null;
         int highestBalance = 0;
