@@ -24,8 +24,6 @@ public class CurrencyCodec {
 
     private static final String NAME = "name";
     private static final String ICON = "icon";
-    private static final String STATUS = "status";
-    private static final String STATUS_ACTIVE = "active";
     private static final String SYMBOL = "symbol";
     private static final String MAX_TAP = "max_amount";
     private static final String DENOMINATIONS = "denominations";
@@ -41,14 +39,6 @@ public class CurrencyCodec {
     public void parse(int currencyId, JSONObject json) throws JSONException {
         id = currencyId;
         name = json.getString(NAME);
-        if (!json.getString(STATUS).equals(STATUS_ACTIVE)) {
-            // @TODO this should probably be some other exception, but
-            // I'm unclear as to what the various status will mean and
-            // how they should be handled
-            throw new AssertionError(
-                "Currency " + name + " has non-active status"
-            );
-        }
         icon = json.getString(ICON);
         symbol = json.getString(SYMBOL);
         maxTap = json.getInt(MAX_TAP);
