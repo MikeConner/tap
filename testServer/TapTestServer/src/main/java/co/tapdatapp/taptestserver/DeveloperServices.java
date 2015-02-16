@@ -34,6 +34,7 @@ public class DeveloperServices {
   @Path("image/{name}")
   @Produces({ "image/png" })
   public Response getImage(@PathParam("name") String name) {
+    Monitor.trace("Request image " + name);
     Response r;
     try {
       r = Response.ok(ImageBuilder.getImage(name)).build();

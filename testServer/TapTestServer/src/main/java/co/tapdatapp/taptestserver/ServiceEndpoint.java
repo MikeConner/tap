@@ -8,9 +8,14 @@ import co.tapdatapp.taptestserver.controllers.Currencies;
 import co.tapdatapp.taptestserver.controllers.Balances;
 import co.tapdatapp.taptestserver.entities.CreateAccountRequest;
 import co.tapdatapp.taptestserver.dev.Monitor;
+import co.tapdatapp.taptestserver.entities.PayloadCreateRequest;
+import co.tapdatapp.taptestserver.entities.PayloadObject;
+import co.tapdatapp.taptestserver.entities.ResponseResponse;
+import co.tapdatapp.taptestserver.entities.TagResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -59,4 +64,44 @@ public class ServiceEndpoint {
     return Response.ok(accounts.getBalances(authId)).build();
   }
   
+  /**
+   * Return list of all tags owned by this user
+   * 
+   * @param authId authentication token
+   * @return Array of tag objects
+   */
+  @GET
+  @Path("nfc_tags.json")
+  @Produces({ MediaType.APPLICATION_JSON })
+  public Response getUserTags(@QueryParam(AUTH_TOKEN) String authId) {
+    TagResponse[] response = accounts.getUserTags(authId);
+    Monitor.trace("Got " + response.length + " tags for " + authId);
+    return Response.ok(new ResponseResponse(response)).build();
+  }
+  
+  /**
+   * Create a new tag
+   * 
+   * @param authId
+   * @return 
+   */
+  @POST
+  @Path("nfc_tags.json")
+  @Produces({ MediaType.APPLICATION_JSON })
+  public Response createTag(@QueryParam(AUTH_TOKEN) String authId) {
+    TagResponse tag = accounts.newTag(authId);
+    Monitor.trace(authId + " created new tag " + tag.tag_id);
+    return Response.ok(new ResponseResponse(tag)).build();
+  }
+  
+  @POST
+  @Path("payloads.json")
+  @Produces({ MediaType.APPLICATION_JSON })
+  public Response createPayload(
+    PayloadCreateRequest payload,
+    @QueryParam(AUTH_TOKEN) String authId
+  ) {
+    PayloadObject createdPayload = accounts.newPayload(authId, payload);
+    return Response.ok(new ResponseResponse(createdPayload.getSlug())).build();
+  }
 }

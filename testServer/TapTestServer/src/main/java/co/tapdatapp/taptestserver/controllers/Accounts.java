@@ -6,13 +6,19 @@ package co.tapdatapp.taptestserver.controllers;
 import co.tapdatapp.taptestserver.entities.BalanceResponse;
 import co.tapdatapp.taptestserver.entities.CreateAccountResponse;
 import co.tapdatapp.taptestserver.entities.GetBalancesResponse;
+import co.tapdatapp.taptestserver.entities.PayloadCreateRequest;
+import co.tapdatapp.taptestserver.entities.PayloadObject;
 import co.tapdatapp.taptestserver.entities.ResponseResponse;
+import co.tapdatapp.taptestserver.entities.TagResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class Accounts {
   
   private final HashMap<String, CreateAccountResponse> accounts = new HashMap<>();
+  private final ArrayList<TagResponse> tags = new ArrayList<>();
+  private final ArrayList<PayloadObject> payloads = new ArrayList<>();
   
   private final Balances balances;
   
@@ -51,4 +57,32 @@ public class Accounts {
     return new ResponseResponse(rv);
   }
   
+  public TagResponse newTag(String authId) {
+    TagResponse rv = new TagResponse(authId);
+    tags.add(rv);
+    return rv;
+  }
+  
+  public TagResponse[] getUserTags(String authId) {
+    ArrayList<TagResponse> rv = new ArrayList<>();
+    for (TagResponse oneTag : tags) {
+      if (oneTag.belongsTo(authId)) {
+        rv.add(oneTag);
+      }
+    }
+    return rv.toArray(new TagResponse[rv.size()]);
+  }
+  
+  public PayloadObject newPayload(String auth, PayloadCreateRequest payload) {
+    PayloadObject ob = new PayloadObject();
+    ob.text = payload.payload.content;
+    ob.threshold = payload.payload.threshold;
+    ob.uri = "";
+    ob.payload_image = payload.payload.mobile_payload_image_url;
+    ob.payload_thumb = payload.payload.mobile_payload_thumb_url;
+    ob.setTagId(payload.tag_id);
+    ob.generateSlug();
+    payloads.add(ob);
+    return ob;
+  }
 }
