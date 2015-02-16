@@ -28,12 +28,13 @@ public class AccountFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+        Account account = new Account();
 
-        TextView nickName = (TextView)  getActivity().findViewById(R.id.etNickName);
-        nickName.setText(new Account().getNickname());
+        TextView nickName = (TextView)getActivity().findViewById(R.id.etNickName);
+        nickName.setText(account.getNickname());
 
         TextView email = (TextView)getActivity().findViewById(R.id.etEmail);
-        String mEmailAddy = new Account().getEmail();
+        String mEmailAddy = account.getEmail();
         if (mEmailAddy.equals("")){
             email.setText("no@email.addy");
         }else
@@ -45,7 +46,7 @@ public class AccountFragment extends Fragment {
         nickName.setEnabled(false);
 
         ImageView ivProfilePic = (ImageView) getActivity().findViewById(R.id.profile_image);
-        String mThumb = new Account().getProfilePicThumbUrl();
+        String mThumb = account.getProfilePicThumbUrl();
         if (mThumb.isEmpty()){
             //do nothing or set it to some image?
             ivProfilePic.setImageResource(R.drawable.brienne);
