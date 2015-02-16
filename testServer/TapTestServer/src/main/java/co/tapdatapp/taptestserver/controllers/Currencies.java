@@ -21,14 +21,14 @@ public class Currencies {
     CurrencyResponse rv = new CurrencyResponse();
     Currency c = currencies[id];
     rv.amount_per_dollar = 0;
-    rv.icon = "http://www.example.com/nothing.png";
+    rv.icon = ImageBuilder.getURL(200, 200, c.name);
     rv.max_amount = c.max_amount;
     rv.name = c.name;
     rv.symbol = c.symbol;
     rv.denominations = new DenominationResponse[3];
-    rv.denominations[0] = new DenominationResponse(1, "http://www.example.com/dr1.png");
-    rv.denominations[1] = new DenominationResponse(5, "http://www.example.com/dr5.png");
-    rv.denominations[2] = new DenominationResponse(10, "http://www.example.com/dr10.png");
+    rv.denominations[0] = new DenominationResponse(1, ImageBuilder.getURL(275, 100, "1"));
+    rv.denominations[1] = new DenominationResponse(5, ImageBuilder.getURL(275, 100, "5"));
+    rv.denominations[2] = new DenominationResponse(10, ImageBuilder.getURL(275, 100, "10"));
     return rv;
   }
   
