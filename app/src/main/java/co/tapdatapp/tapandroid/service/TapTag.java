@@ -1,5 +1,6 @@
 package co.tapdatapp.tapandroid.service;
 
+import android.os.Bundle;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
 public class TapTag {
     private HttpHelper httpHelper;
@@ -47,17 +49,15 @@ public class TapTag {
                 payload.put("mobile_payload_thumb_url", mYapa.getThumbYapa());
 
                 json.put("auth_token", mAuthToken);
-                json.put("tag_id", mTagID.replaceAll("-",""));
+                json.put("tag_id", mTagID.replaceAll("-", ""));
                 json.put("payload", payload);
                 //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
-                output = mTapCloud.httpPost(httpHelper.getFullUrl(R.string.ENDPOINT_YAPA), json);
-                mYapa.setYapaID( output.getString("response"));
+                output = httpHelper.HttpPostJSON(httpHelper.getFullUrl(R.string.ENDPOINT_YAPA), new Bundle(), json);
+                mYapa.setYapaID(output.getString("response"));
             }
-            catch (JSONException e) {
-                e.printStackTrace();
-                Log.e("JSON", "" + e);
+            catch (Exception e) {
+                TapApplication.unknownFailure(e);
             }
-
         }
         else
         {
@@ -70,10 +70,8 @@ public class TapTag {
             }
         }
         mTapYapas.add(mYapa);
-
-
-
     }
+
     public void loadYapa(String auth_token){
         mAuthToken = auth_token;
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
@@ -131,7 +129,7 @@ public class TapTag {
 
     public String
     generateNewTag(String auth_token, String default_yapa_thumb)
-    throws JSONException {
+    throws JSONException, WebServiceError {
         mAuthToken = auth_token;
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
         mTapCloud = new TapCloud();
@@ -145,7 +143,7 @@ public class TapTag {
         //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
 
         //TODO: Update this to session controller instead of registration controller
-        output = mTapCloud.httpPost(httpHelper.getFullUrl(R.string.ENDPOINT_TAGS), tag);
+        output = httpHelper.HttpPostJSON(httpHelper.getFullUrl(R.string.ENDPOINT_TAGS), new Bundle(), tag);
         mTagID = output.getJSONObject("response").getString("id");
         mTagName = output.getJSONObject("response").getString("name");
 

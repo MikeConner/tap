@@ -1,5 +1,6 @@
 package co.tapdatapp.tapandroid.service;
 
+import android.os.Bundle;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -12,6 +13,8 @@ import java.util.Map;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+import co.tapdatapp.tapandroid.remotedata.WebResponse;
+import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class TapUser {
@@ -51,12 +54,14 @@ public class TapUser {
     }
 
     public Map<String, String>
-    getTags(String auth_token) throws JSONException {
+    getTags(String auth_token) throws WebServiceError {
         mAuthToken = auth_token;
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
         mTapCloud = new TapCloud();
-        JSONObject output = mTapCloud.httpGet(httpHelper.getFullUrl(R.string.ENDPOINT_TAGS));
+        JSONObject output = null;
         try {
+            WebResponse wr = httpHelper.HttpGet(httpHelper.getFullUrl(R.string.ENDPOINT_TAGS), new Bundle());
+            output = wr.getJSON();
             JSONArray jsonTags = new JSONArray();
             mtagMap = new HashMap<>();
             try {
@@ -80,7 +85,11 @@ public class TapUser {
         }
         catch (JSONException je) {
             Log.e("WEBSERVICE", output.toString());
-            throw je;
+            throw new WebServiceError(je);
+        }
+        catch (Exception e) {
+            TapApplication.unknownFailure(e);
+            throw new WebServiceError(e);
         }
     }
 
