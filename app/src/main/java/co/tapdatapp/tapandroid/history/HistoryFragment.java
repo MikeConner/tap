@@ -23,6 +23,7 @@ import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.yapa.YapaImage;
 import co.tapdatapp.tapandroid.yapa.YapaUrl;
+import co.tapdatapp.tapandroid.yapa.YapaText;
 
 public class HistoryFragment extends Fragment implements HistorySyncCallback {
 
@@ -73,7 +74,7 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
                  * happen depending on the type of yapa.
                  */
                 Intent openYapa = null;
-                openYapa = new Intent(getActivity(), YapaUrl.class);
+                openYapa = new Intent(getActivity(), YapaImage.class);
                 startActivity(openYapa);
             }
         });
