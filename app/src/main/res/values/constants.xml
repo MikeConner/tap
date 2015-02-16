@@ -12,6 +12,13 @@
     <string name="ENDPOINT_NEW_TAG">nfc_tags.json</string>
     <string name="ENDPOINT_GET_CURRENCY">currencies.json</string>
     <string name="ENDPOINT_GET_BALANCES">users/balance_inquiry</string>
+    <string name="ENDPOINT_USER_API">users/me.json</string>
+    <string name="ENDPOINT_RESET_NICK">users/reset_nickname</string>
+    <string name="ENDPOINT_TAGS">nfc_tags.json</string>
+    <string name="ENDPOINT_TAG">nfc_tags/0.json</string>
+    <string name="ENDPOINT_YAPA">payloads.json</string>
+    <string name="ENDPOINT_TAP_ONE_YAPA">payloads/</string>
+    <string name="ENDPOINT_TRANSACTION">transactions.json</string>
 
     <string name="PHONE_SECRET_SIZE">16</string>
     <string name="PHONE_SECRET_ALLOWED_CHARACTERS">0123456789qwertyuiopasdfghjklzxcvbnm</string>

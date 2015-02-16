@@ -9,10 +9,14 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class TapUser {
 
+    private final HttpHelper httpHelper;
     private String mOutboundBTCaddress;
     private String mInboundBTCaddress;
     private String mAuthToken;
@@ -22,61 +26,66 @@ public class TapUser {
     private String mProfilePicFull;
     private String mInboundQRcodePicture;
 
-    public String getNewNickname(String auth_token){
+    public TapUser() {
+        httpHelper = new HttpHelper();
+    }
+
+    public String
+    getNewNickname(String auth_token) throws JSONException {
         mAuthToken = auth_token;
         JSONObject user = new JSONObject();
         JSONObject json = new JSONObject();
         JSONObject output;
 
-        String mURL = TapCloud.TAP_USERNICK_API_ENDPOINT_URL + "?auth_token=" + mAuthToken;
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
         mTapCloud = new TapCloud();
-        try {
-            user.put("auth_token", mAuthToken);
-            json.put("user", user);
-            //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
-            output = mTapCloud.httpPut(mURL, json);
-            return output.getJSONObject("response").getString("nickname");
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("JSON", "" + e);
-            return "";
-        }
+        user.put("auth_token", mAuthToken);
+        json.put("user", user);
+        //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
+        output = mTapCloud.httpPut(httpHelper.getFullUrl(R.string.ENDPOINT_RESET_NICK), json);
+        return output.getJSONObject("response").getString("nickname");
     }
 
     public Map<String, String> myTagHash(){
         return mtagMap;
     }
 
-    public Map<String, String> getTags(String auth_token){
+    public Map<String, String>
+    getTags(String auth_token) throws JSONException {
         mAuthToken = auth_token;
-        String mURL = TapCloud.TAP_TAGS_API_ENDPOINT_URL + "?auth_token=" + mAuthToken;
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
         mTapCloud = new TapCloud();
-        JSONObject output = new JSONObject();
+        JSONObject output = mTapCloud.httpGet(httpHelper.getFullUrl(R.string.ENDPOINT_TAGS));
         try {
-            output = mTapCloud.httpGet(mURL);
-            JSONArray jsonTags = output.getJSONArray("response");
+            JSONArray jsonTags = new JSONArray();
+            mtagMap = new HashMap<>();
+            try {
+                jsonTags = output.getJSONArray("response");
+            }
+            catch (JSONException je) {
+                if (je.getMessage().startsWith("No value for")) {
+                    // In case of empty return value, return empty Map
+                    return mtagMap;
+                }
+                else {
+                    TapApplication.unknownFailure(je);
+                }
+            }
             int length = jsonTags.length();
-
-            mtagMap = new HashMap<String, String>();
 
             for (int i = 0; i < length; i++) {
                 mtagMap.put(jsonTags.getJSONObject(i).getString("id"), jsonTags.getJSONObject(i).getString("name"));
             }
-
-
+            return mtagMap;
         }
-        catch (Exception e)
-        {
-            //TODO: any errors possible here?
+        catch (JSONException je) {
+            Log.e("WEBSERVICE", output.toString());
+            throw je;
         }
-        return mtagMap;
     }
 
 
-    public void UpdateUser(String auth_token){
+    public void UpdateUser(String auth_token) throws JSONException {
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
         mTapCloud = new TapCloud();
         //END
@@ -86,31 +95,25 @@ public class TapUser {
         JSONObject user = new JSONObject();
         JSONObject json = new JSONObject();
         JSONObject output;
-        try {
-            Account account = new Account();
-            if (account.getEmail().isEmpty()){
+        Account account = new Account();
+        if (account.getEmail().isEmpty()){
 //                user.put("email", "your@email.addy");
-            } else {
-                user.put("email", account.getEmail());
-            }
+        } else {
+            user.put("email", account.getEmail());
+        }
 
-            user.put("name", new Account().getNickname());
-            user.put("outbound_btc_address", mOutboundBTCaddress);
-            user.put("mobile_profile_image_url", mProfilePicFull);
-            user.put("mobile_profile_thumb_url", new Account().getProfilePicThumbUrl());
+        user.put("name", new Account().getNickname());
+        user.put("outbound_btc_address", mOutboundBTCaddress);
+        user.put("mobile_profile_image_url", mProfilePicFull);
+        user.put("mobile_profile_thumb_url", new Account().getProfilePicThumbUrl());
 
 
-            json.put("user", user);
-            //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
-            output = mTapCloud.httpPut(TapCloud.TAP_USER_API_ENDPOINT_URL + ".json?auth_token=" + mAuthToken, json);
+        json.put("user", user);
+        //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
+        output = mTapCloud.httpPut(httpHelper.getFullUrl(R.string.ENDPOINT_USER_API), json);
 //            mAuthToken = output.getJSONObject("response").getString("auth_token");
 //            mNickName = output.getJSONObject("response").getString("nickname");
 
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("JSON", "" + e);
-        }
     }
 
     public void setProfilePicFull(String new_value){

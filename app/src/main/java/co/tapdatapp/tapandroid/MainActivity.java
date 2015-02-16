@@ -42,6 +42,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import co.tapdatapp.tapandroid.currency.BalancesActivity;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
@@ -342,7 +344,12 @@ implements AccountFragment.OnFragmentInteractionListener,
       //          }
                 mTapUser.setProfilePicFull(newFullImageURL );
                 new Account().setProfilePicThumbUrl(newThumbImageURL);
-                mTapUser.UpdateUser(mAuthToken);
+                try {
+                    mTapUser.UpdateUser(mAuthToken);
+                }
+                catch (JSONException je) {
+                    TapApplication.unknownFailure(je);
+                }
             }
             else {
                 Uri mContentURI = data.getData();
@@ -362,7 +369,12 @@ implements AccountFragment.OnFragmentInteractionListener,
                 }
                 mTapUser.setProfilePicFull(newFullImageURL );
                 new Account().setProfilePicThumbUrl(newThumbImageURL);
-                mTapUser.UpdateUser(mAuthToken);
+                try {
+                    mTapUser.UpdateUser(mAuthToken);
+                }
+                catch (JSONException je) {
+                    TapApplication.unknownFailure(je);
+                }
             }
         }
     }
@@ -493,12 +505,14 @@ implements AccountFragment.OnFragmentInteractionListener,
 
     private class TapTxnTask extends AsyncTask<TapTxn, Integer, TapTxn> {
         protected TapTxn doInBackground(TapTxn... taptxn) {
-            int count = taptxn.length;
-            for (int i = 0; i < count; i++) {
-                taptxn[i].TapAfool();
-//                publishProgress((int) ((i / (float) count) * 100));
-                // Escape early if cancel() is called
-                if (isCancelled()) break;
+            if (taptxn.length != 1) {
+                throw new AssertionError("Must pass a single TapTxn");
+            }
+            try {
+                taptxn[0].TapAfool();
+            }
+            catch (JSONException je) {
+                TapApplication.unknownFailure(je);
             }
             return taptxn[0];
         }
@@ -594,7 +608,6 @@ implements AccountFragment.OnFragmentInteractionListener,
     }
 
     public void myTags(View view){
-        TagsFragment mTags = new TagsFragment();
         Intent i = new Intent(this,TagActivity.class);
         i.putExtra("AuthToken", mAuthToken);
         startActivity(i);
@@ -606,7 +619,14 @@ implements AccountFragment.OnFragmentInteractionListener,
     }
     private class newNickTask extends AsyncTask<TapUser, Void, String> {
         protected String doInBackground(TapUser... tapusers) {
-            return tapusers[0].getNewNickname(mAuthToken);
+            String returnValue = "";
+            try {
+                returnValue = tapusers[0].getNewNickname(mAuthToken);
+            }
+            catch (JSONException je) {
+                TapApplication.unknownFailure(je);
+            }
+            return returnValue;
         }
 
         protected void onProgressUpdate(Void... progress) {
@@ -617,17 +637,6 @@ implements AccountFragment.OnFragmentInteractionListener,
             TextView et = (TextView) findViewById(R.id.etNickName);
             et.setText(      result  );
         }
-    }
-
-    public void writeUser(View view){
-        TextView edName = (TextView) findViewById(R.id.etNickName);
-        TextView edEmail = (TextView) findViewById(R.id.etEmail);
-        //EditText edWithDraw = (EditText) findViewById(R.id.etWithdraw);
-        new Account().setNickname(edName.getText().toString());
-        //mTapUser.setBTCoutbound( edWithDraw.getText().toString());
-        new Account().setEmail(edEmail.getText().toString());
-        mTapUser.UpdateUser(mAuthToken);
-
     }
 
     //generic stuff for fragments

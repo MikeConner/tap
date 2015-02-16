@@ -59,27 +59,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class TapCloud {
     DefaultHttpClient client;
 
-    static {
-        // intermediate fix until all code is reorganized into the
-        // HttpHelper class
-        TAP_SERVER = TapApplication.string(R.string.SERVER);
-    }
-
-    public final static String TAP_SERVER;
-
-    public final static String TAP_USER_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/users/me";
-    public final static String TAP_USERNICK_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/users/reset_nickname";
-
-
-    public final static String TAP_TAGS_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/nfc_tags.json";
-    public final static String TAP_TAG_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/nfc_tags/0.json";
-
-    public final static String TAP_YAPA_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/payloads.json";
-    public final static String TAP_ONE_YAPA_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/payloads/";
-
-    public final static String TAP_TXN_API_ENDPOINT_URL = "http://" + TAP_SERVER + "/mobile/1/transactions.json";
-
-
     //public final static String TAP_USER_TXNS_API_ENDPOINT_URL = "http://192.168.1.135:3000/mobile/1/transactions.json";
 
 

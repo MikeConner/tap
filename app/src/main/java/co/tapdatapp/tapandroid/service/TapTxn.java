@@ -1,16 +1,15 @@
 package co.tapdatapp.tapandroid.service;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import co.tapdatapp.tapandroid.MainActivity;
+import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 
-/**
- * Created by arash on 9/28/14.
- */
 public class TapTxn {
+
+    private final HttpHelper httpHelper;
+
     private String mTXNid = "";
     private String mPayloadURL = "";
     private String mUserNickname ="";
@@ -32,6 +31,10 @@ public class TapTxn {
     private String mAuthToken;
 
     private float mTxnAmount;
+
+    public TapTxn() {
+        httpHelper = new HttpHelper();
+    }
 
     public void setTxnAmount(float new_amount){
         mTxnAmount = new_amount;
@@ -126,7 +129,7 @@ public class TapTxn {
     }
 
 
-    public void TapAfool(){
+    public void TapAfool() throws JSONException {
 
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
         mTapCloud = new TapCloud();
@@ -134,41 +137,28 @@ public class TapTxn {
 
         if (mAuthToken != null && mTagID != null && mTxnAmount != 0){
 
-
             JSONObject json = new JSONObject();
             JSONObject output;
-            try {
-                json.put("auth_token", mAuthToken);
-                json.put("tag_id", mTagID   );
-                json.put("amount", mTxnAmount);
+            json.put("auth_token", mAuthToken);
+            json.put("tag_id", mTagID   );
+            json.put("amount", mTxnAmount);
 
 
-                //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
-                output = mTapCloud.httpPost(TapCloud.TAP_TXN_API_ENDPOINT_URL + "auth_token=" + mAuthToken, json);
-                mSatoshi = output.getJSONObject("response").getInt("satoshi_amount");
-                mAmountUSD = (float) (output.getJSONObject("response").getInt("dollar_amount") / 100);
-                mEndingUserBalanaceSatoshi = output.getJSONObject("response").getInt("final_balance");
-                mUserImageThumb = output.getJSONObject("response").getString("tapped_user_thumb");
-                mUserNickname = output.getJSONObject("response").getString("tapped_user_name");
+            //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
+            output = mTapCloud.httpPost(httpHelper.getFullUrl(R.string.ENDPOINT_TRANSACTION), json);
+            mSatoshi = output.getJSONObject("response").getInt("satoshi_amount");
+            mAmountUSD = (float) (output.getJSONObject("response").getInt("dollar_amount") / 100);
+            mEndingUserBalanaceSatoshi = output.getJSONObject("response").getInt("final_balance");
+            mUserImageThumb = output.getJSONObject("response").getString("tapped_user_thumb");
+            mUserNickname = output.getJSONObject("response").getString("tapped_user_name");
 
+            mPayloadURL = output.getJSONObject("response").getJSONObject("payload").getString("uri");
+            mMessage = output.getJSONObject("response").getJSONObject("payload").getString("text");
+            mPayloadImageThumb = output.getJSONObject("response").getJSONObject("payload").getString("thumb");
+            mPayloadImage = output.getJSONObject("response").getJSONObject("payload").getString("image");
 
-                mPayloadURL = output.getJSONObject("response").getJSONObject("payload").getString("uri");
-                mMessage = output.getJSONObject("response").getJSONObject("payload").getString("text");
-                mPayloadImageThumb = output.getJSONObject("response").getJSONObject("payload").getString("thumb");
-                mPayloadImage = output.getJSONObject("response").getJSONObject("payload").getString("image");
+//            /{"response":{"satoshi":936593,"payload":{"uri":"https:\/\/s3.amazonaws.com\/tapyapa\/new_key_needed","text":"Enter Your message here"}}}
 
-
-
-    //            /{"response":{"satoshi":936593,"payload":{"uri":"https:\/\/s3.amazonaws.com\/tapyapa\/new_key_needed","text":"Enter Your message here"}}}
-                String b = "sdlfkjsdf";
-    //            mAuthToken = output.getJSONObject("response").getString("auth_token");
-    //            mNickName = output.getJSONObject("response").getString("nickname");
-
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-                Log.e("JSON", "" + e);
-            }
         }
     }
 

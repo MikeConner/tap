@@ -27,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -85,9 +87,13 @@ public class WriteActivity extends Activity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus){
                     EditText g = (EditText) v;
-
-                    mTapTag.updateTag(mAuthToken,mTapTag.getTagID().replaceAll("-",""), g.getText().toString() );
+                    try {
+                        mTapTag.updateTag(mAuthToken, mTapTag.getTagID().replaceAll("-", ""), g.getText().toString());
 //                    Toast.makeText(WriteActivity.this, "lost it", Toast.LENGTH_LONG);
+                    }
+                    catch (JSONException je) {
+                        TapApplication.unknownFailure(je);
+                    }
                 }
             }
         });
@@ -108,7 +114,12 @@ public class WriteActivity extends Activity {
                     if (!hasFocus){
                         EditText g = (EditText) v;
                         mTapTag.myYappas().get(0).setContent(((EditText) v).getText().toString());
-                        mTapTag.myYappas().get(0).updateYapa(mAuthToken, mTapTag.getTagID());
+                        try {
+                            mTapTag.myYappas().get(0).updateYapa(mAuthToken, mTapTag.getTagID());
+                        }
+                        catch (JSONException je) {
+                            TapApplication.unknownFailure(je);
+                        }
                     }
 
                 }
@@ -234,7 +245,12 @@ public class WriteActivity extends Activity {
                         myYappas.get(0).setContent(edMessage.getText().toString());
                         myYappas.get(0).setThumbYapa(newThumbImageURL);
                         myYappas.get(0).setFullYapa(newFullImageURL);
-                        myYappas.get(0).updateYapa(mAuthToken, mTapTag.getTagID());
+                        try {
+                            myYappas.get(0).updateYapa(mAuthToken, mTapTag.getTagID());
+                        }
+                        catch (JSONException je) {
+                            TapApplication.unknownFailure(je);
+                        }
                     }
                     else {
                         edMessage  = (EditText) findViewById(R.id.edBonusYapa);
@@ -252,7 +268,12 @@ public class WriteActivity extends Activity {
                             myYappas.get(1).setContent(edMessage.getText().toString());
                             myYappas.get(1).setThumbYapa(newThumbImageURL);
                             myYappas.get(1).setFullYapa(newFullImageURL);
-                            myYappas.get(1).updateYapa(mAuthToken, mTapTag.getTagID());
+                            try {
+                                myYappas.get(1).updateYapa(mAuthToken, mTapTag.getTagID());
+                            }
+                            catch (JSONException je) {
+                                TapApplication.unknownFailure(je);
+                            }
                         }
                     }
 
@@ -280,7 +301,7 @@ public class WriteActivity extends Activity {
 
                 }
                 String newFullImageURL = mTapCloud.uploadToS3withURI(mContentURI, Account.getRandomString(16) +".jpg", this);
-                String newFUllImagePath = TapCloud.getRealPathFromURI(this,mContentURI);
+                String newFUllImagePath = TapCloud.getRealPathFromURI(this, mContentURI);
                 String newThumbImageURL = "";
                 try {
                     ExifInterface exif = new ExifInterface(newFUllImagePath);
