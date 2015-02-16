@@ -157,6 +157,9 @@ public class Account {
      * @param to user's nickname
      */
     public void setNickname(String to) {
+        if (to == null) {
+            throw new AssertionError("setting nickname to null");
+        }
         set(NICKNAME, to);
     }
 
