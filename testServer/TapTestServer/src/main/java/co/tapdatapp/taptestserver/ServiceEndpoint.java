@@ -102,6 +102,7 @@ public class ServiceEndpoint {
     @QueryParam(AUTH_TOKEN) String authId
   ) {
     PayloadObject createdPayload = accounts.newPayload(authId, payload);
+    Monitor.trace(authId + " created payload " + createdPayload.getSlug());
     return Response.ok(new ResponseResponse(createdPayload.getSlug())).build();
   }
 }
