@@ -1,10 +1,12 @@
 package co.tapdatapp.tapandroid.service;
 
-import org.json.JSONException;
+import android.os.Bundle;
+
 import org.json.JSONObject;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+import co.tapdatapp.tapandroid.user.Account;
 
 public class TapTxn {
 
@@ -22,13 +24,10 @@ public class TapTxn {
 
 
     private String mTagID;
-    private TapCloud mTapCloud;
     private int mSatoshi;
     private String mMessage;
     private String mTxnDate;
     private int mEndingUserBalanaceSatoshi = 0;
-
-    private String mAuthToken;
 
     private float mTxnAmount;
 
@@ -41,9 +40,6 @@ public class TapTxn {
     }
     public void setTagID(String new_value){
         mTagID = new_value;
-    }
-    public void setAuthToken(String new_value){
-        mAuthToken = new_value;
     }
 
     public String getTxnDate(){
@@ -129,37 +125,35 @@ public class TapTxn {
     }
 
 
-    public void TapAfool() throws JSONException {
+    public void TapAfool() throws Exception {
 
-        //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
-        mTapCloud = new TapCloud();
-        //END
+        if (mTagID == null) {
+            throw new AssertionError("tag id == null");
+        }
+        if (mTxnAmount == 0) {
+            throw new AssertionError("transaction amount == 0");
+        }
 
-        if (mAuthToken != null && mTagID != null && mTxnAmount != 0){
+        JSONObject json = new JSONObject();
+        JSONObject output;
+        json.put("auth_token", new Account().getAuthToken());
+        json.put("tag_id", mTagID   );
+        json.put("amount", mTxnAmount);
 
-            JSONObject json = new JSONObject();
-            JSONObject output;
-            json.put("auth_token", mAuthToken);
-            json.put("tag_id", mTagID   );
-            json.put("amount", mTxnAmount);
+        output = httpHelper.HttpPostJSON(httpHelper.getFullUrl(R.string.ENDPOINT_TRANSACTION), new Bundle(), json);
+        mSatoshi = output.getJSONObject("response").getInt("satoshi_amount");
+        mAmountUSD = (float) (output.getJSONObject("response").getInt("dollar_amount") / 100);
+        mEndingUserBalanaceSatoshi = output.getJSONObject("response").getInt("final_balance");
+        mUserImageThumb = output.getJSONObject("response").getString("tapped_user_thumb");
+        mUserNickname = output.getJSONObject("response").getString("tapped_user_name");
 
-
-            //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
-            output = mTapCloud.httpPost(httpHelper.getFullUrl(R.string.ENDPOINT_TRANSACTION), json);
-            mSatoshi = output.getJSONObject("response").getInt("satoshi_amount");
-            mAmountUSD = (float) (output.getJSONObject("response").getInt("dollar_amount") / 100);
-            mEndingUserBalanaceSatoshi = output.getJSONObject("response").getInt("final_balance");
-            mUserImageThumb = output.getJSONObject("response").getString("tapped_user_thumb");
-            mUserNickname = output.getJSONObject("response").getString("tapped_user_name");
-
-            mPayloadURL = output.getJSONObject("response").getJSONObject("payload").getString("uri");
-            mMessage = output.getJSONObject("response").getJSONObject("payload").getString("text");
-            mPayloadImageThumb = output.getJSONObject("response").getJSONObject("payload").getString("thumb");
-            mPayloadImage = output.getJSONObject("response").getJSONObject("payload").getString("image");
+        mPayloadURL = output.getJSONObject("response").getJSONObject("payload").getString("uri");
+        mMessage = output.getJSONObject("response").getJSONObject("payload").getString("text");
+        mPayloadImageThumb = output.getJSONObject("response").getJSONObject("payload").getString("thumb");
+        mPayloadImage = output.getJSONObject("response").getJSONObject("payload").getString("image");
 
 //            /{"response":{"satoshi":936593,"payload":{"uri":"https:\/\/s3.amazonaws.com\/tapyapa\/new_key_needed","text":"Enter Your message here"}}}
 
-        }
     }
 
 }

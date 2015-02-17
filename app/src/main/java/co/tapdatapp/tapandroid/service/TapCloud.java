@@ -126,48 +126,6 @@ public class TapCloud {
         return output;
     }
 
-
-    public JSONObject httpPost(String url, JSONObject json){
-        //TODO: Create this one time in class instantiation vs. here and destory later
-        client = new DefaultHttpClient();
-        //END
-
-        HttpPost post = new HttpPost(url);
-        String response = null;
-        JSONObject output = new JSONObject();
-        try {
-            try {
-
-                // setup the request headers
-                post.setHeader("Accept", "application/json");
-                post.setHeader("Content-Type", "application/json");
-
-                StringEntity se = new StringEntity(json.toString());
-                post.setEntity(se);
-
-
-                ResponseHandler<String> responseHandler = new BasicResponseHandler();
-                response = client.execute(post, responseHandler);
-                output = new JSONObject(response);
-
-
-            } catch (HttpResponseException e) {
-                e.printStackTrace();
-                Log.e("ClientProtocol", "" + e);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e("IO", "" + e);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("JSON", "" + e);
-        }
-
-
-        return output;
-    }
-
-
     public JSONObject httpGet(String url) {
         //URLEncoder.encode
         StringBuilder builder = new StringBuilder();

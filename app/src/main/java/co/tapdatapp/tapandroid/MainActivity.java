@@ -48,6 +48,7 @@ import co.tapdatapp.tapandroid.currency.BalancesActivity;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
+import co.tapdatapp.tapandroid.remotedata.TapTxnTask;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
@@ -57,12 +58,11 @@ import co.tapdatapp.tapandroid.voucher.RedeemVoucherActivity;
 public class MainActivity
 extends Activity
 implements AccountFragment.OnFragmentInteractionListener,
-           ActionBar.TabListener {
+           ActionBar.TabListener,
+           TapTxnTask.TapTxnInitiator {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
-
-    protected String mAuthToken;
 
     protected TapUser mTapUser;
     protected TapCloud mTapCloud;
@@ -83,6 +83,12 @@ implements AccountFragment.OnFragmentInteractionListener,
     static final int REQUEST_TAKE_PHOTO = 1;
 
     CurrencyDAO currency;
+
+    /**
+     * For tapping, store the desired transaction object to be
+     * referenced during background task execution
+     */
+    TapTxn outgoingTransaction = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -345,7 +351,7 @@ implements AccountFragment.OnFragmentInteractionListener,
                 mTapUser.setProfilePicFull(newFullImageURL );
                 new Account().setProfilePicThumbUrl(newThumbImageURL);
                 try {
-                    mTapUser.UpdateUser(mAuthToken);
+                    mTapUser.UpdateUser(new Account().getAuthToken());
                 }
                 catch (JSONException je) {
                     TapApplication.unknownFailure(je);
@@ -370,7 +376,7 @@ implements AccountFragment.OnFragmentInteractionListener,
                 mTapUser.setProfilePicFull(newFullImageURL );
                 new Account().setProfilePicThumbUrl(newThumbImageURL);
                 try {
-                    mTapUser.UpdateUser(mAuthToken);
+                    mTapUser.UpdateUser(new Account().getAuthToken());
                 }
                 catch (JSONException je) {
                     TapApplication.unknownFailure(je);
@@ -457,7 +463,6 @@ implements AccountFragment.OnFragmentInteractionListener,
     //NFC STUFF
     @Override
     protected void onNewIntent(Intent intent) {
-
         //TODO: WHen not in armed mode, if intent is detected, change to send mode
         super.onNewIntent(intent);
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
@@ -478,12 +483,10 @@ implements AccountFragment.OnFragmentInteractionListener,
                 }
 
                 if (mArmed){
-                    TapTxn txn = new TapTxn();
-                    txn.setAuthToken(mAuthToken);
-                    txn.setTagID(result.replaceAll("-",""));
-                    txn.setTxnAmount(new Account().getArmedAmount());
-                    new TapTxnTask().execute(txn);
-
+                    outgoingTransaction = new TapTxn();
+                    outgoingTransaction.setTagID(result.replaceAll("-",""));
+                    outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
+                    new TapTxnTask().execute(this);
 
 //                    Toast.makeText(MainActivity.this, result.getPayloadImageThumb(), Toast.LENGTH_LONG).show();
 
@@ -503,33 +506,35 @@ implements AccountFragment.OnFragmentInteractionListener,
         }
     }
 
-    private class TapTxnTask extends AsyncTask<TapTxn, Integer, TapTxn> {
-        protected TapTxn doInBackground(TapTxn... taptxn) {
-            if (taptxn.length != 1) {
-                throw new AssertionError("Must pass a single TapTxn");
-            }
-            try {
-                taptxn[0].TapAfool();
-            }
-            catch (JSONException je) {
-                TapApplication.unknownFailure(je);
-            }
-            return taptxn[0];
-        }
+    @Override
+    public TapTxn getTapTxn() {
+        return outgoingTransaction;
+    }
 
-        protected void onProgressUpdate(Integer... progress) {
-            //setProgressPercent(progress[0]);
-        }
+    /**
+     * Called when the webservice has responded to a transaction
+     */
+    @Override
+    public void onTapNetComplete() {
+        mArmed = false;
+        String mMessage = outgoingTransaction.getMessage();
+        String mYapURL = outgoingTransaction.getPayloadImageThumb();
+        mArmFrag.setValues(mMessage, mYapURL);
+        outgoingTransaction = null;
+    }
 
-        protected void onPostExecute(TapTxn result) {
-            mArmed = false;
-             String mMessage;
-             String mYapURL;
-            mMessage = result.getMessage();
-            mYapURL = result.getPayloadImageThumb();
-
-            mArmFrag.setValues(mMessage, mYapURL);
-        }
+    /**
+     * Called if an error occurs sending a transaction to the webservice
+     *
+     * @param t Throwable object containing failure details
+     */
+    @Override
+    public void onTapNetFailure(Throwable t) {
+        outgoingTransaction = null;
+        // @TODO friendlier error message
+        // This is a holdover to get us to a demoable state without
+        // dealing with all the UI stuff for errors just yet
+        TapApplication.unknownFailure(t);
     }
 
     private class ImageAdapter extends BaseAdapter {
@@ -609,7 +614,7 @@ implements AccountFragment.OnFragmentInteractionListener,
 
     public void myTags(View view){
         Intent i = new Intent(this,TagActivity.class);
-        i.putExtra("AuthToken", mAuthToken);
+        i.putExtra("AuthToken", new Account().getAuthToken());
         startActivity(i);
 
     }
@@ -621,7 +626,7 @@ implements AccountFragment.OnFragmentInteractionListener,
         protected String doInBackground(TapUser... tapusers) {
             String returnValue = "";
             try {
-                returnValue = tapusers[0].getNewNickname(mAuthToken);
+                returnValue = tapusers[0].getNewNickname(new Account().getAuthToken());
             }
             catch (JSONException je) {
                 TapApplication.unknownFailure(je);
