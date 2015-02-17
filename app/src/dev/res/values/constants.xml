@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- In order to use a different server for testing, change these two values to whatever
+         works for that server and uncomment. The following example values will probalby
+         work for a Tomcat deployment of the test server installed on the same machine as
+         the one running the app in a virtual machine.
+    <string name="SERVER">http://127.0.0.1:8080/</string>
+    <string name="API_VERSION">TapTestServer/mobile/1/</string>
+    -->
+    <!-- Enabling this enables certain features in the code to allow for easier testing by
+         allowing the device to make webservice calls that it normally wouldn't ... NOT a
+         security method, don't enable these methods on production at all!
+      -->
     <string name="CREATE_FAKE_DATA_ON_SERVER">true</string>
 </resources>
