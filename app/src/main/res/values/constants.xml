@@ -15,7 +15,6 @@
     <string name="ENDPOINT_USER_API">users/me.json</string>
     <string name="ENDPOINT_RESET_NICK">users/reset_nickname</string>
     <string name="ENDPOINT_TAGS">nfc_tags.json</string>
-    <string name="ENDPOINT_TAG">nfc_tags/0.json</string>
     <string name="ENDPOINT_YAPA">payloads.json</string>
     <string name="ENDPOINT_TAP_ONE_YAPA">payloads/</string>
     <string name="ENDPOINT_TRANSACTION">transactions.json</string>
