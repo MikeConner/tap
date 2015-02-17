@@ -43,8 +43,6 @@ public class WriteActivity extends Activity {
 
     private String mAuthToken;
     private TapTag mTapTag;
-  //  private String mTagID;
- //   private String mTagName;
     boolean mWriteMode = false;
     private NfcAdapter mNfcAdapter;
     private PendingIntent mNfcPendingIntent;
@@ -403,9 +401,9 @@ public class WriteActivity extends Activity {
     //NFC TAG STUFF
     public void startWrite (View view){
 
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(WriteActivity.this);
-        mNfcPendingIntent = PendingIntent.getActivity(WriteActivity.this, 0,
-                new Intent(WriteActivity.this, WriteActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        mNfcPendingIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, WriteActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         enableTagWriteMode();
 

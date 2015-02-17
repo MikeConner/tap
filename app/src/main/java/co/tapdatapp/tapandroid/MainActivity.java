@@ -424,7 +424,7 @@ implements AccountFragment.OnFragmentInteractionListener,
         ft.addToBackStack(null);
 
         // Create and show the dialog.
-        mArmFrag =  new ArmedFragment(mAuthToken, new Account().getArmedAmount());
+        mArmFrag =  new ArmedFragment();
         mArmFrag.show(ft, "armed");
     }
 
