@@ -93,8 +93,7 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
                         openYapa = new Intent(getActivity(), YapaText.class);
                         break;
                     default:
-                        Log.e("", "Error");
-                        return;
+                        throw new AssertionError("Invalid Yapa Type: " + yapaType);
                 }
                 startActivity(openYapa);
             }
