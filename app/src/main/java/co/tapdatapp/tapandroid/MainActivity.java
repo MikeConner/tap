@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -15,7 +14,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -35,9 +33,6 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -535,60 +530,6 @@ implements AccountFragment.OnFragmentInteractionListener,
         // This is a holdover to get us to a demoable state without
         // dealing with all the UI stuff for errors just yet
         TapApplication.unknownFailure(t);
-    }
-
-    private class ImageAdapter extends BaseAdapter {
-        private Context mContext;
-        ArrayList<TapTxn> mTapTxns;
-        private String[] mTagKeys;
-        private String[] mTagValues;
-
-        public ImageAdapter(Context c, ArrayList<TapTxn> mTxns){
-            mTapTxns = mTxns;
-//            int i  = 0;
-//            for(Map.Entry<String,String> entry : mTagMapImg.entrySet()){
-//                mTagKeys[i]= (entry.getKey());
-//                mTagValues[i] =  entry.getValue();
-//                i++;
-//            }
-//
-            mContext = c;
-
-        }
-        public ImageAdapter(Context c) {
-            mContext = c;
-        }
-
-        public int getCount() {
-            return mTapTxns.size();
-
-        }
-
-        public Object getItem(int position) {
-            //return mTapTxns.get(position).toString();
-            return "bob";
-        }
-
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        // create a new ImageView for each item referenced by the Adapter
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView imageView;
-            if (convertView == null) {  // if it's not recycled, initialize some attributes
-                imageView = new ImageView(mContext);
-                imageView.setLayoutParams(new GridView.LayoutParams(300, 300));
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setPadding(8, 8, 8, 8);
-            } else {
-                imageView = (ImageView) convertView;
-            }
-            imageView.setImageResource(R.drawable.ic_launcher);
-            return imageView;
-        }
-
-
     }
 
     //ACCOUNT Stuff
