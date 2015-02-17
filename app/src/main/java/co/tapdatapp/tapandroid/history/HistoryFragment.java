@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,10 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
     private ProgressBar progressBar;
     private GridView gridView;
     private boolean loaded = false;
+    /**
+     * Defaulting yapaType to image for short-term functionality
+     */
+    public String yapaType = "image";
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -71,12 +76,29 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 /**
                  * openYapa is currently set to null so that, in the future, different things will
-                 * happen depending on the type of yapa.
+                 * happen depending on the type of yapa. Alsoi currently operating under the assumption that
+                 * Yapas currently can only be images. More cases will be added later.
                  */
                 Intent openYapa = null;
-                openYapa = new Intent(getActivity(), YapaImage.class);
+
+                switch (yapaType) {
+
+                    case "image":
+                        openYapa = new Intent(getActivity(), YapaImage.class);
+                        break;
+                    case "url":
+                        openYapa = new Intent(getActivity(), YapaUrl.class);
+                        break;
+                    case "text":
+                        openYapa = new Intent(getActivity(), YapaText.class);
+                        break;
+                    default:
+                        Log.e("", "Error");
+                        return;
+                }
                 startActivity(openYapa);
             }
+
         });
     }
 
