@@ -22,6 +22,8 @@ import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.yapa.YapaImage;
+import co.tapdatapp.tapandroid.yapa.YapaUrl;
+import co.tapdatapp.tapandroid.yapa.YapaText;
 
 public class HistoryFragment extends Fragment implements HistorySyncCallback {
 

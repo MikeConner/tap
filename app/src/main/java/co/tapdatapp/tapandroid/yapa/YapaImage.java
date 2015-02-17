@@ -23,6 +23,9 @@ public class YapaImage extends Activity {
         setContentView(R.layout.activity_yapa_image);
         final ImageView imageView = (ImageView) findViewById(R.id.yapaImage);
 
+        /**
+         * This makes clicking on the image turn it into a fullscreen view.
+         */
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

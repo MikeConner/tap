@@ -64,6 +64,8 @@
         </activity>
         <activity android:name=".voucher.RedeemVoucherActivity" />
         <activity android:name=".yapa.YapaImage"/>
+        <activity android:name=".yapa.YapaUrl"/>
+        <activity android:name=".yapa.YapaText"/>
 
     </application>
 
