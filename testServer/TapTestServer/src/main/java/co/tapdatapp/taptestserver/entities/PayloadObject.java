@@ -20,6 +20,10 @@ public class PayloadObject {
     nfc_tag_id = to;
   }
   
+  public boolean slugEquals(String otherId) {
+    return slug.equals(otherId);
+  }
+  
   public void generateSlug() {
     slug = UUID.randomUUID().toString().replace("-", "");
   }

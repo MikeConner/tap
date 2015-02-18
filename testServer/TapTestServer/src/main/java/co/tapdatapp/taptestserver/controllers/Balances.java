@@ -8,6 +8,9 @@ import java.util.HashMap;
 
 public class Balances {
   
+  /**
+   * auth_token maps to currency_id => balance
+   */
   private final HashMap<String, HashMap<Integer, Integer>> balances;
   
   private final Currencies currencies;
@@ -32,6 +35,25 @@ public class Balances {
     Monitor.trace("Getting balances for " + authId);
     Monitor.trace(balances.size() + " users with balances to choose from");
     return balances.get(authId);
+  }
+
+  void debit(String auth_token, int currency_id, int amount) {
+    HashMap<Integer, Integer> balance = balances.get(auth_token);
+    if (balance != null) {
+      Integer b = balance.get(currency_id);
+      if (b != null) {
+        // No checks, the balance could fall into the negative
+        b = b - amount;
+        balance.put(currency_id, b);
+      }
+      else {
+        // Intentionally ignore, means the client can charge with currencies
+        // that it has no balance on.
+      }
+    }
+    else {
+      throw new AssertionError("No such account " + auth_token);
+    }
   }
   
 }

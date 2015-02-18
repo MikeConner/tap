@@ -85,4 +85,19 @@ public class Accounts {
     payloads.add(ob);
     return ob;
   }
+  
+  public PayloadObject getPayload(String slug) {
+    for (PayloadObject p : payloads) {
+      if (p.slugEquals(slug)) {
+        return p;
+      }
+    }
+    PayloadObject p = new PayloadObject();
+    p.generateSlug();
+    p.payload_image = ImageBuilder.getURL(300, 300, "Dynamic Yapa");
+    p.payload_thumb = ImageBuilder.getURL(100, 100, "Dynamic Yapa");
+    p.text = "Dynamic Yapa";
+    p.uri = "http://www.example.com";
+    return p;
+  }
 }

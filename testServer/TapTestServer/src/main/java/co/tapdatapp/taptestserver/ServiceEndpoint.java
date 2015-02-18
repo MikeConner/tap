@@ -6,12 +6,15 @@ package co.tapdatapp.taptestserver;
 import co.tapdatapp.taptestserver.controllers.Accounts;
 import co.tapdatapp.taptestserver.controllers.Currencies;
 import co.tapdatapp.taptestserver.controllers.Balances;
+import co.tapdatapp.taptestserver.controllers.Transactions;
 import co.tapdatapp.taptestserver.entities.CreateAccountRequest;
 import co.tapdatapp.taptestserver.dev.Monitor;
+import co.tapdatapp.taptestserver.entities.NewTransactionRequest;
 import co.tapdatapp.taptestserver.entities.PayloadCreateRequest;
 import co.tapdatapp.taptestserver.entities.PayloadObject;
 import co.tapdatapp.taptestserver.entities.ResponseResponse;
 import co.tapdatapp.taptestserver.entities.TagResponse;
+import co.tapdatapp.taptestserver.entities.TransactionCreatedResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -31,11 +34,13 @@ public class ServiceEndpoint {
   private static final Balances balances;
   private static final Accounts accounts;
   private static final Currencies currencies;
+  private static final Transactions transactions;
   
   static {
     currencies = new Currencies();
     balances = new Balances(currencies);
     accounts = new Accounts(balances);
+    transactions = new Transactions(balances, accounts);
   }
   
   @POST
@@ -104,5 +109,15 @@ public class ServiceEndpoint {
     PayloadObject createdPayload = accounts.newPayload(authId, payload);
     Monitor.trace(authId + " created payload " + createdPayload.getSlug());
     return Response.ok(new ResponseResponse(createdPayload.getSlug())).build();
+  }
+  
+  @POST
+  @Path("transactions.json")
+  @Produces({ MediaType.APPLICATION_JSON })
+  @Consumes({ MediaType.APPLICATION_JSON })
+  public Response newTransaction(NewTransactionRequest request) {
+    TransactionCreatedResponse response = transactions.create(request);
+    Monitor.trace(request.auth_token + " transaction on " + request.tag_id);
+    return Response.ok(new ResponseResponse(response)).build();
   }
 }
