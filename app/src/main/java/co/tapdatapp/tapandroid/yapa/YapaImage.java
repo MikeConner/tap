@@ -11,8 +11,10 @@ import android.widget.ImageView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.localdata.Transaction;
 
 public class YapaImage extends Activity {
 
@@ -22,6 +24,16 @@ public class YapaImage extends Activity {
         super.onCreate(state);
         setContentView(R.layout.activity_yapa_image);
         final ImageView imageView = (ImageView) findViewById(R.id.yapaImage);
+        final TextView imageSender = (TextView) findViewById(R.id.image_sender);
+        final TextView imageDescription = (TextView) findViewById(R.id.image_description);
+        final TextView imageDate = (TextView) findViewById(R.id.image_date);
+
+        Transaction transaction = new Transaction();
+        ((TextView)imageSender.findViewById(R.id.image_sender)).setText(transaction.getNickname());
+        ((TextView)imageDescription.findViewById(R.id.image_description)).setText(transaction.getDescription());
+        ((TextView)imageDate.findViewById(R.id.image_date)).setText(transaction.getTimestamp().toString()
+                + "  " + Integer.toString(transaction.getAmount()));
+
 
         /**
          * This makes clicking on the image turn it into a fullscreen view.
