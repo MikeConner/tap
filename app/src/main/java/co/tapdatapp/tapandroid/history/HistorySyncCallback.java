@@ -8,5 +8,5 @@ public interface HistorySyncCallback {
 
     public void postSyncDisplay();
 
-    public void syncFailure(Exception cause);
+    public void syncFailure(Throwable cause);
 }

@@ -4,7 +4,6 @@
 
 package co.tapdatapp.tapandroid.remotedata;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -19,6 +18,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Set;
 
@@ -55,9 +56,15 @@ public class HttpHelper {
             }
             sb.append(key);
             sb.append("=");
-            sb.append(params.get(key));
+            try {
+                sb.append(URLEncoder.encode(params.get(key), "US-ASCII"));
+            }
+            catch (UnsupportedEncodingException uee) {
+                // This should never happen
+                throw new AssertionError(uee);
+            }
         }
-        appendAuthTokenIfExists(sb, first);
+        appendAuthTokenIfExists(sb, !first);
         return sb.toString();
     }
 

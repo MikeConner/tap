@@ -9,18 +9,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.GridView;
 
-import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.yapa.YapaImage;
 import co.tapdatapp.tapandroid.yapa.YapaUrl;
@@ -158,10 +155,8 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
      *
      * @TODO make this a user-friendly error
      */
-    public void syncFailure(Exception cause) {
-        AssertionError e = new AssertionError("Failed to sync: see @TODO");
-        e.initCause(cause);
-        throw e;
+    public void syncFailure(Throwable cause) {
+        TapApplication.unknownFailure(cause);
     }
 
 }
