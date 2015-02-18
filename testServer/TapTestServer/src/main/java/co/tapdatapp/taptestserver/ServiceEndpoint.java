@@ -6,6 +6,7 @@ package co.tapdatapp.taptestserver;
 import co.tapdatapp.taptestserver.controllers.Accounts;
 import co.tapdatapp.taptestserver.controllers.Currencies;
 import co.tapdatapp.taptestserver.controllers.Balances;
+import co.tapdatapp.taptestserver.controllers.ISO8601Format;
 import co.tapdatapp.taptestserver.controllers.Transactions;
 import co.tapdatapp.taptestserver.entities.CreateAccountRequest;
 import co.tapdatapp.taptestserver.dev.Monitor;
@@ -15,10 +16,12 @@ import co.tapdatapp.taptestserver.entities.PayloadObject;
 import co.tapdatapp.taptestserver.entities.ResponseResponse;
 import co.tapdatapp.taptestserver.entities.TagResponse;
 import co.tapdatapp.taptestserver.entities.TransactionCreatedResponse;
+import co.tapdatapp.taptestserver.entities.TransactionResponse;
+import java.text.ParseException;
+import java.util.Date;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -126,5 +129,21 @@ public class ServiceEndpoint {
     TransactionCreatedResponse response = transactions.create(request);
     Monitor.trace(request.auth_token + " transaction on " + request.tag_id);
     return Response.ok(new ResponseResponse(response)).build();
+  }
+  
+  @GET
+  @Path("transactions")
+  @Produces({ MediaType.APPLICATION_JSON })
+  @Consumes({ MediaType.APPLICATION_JSON })
+  public Response transactionList(
+    @QueryParam(AUTH_TOKEN) String authId,
+    @QueryParam("after") String afterDate
+  ) throws ParseException {
+    Monitor.trace(authId + " requesting transactions after " + afterDate);
+    ISO8601Format df = new ISO8601Format();
+    Date d = df.parse(afterDate);
+    TransactionResponse[] rv = transactions.getTransactionsAfter(authId, d);
+    Monitor.trace(authId + " returning " + rv.length + " transactions");
+    return Response.ok(new ResponseResponse(rv)).build();
   }
 }

@@ -5,6 +5,7 @@ import co.tapdatapp.taptestserver.entities.NewTransactionRequest;
 import co.tapdatapp.taptestserver.entities.PayloadObject;
 import co.tapdatapp.taptestserver.entities.TransactionCreatedResponse;
 import co.tapdatapp.taptestserver.entities.TransactionPayloadObject;
+import co.tapdatapp.taptestserver.entities.TransactionResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +47,31 @@ public class Transactions {
     rv.amount = t.amount;
     rv.currency_id = t.currency_id;
     return rv;
+  }
+  
+  public TransactionResponse[]
+  getTransactionsAfter(String authId, Date afterDate) {
+    ArrayList<TransactionResponse> rv = new ArrayList<>();
+    ArrayList<Transaction> input = transactions.get(authId);
+    if (input != null) {
+      ISO8601Format df = new ISO8601Format();
+      for (Transaction oneT : input) {
+        if (oneT.timestamp.after(afterDate)) {
+          TransactionResponse t = new TransactionResponse();
+          t.id = oneT.payload.getSlug();
+          t.date = df.format(oneT.timestamp);
+          t.payload_image = oneT.payload.payload_image;
+          t.payload_thumb = oneT.payload.payload_thumb;
+          t.amount = oneT.amount;
+          t.dollar_amount = 0;
+          t.comment = oneT.payload.text;
+          t.other_user_thumb = ImageBuilder.getURL(100, 100, "otherUserThumb");
+          t.other_user_nickname = "Other User Nickname";
+          rv.add(t);
+        }
+      }
+    }
+    return rv.toArray(new TransactionResponse[rv.size()]);
   }
   
   private class Transaction {
