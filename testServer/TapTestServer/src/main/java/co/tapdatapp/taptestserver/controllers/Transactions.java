@@ -21,6 +21,13 @@ public class Transactions {
     transactions = new HashMap<>();
   }
   
+  /**
+   * Deletes all data
+   */
+  public void reset() {
+    transactions.clear();
+  }
+  
   public TransactionCreatedResponse create(NewTransactionRequest request) {
     balances.debit(request.auth_token, request.currency_id, request.amount);
     TransactionCreatedResponse rv = new TransactionCreatedResponse();

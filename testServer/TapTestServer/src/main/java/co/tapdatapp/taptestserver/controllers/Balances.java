@@ -20,6 +20,10 @@ public class Balances {
     balances = new HashMap<>();
   }
   
+  public void reset() {
+    balances.clear();
+  }
+  
   public void createStarterBalances(String authId) {
     HashMap<Integer, Integer> b = new HashMap<>();
     // Bitcoin

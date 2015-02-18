@@ -46,4 +46,12 @@ public class DeveloperServices {
     return r;
   }
   
+  @GET
+  @Path("reset")
+  public Response reset() {
+    Monitor.trace("Resetting data to initial seed");
+    ServiceEndpoint.reset();
+    return Response.ok().build();
+  }
+  
 }

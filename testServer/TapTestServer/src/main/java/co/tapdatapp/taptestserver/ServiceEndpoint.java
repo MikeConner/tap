@@ -43,6 +43,13 @@ public class ServiceEndpoint {
     transactions = new Transactions(balances, accounts);
   }
   
+  public static void reset() {
+    balances.reset();
+    accounts.reset();
+    currencies.reset();
+    transactions.reset();
+  }
+  
   @POST
   @Path("/registrations.json")
   @Consumes({ MediaType.APPLICATION_JSON })

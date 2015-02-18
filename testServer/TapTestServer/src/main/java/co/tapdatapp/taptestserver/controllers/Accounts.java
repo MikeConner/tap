@@ -26,6 +26,12 @@ public class Accounts {
     balances = b;
   }
   
+  public void reset() {
+    accounts.clear();
+    tags.clear();
+    payloads.clear();
+  }
+  
   public CreateAccountResponse create(String phoneSecret) {
     CreateAccountResponse rv = new CreateAccountResponse();
     rv.response.auth_token = UUID.randomUUID().toString().replace("-", "");

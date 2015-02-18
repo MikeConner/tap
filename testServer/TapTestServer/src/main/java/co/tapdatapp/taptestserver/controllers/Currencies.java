@@ -8,9 +8,13 @@ import co.tapdatapp.taptestserver.entities.DenominationResponse;
 
 public class Currencies {
   
-  private final Currency[] currencies;
+  private Currency[] currencies;
   
   public Currencies() {
+    reset();
+  }
+  
+  public void reset() {
     currencies = new Currency[2];
     // 0 = bitcoin
     currencies[0] = new Currency(0, "bitcoin", "S");
