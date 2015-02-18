@@ -8,18 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 
+import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.user.Account;
 
 
-public class ArmedFragment extends DialogFragment {
+public class ArmedFragment extends DialogFragment implements View.OnClickListener{
 
     public  void setValues (String message, String payload_url){
-
         TextView tv = (TextView) getView().findViewById(R.id.txtYap);
         tv.setText(message);
-
     }
 
     public ArmedFragment() {
@@ -27,15 +27,18 @@ public class ArmedFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View
+    onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        return inflater.inflate(R.layout.fragment_armed, container, false);
-
-
+        View armedFragment = inflater.inflate(R.layout.fragment_armed, container, false);
+        if (DevHelper.isEnabled(R.string.CREATE_FAKE_DATA_ON_SERVER)) {
+            Button b = (Button) armedFragment.findViewById(R.id.btnRandomTransaction);
+            b.setVisibility(View.VISIBLE);
+            b.setOnClickListener(this);
+        }
+        return armedFragment;
     }
+
     @Override
     public void onResume(){
         super.onResume();
@@ -53,5 +56,9 @@ public class ArmedFragment extends DialogFragment {
         getDialog().getWindow().setLayout(width, height);
     }
 
-
+    @Override
+    public void onClick(View v) {
+        // Only a single button at this time
+        ((MainActivity)getActivity()).clickRandomTransaction();
+    }
 }

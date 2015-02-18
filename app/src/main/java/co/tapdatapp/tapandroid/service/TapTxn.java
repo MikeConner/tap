@@ -5,6 +5,7 @@ import android.os.Bundle;
 import org.json.JSONObject;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.user.Account;
 
@@ -20,7 +21,7 @@ public class TapTxn {
     private int mAmountSatoshi = 0;
     private String mPayloadImageThumb = "";
     private String mUserImageThumb = "";
-
+    private int mCurrencyId;
 
 
     private String mTagID;
@@ -124,6 +125,9 @@ public class TapTxn {
         return mSatoshi;
     }
 
+    public void setCurrencyId(int to) {
+        mCurrencyId = to;
+    }
 
     public void TapAfool() throws Exception {
 
@@ -139,9 +143,11 @@ public class TapTxn {
         json.put("auth_token", new Account().getAuthToken());
         json.put("tag_id", mTagID   );
         json.put("amount", mTxnAmount);
+        if (mCurrencyId != CurrencyDAO.CURRENCY_BITCOIN) {
+            json.put("currency_id", mCurrencyId);
+        }
 
         output = httpHelper.HttpPostJSON(httpHelper.getFullUrl(R.string.ENDPOINT_TRANSACTION), new Bundle(), json);
-        mSatoshi = output.getJSONObject("response").getInt("satoshi_amount");
         mAmountUSD = (float) (output.getJSONObject("response").getInt("dollar_amount") / 100);
         mEndingUserBalanaceSatoshi = output.getJSONObject("response").getInt("final_balance");
         mUserImageThumb = output.getJSONObject("response").getString("tapped_user_thumb");

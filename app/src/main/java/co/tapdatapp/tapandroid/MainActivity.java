@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.UUID;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -30,6 +31,7 @@ import android.provider.MediaStore;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +42,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 
 import co.tapdatapp.tapandroid.currency.BalancesActivity;
+import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
@@ -455,6 +458,21 @@ implements AccountFragment.OnFragmentInteractionListener,
         setArmedAmount(tapAmount);
     }
 
+    /**
+     * For development builds only, generate a random tag ID to do a transaction with
+     */
+    public void clickRandomTransaction() {
+        if (!DevHelper.isEnabled(R.string.CREATE_FAKE_DATA_ON_SERVER)) {
+            throw new AssertionError("Dev commands issued on dev-disabled build");
+        }
+        outgoingTransaction = new TapTxn();
+        outgoingTransaction.setTagID("XX" + UUID.randomUUID().toString().replaceAll("-", "").substring(7, 15));
+        outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
+        outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
+        Log.d("TAP", "Phoney Transaction starting");
+        new TapTxnTask().execute(this);
+    }
+
     //NFC STUFF
     @Override
     protected void onNewIntent(Intent intent) {
@@ -479,8 +497,9 @@ implements AccountFragment.OnFragmentInteractionListener,
 
                 if (mArmed){
                     outgoingTransaction = new TapTxn();
-                    outgoingTransaction.setTagID(result.replaceAll("-",""));
+                    outgoingTransaction.setTagID(result.replaceAll("-", ""));
                     outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
+                    outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
                     new TapTxnTask().execute(this);
 
 //                    Toast.makeText(MainActivity.this, result.getPayloadImageThumb(), Toast.LENGTH_LONG).show();
