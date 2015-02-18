@@ -7,6 +7,10 @@
     <string name="SERVER">http://127.0.0.1:8080/</string>
     <string name="API_VERSION">TapTestServer/mobile/1/</string>
     -->
+    <!-- Following values will connect to the public test server -->
+    <string name="SERVER">https://www.skilive.net/</string>
+    <string name="API_VERSION">tap/mobile/1/</string>
+
     <!-- Enabling this enables certain features in the code to allow for easier testing by
          allowing the device to make webservice calls that it normally wouldn't ... NOT a
          security method, don't enable these methods on production at all!
