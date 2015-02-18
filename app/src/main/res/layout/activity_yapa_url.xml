@@ -6,21 +6,20 @@
     android:weightSum="1">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="263dp"
+        android:layout_height="287dp"
         android:id="@+id/yapaUrl"
         android:src="@drawable/logo"
         android:scaleType="centerCrop"
         android:cropToPadding="false"
-        android:layout_weight="0.39"
-        android:adjustViewBounds="true"/>
+        android:adjustViewBounds="true"
+        android:layout_gravity="center_horizontal" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Sender goes here"
-        android:id="@+id/sender_name"
+        android:id="@+id/url_sender"
         android:layout_gravity="center_horizontal|left"
         android:layout_weight="0.18" />
 
@@ -28,8 +27,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Other additional information"
-        android:id="@+id/additional_info"
-        android:layout_weight="0.44" />
+        android:id="@+id/url_description"
+        android:layout_weight="0.83" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/url_date" />
 
 </LinearLayout>
