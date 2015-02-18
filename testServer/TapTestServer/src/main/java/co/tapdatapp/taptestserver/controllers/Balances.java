@@ -45,6 +45,7 @@ public class Balances {
         // No checks, the balance could fall into the negative
         b = b - amount;
         balance.put(currency_id, b);
+        Monitor.trace("Debit " + amount + " from currency " + currency_id);
       }
       else {
         // Intentionally ignore, means the client can charge with currencies
