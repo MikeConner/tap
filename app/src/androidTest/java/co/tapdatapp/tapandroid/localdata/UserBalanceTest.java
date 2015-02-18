@@ -47,7 +47,8 @@ public class UserBalanceTest extends BaseUnitTest {
         final String name = "testCreateOrUpdate_create";
         final String icon = "http://www.example.com/image.png";
         final String symbol = "$";
-        b.createOrUpdate(id, name, icon, symbol);
+        final int maxTap = 5;
+        b.createOrUpdate(id, name, icon, symbol, maxTap);
         b = new UserBalance();
         b.moveTo(id);
         assertEquals("name did not match", name, b.getName());
@@ -67,9 +68,9 @@ public class UserBalanceTest extends BaseUnitTest {
         final String name1 = "testCreateOrUpdate_update";
         final String icon1 = "http://www.example.com/newImage.png";
         final String symbol1 = "%";
-        b.createOrUpdate(id, name0, icon0, symbol0);
+        b.createOrUpdate(id, name0, icon0, symbol0, 0);
         b = new UserBalance();
-        b.createOrUpdate(id, name1, icon1, symbol1);
+        b.createOrUpdate(id, name1, icon1, symbol1, 0);
         b = new UserBalance();
         b.moveTo(id);
         assertEquals("name did not match", name1, b.getName());
@@ -86,7 +87,7 @@ public class UserBalanceTest extends BaseUnitTest {
         Denomination[] d = new Denomination[2];
         d[0] = new Denomination(id, 1, "d1image");
         d[1] = new Denomination(id, 5, "d5image");
-        b.createOrUpdateAll(id, name, icon, symbol, d);
+        b.createOrUpdateAll(id, name, icon, symbol, 0, d);
         b = new UserBalance();
         b.moveTo(id);
         assertEquals("name did not match", name, b.getName());
@@ -106,9 +107,9 @@ public class UserBalanceTest extends BaseUnitTest {
         Denomination[] d = new Denomination[2];
         d[0] = new Denomination(id, 1, "d1image");
         d[1] = new Denomination(id, 5, "d5image");
-        b.createOrUpdateAll(id, name, icon, symbol, d);
+        b.createOrUpdateAll(id, name, icon, symbol, 0, d);
         b = new UserBalance();
-        b.createOrUpdateAll(id, name, icon, symbol, null);
+        b.createOrUpdateAll(id, name, icon, symbol, 0, null);
         b = new UserBalance();
         b.moveTo(id);
         assertEquals("name did not match", name, b.getName());
@@ -140,11 +141,11 @@ public class UserBalanceTest extends BaseUnitTest {
         Denomination[] d = new Denomination[2];
         d[0] = new Denomination(id, 1, "d1image");
         d[1] = new Denomination(id, 5, "d5image");
-        b.createOrUpdateAll(id, name, icon, symbol, d);
+        b.createOrUpdateAll(id, name, icon, symbol, 0, d);
         b = new UserBalance();
         d[0] = new Denomination(id, 1, "d1newImage");
         d[1] = new Denomination(id, 5, "d5newImage");
-        b.createOrUpdateAll(id, name, icon, symbol, d);
+        b.createOrUpdateAll(id, name, icon, symbol, 0, d);
         b = new UserBalance();
         b.moveTo(id);
         assertEquals("name did not match", name, b.getName());
@@ -161,7 +162,7 @@ public class UserBalanceTest extends BaseUnitTest {
         final String icon = "http://www.example.com/testGetIconFromCache.png";
         final String symbol = "$";
         UserBalance b = new UserBalance();
-        b.createOrUpdate(id, name, icon, symbol);
+        b.createOrUpdate(id, name, icon, symbol, 0);
         AndroidCache c = new AndroidCache();
         try {
             Bitmap bitmap = BitmapFactory.decodeResource(
