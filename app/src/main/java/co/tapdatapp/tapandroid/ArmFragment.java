@@ -51,6 +51,7 @@ public class ArmFragment extends Fragment {
                 sendView.setText(Integer.toString(sendAmt));
             }
         });
+
         /**
          * Adding :
          * account.getActiveCurrency() +
@@ -64,6 +65,18 @@ public class ArmFragment extends Fragment {
                 bankAmt = bankAmt + sendAmt;
                 sendAmt = 1;
                 sendView.setText(Integer.toString(sendAmt));
+                account.setArmedAmount(bankAmt);
+                bankView.setText(String.valueOf(account.getArmedAmount()));
+            }
+        });
+
+        /**
+         * Click on the Armed Amount to reset it.
+         */
+        bankView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bankAmt = 0;
                 account.setArmedAmount(bankAmt);
                 bankView.setText(String.valueOf(account.getArmedAmount()));
             }
