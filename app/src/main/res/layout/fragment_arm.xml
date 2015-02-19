@@ -16,9 +16,9 @@
         android:layout_height="0dp"
         android:textStyle="bold"
         android:textSize="140sp"
-        android:text="$999"
         android:background="@drawable/pixelated_open_chest"
-        android:id="@+id/txtAmount" />
+        android:id="@+id/txtAmount"
+        android:text="0"/>
 
     <LinearLayout
         android:gravity="center"
@@ -38,7 +38,7 @@
         <TextView
             android:layout_width="235dp"
             android:layout_height="70dp"
-            android:text=" AMOUNT HERE "
+            android:text=" 1 "
             android:textSize="10pt"
             android:textStyle="bold"
             android:textColor="#000000"

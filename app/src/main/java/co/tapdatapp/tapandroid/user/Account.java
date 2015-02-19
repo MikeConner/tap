@@ -36,7 +36,7 @@ public class Account {
     private SharedPreferences preferences;
 
     // @TODO I don't think this belongs in this class ...
-    private static int armedAmount = 1;
+    private static int armedAmount = 0;
 
     public Account() {
         super();

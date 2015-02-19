@@ -432,7 +432,10 @@ implements AccountFragment.OnFragmentInteractionListener,
         mArmFrag.show(ft, "armed");
     }
 
-    public void setArmedAmount(int to) {
+    /**
+     * Some of this is obsolete and currently breaking the app
+     */
+   /** public void setArmedAmount(int to) {
         if (txAmount == null) {
             txAmount = (TextView)findViewById(R.id.txtAmount);
         }
@@ -457,6 +460,7 @@ implements AccountFragment.OnFragmentInteractionListener,
         }
         setArmedAmount(tapAmount);
     }
+    **/
 
     /**
      * For development builds only, generate a random tag ID to do a transaction with
