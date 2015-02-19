@@ -31,6 +31,7 @@
         <Button
             style="@style/AppTheme.circular_button"
             android:text="&lt;"
+            android:id="@+id/decreaseButton"
             android:layout_width="48dp"
             android:layout_height="48dp"/>
 
@@ -42,7 +43,8 @@
             android:textStyle="bold"
             android:textColor="#000000"
             android:gravity="center"
-            android:background="@drawable/currency"/>
+            android:background="@drawable/currency"
+            android:id="@+id/deposit_text"/>
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -51,6 +53,7 @@
         <Button
             style="@style/AppTheme.circular_button"
             android:text="&gt;"
+            android:id="@+id/increaseButton"
             android:layout_width="48dp"
             android:layout_height="48dp"/>
 
