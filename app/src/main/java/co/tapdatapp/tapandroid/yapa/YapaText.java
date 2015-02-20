@@ -17,11 +17,14 @@ public class YapaText extends Activity {
         final TextView textDescription = (TextView) findViewById(R.id.text_description);
         final TextView textDate = (TextView) findViewById(R.id.text_date);
 
+        /**
+         * Commented out Timestamps, was causing a crash
+         */
         Transaction transaction = new Transaction();
         ((TextView)textSender.findViewById(R.id.text_sender)).setText(transaction.getNickname());
         ((TextView)textDescription.findViewById(R.id.text_description)).setText(transaction.getDescription());
-        ((TextView)textDate.findViewById(R.id.text_date)).setText(transaction.getTimestamp().toString()
-                + "  " + Integer.toString(transaction.getAmount()));
+        //((TextView)textDate.findViewById(R.id.text_date)).setText(transaction.getTimestamp().toString()
+          //      + "  " + Integer.toString(transaction.getAmount()));
     }
 
     public void onResume() {

@@ -28,11 +28,14 @@ public class YapaImage extends Activity {
         final TextView imageDescription = (TextView) findViewById(R.id.image_description);
         final TextView imageDate = (TextView) findViewById(R.id.image_date);
 
+        /**
+         * Commented out Timestamps, was causing a crash
+         */
         Transaction transaction = new Transaction();
         ((TextView)imageSender.findViewById(R.id.image_sender)).setText(transaction.getNickname());
         ((TextView)imageDescription.findViewById(R.id.image_description)).setText(transaction.getDescription());
-        ((TextView)imageDate.findViewById(R.id.image_date)).setText(transaction.getTimestamp().toString()
-                + "  " + Integer.toString(transaction.getAmount()));
+        //((TextView)imageDate.findViewById(R.id.image_date)).setText(transaction.getTimestamp().toString()
+          //      + "  " + Integer.toString(transaction.getAmount()));
 
 
         /**
