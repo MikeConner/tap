@@ -39,8 +39,14 @@ public class ArmFragment extends Fragment {
         lessBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendAmt--;
-                sendView.setText(Integer.toString(sendAmt));
+             if(sendAmt>0) {
+                 sendAmt--;
+                 sendView.setText(Integer.toString(sendAmt));
+             }
+             else {
+                 sendAmt = 0;
+                 sendView.setText(Integer.toString(sendAmt));
+             }
             }
         });
 
@@ -56,15 +62,11 @@ public class ArmFragment extends Fragment {
          * Adding :
          * account.getActiveCurrency() +
          * to the bankView.setText() line completely messes up the math, I'm not sure why.
-         *
-         * I'm also not sure if we want to reset the amount to send after it's sent.
          */
         sendView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bankAmt = bankAmt + sendAmt;
-                sendAmt = 1;
-                sendView.setText(Integer.toString(sendAmt));
                 account.setArmedAmount(bankAmt);
                 bankView.setText(String.valueOf(account.getArmedAmount()));
             }
