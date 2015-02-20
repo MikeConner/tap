@@ -59,6 +59,7 @@ public class ArmedFragment extends DialogFragment implements View.OnClickListene
     @Override
     public void onClick(View v) {
         // Only a single button at this time
-        ((MainActivity)getActivity()).clickRandomTransaction();
+        v.setEnabled(false);
+        ((MainActivity)getActivity()).clickRandomTransaction(v);
     }
 }

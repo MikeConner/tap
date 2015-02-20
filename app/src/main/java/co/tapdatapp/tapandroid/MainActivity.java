@@ -462,13 +462,16 @@ implements AccountFragment.OnFragmentInteractionListener,
     }
     **/
 
+    private View randomTransactionButton;
+
     /**
      * For development builds only, generate a random tag ID to do a transaction with
      */
-    public void clickRandomTransaction() {
+    public void clickRandomTransaction(View v) {
         if (!DevHelper.isEnabled(R.string.CREATE_FAKE_DATA_ON_SERVER)) {
             throw new AssertionError("Dev commands issued on dev-disabled build");
         }
+        randomTransactionButton = v;
         outgoingTransaction = new TapTxn();
         outgoingTransaction.setTagID("XX" + UUID.randomUUID().toString().replaceAll("-", "").substring(7, 15));
         outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
@@ -539,6 +542,10 @@ implements AccountFragment.OnFragmentInteractionListener,
         String mYapURL = outgoingTransaction.getPayloadImageThumb();
         mArmFrag.setValues(mMessage, mYapURL);
         outgoingTransaction = null;
+        if (randomTransactionButton != null) {
+            randomTransactionButton.setEnabled(true);
+            randomTransactionButton = null;
+        }
     }
 
     /**
