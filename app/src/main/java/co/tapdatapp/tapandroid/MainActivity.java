@@ -4,16 +4,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.UUID;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -27,22 +28,25 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
+import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import co.tapdatapp.tapandroid.currency.BalancesActivity;
+import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
-import co.tapdatapp.tapandroid.localdata.MockCurrency;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
+import co.tapdatapp.tapandroid.localdata.UserBalance;
+import co.tapdatapp.tapandroid.remotedata.TapTxnTask;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
@@ -51,12 +55,12 @@ import co.tapdatapp.tapandroid.voucher.RedeemVoucherActivity;
 
 public class MainActivity
 extends Activity
-implements AccountFragment.OnFragmentInteractionListener {
+implements AccountFragment.OnFragmentInteractionListener,
+           ActionBar.TabListener,
+           TapTxnTask.TapTxnInitiator {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
-
-    protected String mAuthToken;
 
     protected TapUser mTapUser;
     protected TapCloud mTapCloud;
@@ -76,16 +80,18 @@ implements AccountFragment.OnFragmentInteractionListener {
     boolean mFromCamera = false;
     static final int REQUEST_TAKE_PHOTO = 1;
 
+    CurrencyDAO currency;
+
+    /**
+     * For tapping, store the desired transaction object to be
+     * referenced during background task execution
+     */
+    TapTxn outgoingTransaction = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        captureNFC();
-
-        //TODO: REMOVE THIS - Make sure all NETWORK TXNS are async
-        //StrictMode.ThreadPolicy tp = StrictMode.ThreadPolicy.LAX;
-        //StrictMode.setThreadPolicy(tp);
-
         super.onCreate(savedInstanceState);
-
+        captureNFC();
     }
 
     //TODO: Move this to DataLoaderFragment
@@ -138,22 +144,64 @@ implements AccountFragment.OnFragmentInteractionListener {
 
             //set up action bar and nav tabs
             mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+            // Set up the action bar.
+            final ActionBar actionBar = getActionBar();
+            if (actionBar == null) {
+                throw new AssertionError("null ActionBar on MainActivity");
+            }
 
+            // Specify that the Home/Up button should not be enabled, since there is no hierarchical
+            // parent.
+            actionBar.setHomeButtonEnabled(false);
+            // Specify that we will be displaying tabs in the action bar.
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
             // Set up the ViewPager with the sections adapter.
             mViewPager = (ViewPager) findViewById(R.id.pager);
             mViewPager.setAdapter(mSectionsPagerAdapter);
-
+            mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                @Override
+                public void onPageSelected(int position) {
+                    // When swiping between different app sections, select the corresponding tab.
+                    // We can also use ActionBar.Tab#select() to do this if we have a reference to the
+                    // Tab.
+                    actionBar.setSelectedNavigationItem(position);
+                }
+            });
+            for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+                // Create a tab with text corresponding to the page title defined by the adapter.
+                // Also specify this Activity object, which implements the TabListener interface, as the
+                // listener for when this tab is selected.
+                actionBar.addTab(
+                        actionBar.newTab()
+                                .setText(mSectionsPagerAdapter.getPageTitle(i))
+                                .setTabListener(this));
+            }
             //sets home page to tap
 
             mViewPager.setCurrentItem(1);
         }
     }
 
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        // When the given tab is selected, switch to the corresponding page in the ViewPager.
+        mViewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+    }
 
     @Override
     public void onResume(){
         super.onResume();
-
+        currency = new UserBalance();
         if (mNfcAdapter != null) {
             mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
                     mNdefExchangeFilters, null);
@@ -300,7 +348,12 @@ implements AccountFragment.OnFragmentInteractionListener {
       //          }
                 mTapUser.setProfilePicFull(newFullImageURL );
                 new Account().setProfilePicThumbUrl(newThumbImageURL);
-                mTapUser.UpdateUser(mAuthToken);
+                try {
+                    mTapUser.UpdateUser(new Account().getAuthToken());
+                }
+                catch (JSONException je) {
+                    TapApplication.unknownFailure(je);
+                }
             }
             else {
                 Uri mContentURI = data.getData();
@@ -320,7 +373,12 @@ implements AccountFragment.OnFragmentInteractionListener {
                 }
                 mTapUser.setProfilePicFull(newFullImageURL );
                 new Account().setProfilePicThumbUrl(newThumbImageURL);
-                mTapUser.UpdateUser(mAuthToken);
+                try {
+                    mTapUser.UpdateUser(new Account().getAuthToken());
+                }
+                catch (JSONException je) {
+                    TapApplication.unknownFailure(je);
+                }
             }
         }
     }
@@ -370,16 +428,19 @@ implements AccountFragment.OnFragmentInteractionListener {
         ft.addToBackStack(null);
 
         // Create and show the dialog.
-        mArmFrag =  new ArmedFragment(mAuthToken, new Account().getArmedAmount());
+        mArmFrag =  new ArmedFragment();
         mArmFrag.show(ft, "armed");
     }
 
-    public void setArmedAmount(int to) {
+    /**
+     * Some of this is obsolete and currently breaking the app
+     */
+   /** public void setArmedAmount(int to) {
         if (txAmount == null) {
             txAmount = (TextView)findViewById(R.id.txtAmount);
         }
         new Account().setArmedAmount(to);
-        txAmount.setText(new MockCurrency().getSymbol(new Account().getActiveCurrency()) + String.valueOf(to));
+        txAmount.setText(currency.getSymbol(new Account().getActiveCurrency()) + String.valueOf(to));
     }
 
     private void changeAmount(int amount, boolean addition){
@@ -387,7 +448,7 @@ implements AccountFragment.OnFragmentInteractionListener {
         int tapAmount = account.getArmedAmount();
         if (addition) {
             tapAmount += amount;
-            int max = new MockCurrency().getMaxPayout(account.getActiveCurrency());
+            int max = currency.getMaxPayout(account.getActiveCurrency());
             if (tapAmount > max ) {
                 tapAmount = max;
             }
@@ -399,11 +460,29 @@ implements AccountFragment.OnFragmentInteractionListener {
         }
         setArmedAmount(tapAmount);
     }
+    **/
+
+    private View randomTransactionButton;
+
+    /**
+     * For development builds only, generate a random tag ID to do a transaction with
+     */
+    public void clickRandomTransaction(View v) {
+        if (!DevHelper.isEnabled(R.string.CREATE_FAKE_DATA_ON_SERVER)) {
+            throw new AssertionError("Dev commands issued on dev-disabled build");
+        }
+        randomTransactionButton = v;
+        outgoingTransaction = new TapTxn();
+        outgoingTransaction.setTagID("XX" + UUID.randomUUID().toString().replaceAll("-", "").substring(7, 15));
+        outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
+        outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
+        Log.d("TAP", "Phoney Transaction starting");
+        new TapTxnTask().execute(this);
+    }
 
     //NFC STUFF
     @Override
     protected void onNewIntent(Intent intent) {
-
         //TODO: WHen not in armed mode, if intent is detected, change to send mode
         super.onNewIntent(intent);
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
@@ -424,12 +503,11 @@ implements AccountFragment.OnFragmentInteractionListener {
                 }
 
                 if (mArmed){
-                    TapTxn txn = new TapTxn();
-                    txn.setAuthToken(mAuthToken);
-                    txn.setTagID(result.replaceAll("-",""));
-                    txn.setTxnAmount(new Account().getArmedAmount());
-                    new TapTxnTask().execute(txn);
-
+                    outgoingTransaction = new TapTxn();
+                    outgoingTransaction.setTagID(result.replaceAll("-", ""));
+                    outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
+                    outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
+                    new TapTxnTask().execute(this);
 
 //                    Toast.makeText(MainActivity.this, result.getPayloadImageThumb(), Toast.LENGTH_LONG).show();
 
@@ -449,86 +527,39 @@ implements AccountFragment.OnFragmentInteractionListener {
         }
     }
 
+    @Override
+    public TapTxn getTapTxn() {
+        return outgoingTransaction;
+    }
 
-    private class TapTxnTask extends AsyncTask<TapTxn, Integer, TapTxn> {
-        protected TapTxn doInBackground(TapTxn... taptxn) {
-            int count = taptxn.length;
-            for (int i = 0; i < count; i++) {
-                taptxn[i].TapAfool();
-//                publishProgress((int) ((i / (float) count) * 100));
-                // Escape early if cancel() is called
-                if (isCancelled()) break;
-            }
-            return taptxn[0];
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-            //setProgressPercent(progress[0]);
-        }
-
-        protected void onPostExecute(TapTxn result) {
-            mArmed = false;
-             String mMessage;
-             String mYapURL;
-            mMessage = result.getMessage();
-            mYapURL = result.getPayloadImageThumb();
-
-            mArmFrag.setValues(mMessage, mYapURL);
+    /**
+     * Called when the webservice has responded to a transaction
+     */
+    @Override
+    public void onTapNetComplete() {
+        mArmed = false;
+        String mMessage = outgoingTransaction.getMessage();
+        String mYapURL = outgoingTransaction.getPayloadImageThumb();
+        mArmFrag.setValues(mMessage, mYapURL);
+        outgoingTransaction = null;
+        if (randomTransactionButton != null) {
+            randomTransactionButton.setEnabled(true);
+            randomTransactionButton = null;
         }
     }
 
-    private class ImageAdapter extends BaseAdapter {
-        private Context mContext;
-        ArrayList<TapTxn> mTapTxns;
-        private String[] mTagKeys;
-        private String[] mTagValues;
-
-        public ImageAdapter(Context c, ArrayList<TapTxn> mTxns){
-            mTapTxns = mTxns;
-//            int i  = 0;
-//            for(Map.Entry<String,String> entry : mTagMapImg.entrySet()){
-//                mTagKeys[i]= (entry.getKey());
-//                mTagValues[i] =  entry.getValue();
-//                i++;
-//            }
-//
-            mContext = c;
-
-        }
-        public ImageAdapter(Context c) {
-            mContext = c;
-        }
-
-        public int getCount() {
-            return mTapTxns.size();
-
-        }
-
-        public Object getItem(int position) {
-            //return mTapTxns.get(position).toString();
-            return "bob";
-        }
-
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        // create a new ImageView for each item referenced by the Adapter
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView imageView;
-            if (convertView == null) {  // if it's not recycled, initialize some attributes
-                imageView = new ImageView(mContext);
-                imageView.setLayoutParams(new GridView.LayoutParams(300, 300));
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setPadding(8, 8, 8, 8);
-            } else {
-                imageView = (ImageView) convertView;
-            }
-            imageView.setImageResource(R.drawable.ic_launcher);
-            return imageView;
-        }
-
-
+    /**
+     * Called if an error occurs sending a transaction to the webservice
+     *
+     * @param t Throwable object containing failure details
+     */
+    @Override
+    public void onTapNetFailure(Throwable t) {
+        outgoingTransaction = null;
+        // @TODO friendlier error message
+        // This is a holdover to get us to a demoable state without
+        // dealing with all the UI stuff for errors just yet
+        TapApplication.unknownFailure(t);
     }
 
     //ACCOUNT Stuff
@@ -553,9 +584,8 @@ implements AccountFragment.OnFragmentInteractionListener {
     }
 
     public void myTags(View view){
-        TagsFragment mTags = new TagsFragment();
         Intent i = new Intent(this,TagActivity.class);
-        i.putExtra("AuthToken", mAuthToken);
+        i.putExtra("AuthToken", new Account().getAuthToken());
         startActivity(i);
 
     }
@@ -565,7 +595,14 @@ implements AccountFragment.OnFragmentInteractionListener {
     }
     private class newNickTask extends AsyncTask<TapUser, Void, String> {
         protected String doInBackground(TapUser... tapusers) {
-            return tapusers[0].getNewNickname(mAuthToken);
+            String returnValue = "";
+            try {
+                returnValue = tapusers[0].getNewNickname(new Account().getAuthToken());
+            }
+            catch (JSONException je) {
+                TapApplication.unknownFailure(je);
+            }
+            return returnValue;
         }
 
         protected void onProgressUpdate(Void... progress) {
@@ -576,17 +613,6 @@ implements AccountFragment.OnFragmentInteractionListener {
             TextView et = (TextView) findViewById(R.id.etNickName);
             et.setText(      result  );
         }
-    }
-
-    public void writeUser(View view){
-        TextView edName = (TextView) findViewById(R.id.etNickName);
-        TextView edEmail = (TextView) findViewById(R.id.etEmail);
-        //EditText edWithDraw = (EditText) findViewById(R.id.etWithdraw);
-        new Account().setNickname(edName.getText().toString());
-        //mTapUser.setBTCoutbound( edWithDraw.getText().toString());
-        new Account().setEmail(edEmail.getText().toString());
-        mTapUser.UpdateUser(mAuthToken);
-
     }
 
     //generic stuff for fragments

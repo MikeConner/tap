@@ -6,8 +6,7 @@ package co.tapdatapp.tapandroid.remotedata;
 
 import android.os.AsyncTask;
 
-import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
-import co.tapdatapp.tapandroid.localdata.MockCurrency;
+import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.user.Account;
 
 
@@ -29,7 +28,7 @@ extends AsyncTask<GetCurrentBalanceAsStringTask.Callback, Void, String> {
         String value = "error";
         try {
             Account account = new Account();
-            CurrencyDAO currency = new MockCurrency();
+            UserBalance currency = new UserBalance();
             value = currency.getBalanceAsString(account.getActiveCurrency());
         }
         catch (Throwable t) {

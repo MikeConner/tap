@@ -36,17 +36,6 @@ public class HttpHelperTest extends AndroidTestCase {
     }
 
     /**
-     * Hijack the transactions listing to test the HTTP worker code.
-     * Discard the result, as the test only cares if the HTTP works
-     */
-    public void testTransactionRequest() throws WebServiceError {
-        helper.HttpGetJSON(
-            helper.getFullUrl(R.string.ENDPOINT_TRANSACTION_LIST),
-            new Bundle()
-        );
-    }
-
-    /**
      * Ensure a non-existent URL produces the desired result
      * (Knowing my luck, someone will create this URL)
      */
@@ -64,5 +53,17 @@ public class HttpHelperTest extends AndroidTestCase {
             new Bundle()
         );
         assertEquals("Wrong media type", "text/html", r.getMediaType());
+    }
+
+    public void testAppendAuthTokenIfExists0() {
+        StringBuilder value = new StringBuilder("");
+        helper.appendAuthTokenIfExists(value, true);
+        assertTrue("Should start with &", value.toString().startsWith("&"));
+    }
+
+    public void testAppendAuthTokenIfExists1() {
+        StringBuilder value = new StringBuilder("");
+        helper.appendAuthTokenIfExists(value, false);
+        assertTrue("Should start with ?", value.toString().startsWith("?"));
     }
 }

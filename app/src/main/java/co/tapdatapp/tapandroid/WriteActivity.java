@@ -17,7 +17,6 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,16 +26,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapTag;
-import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapYapa;
 import co.tapdatapp.tapandroid.user.Account;
 
@@ -45,8 +43,6 @@ public class WriteActivity extends Activity {
 
     private String mAuthToken;
     private TapTag mTapTag;
-  //  private String mTagID;
- //   private String mTagName;
     boolean mWriteMode = false;
     private NfcAdapter mNfcAdapter;
     private PendingIntent mNfcPendingIntent;
@@ -85,9 +81,13 @@ public class WriteActivity extends Activity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus){
                     EditText g = (EditText) v;
-
-                    mTapTag.updateTag(mAuthToken,mTapTag.getTagID().replaceAll("-",""), g.getText().toString() );
+                    try {
+                        mTapTag.updateTag(mAuthToken, mTapTag.getTagID().replaceAll("-", ""), g.getText().toString());
 //                    Toast.makeText(WriteActivity.this, "lost it", Toast.LENGTH_LONG);
+                    }
+                    catch (JSONException je) {
+                        TapApplication.unknownFailure(je);
+                    }
                 }
             }
         });
@@ -108,7 +108,12 @@ public class WriteActivity extends Activity {
                     if (!hasFocus){
                         EditText g = (EditText) v;
                         mTapTag.myYappas().get(0).setContent(((EditText) v).getText().toString());
-                        mTapTag.myYappas().get(0).updateYapa(mAuthToken, mTapTag.getTagID());
+                        try {
+                            mTapTag.myYappas().get(0).updateYapa(mAuthToken, mTapTag.getTagID());
+                        }
+                        catch (JSONException je) {
+                            TapApplication.unknownFailure(je);
+                        }
                     }
 
                 }
@@ -141,22 +146,6 @@ public class WriteActivity extends Activity {
 
     static final int REQUEST_TAKE_PHOTO = 1;
     private TapCloud mTapCloud = new TapCloud();
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        return image;
-    }
     public void selectImageYapa1(View v){
         selectImage(0);
     }
@@ -234,7 +223,12 @@ public class WriteActivity extends Activity {
                         myYappas.get(0).setContent(edMessage.getText().toString());
                         myYappas.get(0).setThumbYapa(newThumbImageURL);
                         myYappas.get(0).setFullYapa(newFullImageURL);
-                        myYappas.get(0).updateYapa(mAuthToken, mTapTag.getTagID());
+                        try {
+                            myYappas.get(0).updateYapa(mAuthToken, mTapTag.getTagID());
+                        }
+                        catch (JSONException je) {
+                            TapApplication.unknownFailure(je);
+                        }
                     }
                     else {
                         edMessage  = (EditText) findViewById(R.id.edBonusYapa);
@@ -252,7 +246,12 @@ public class WriteActivity extends Activity {
                             myYappas.get(1).setContent(edMessage.getText().toString());
                             myYappas.get(1).setThumbYapa(newThumbImageURL);
                             myYappas.get(1).setFullYapa(newFullImageURL);
-                            myYappas.get(1).updateYapa(mAuthToken, mTapTag.getTagID());
+                            try {
+                                myYappas.get(1).updateYapa(mAuthToken, mTapTag.getTagID());
+                            }
+                            catch (JSONException je) {
+                                TapApplication.unknownFailure(je);
+                            }
                         }
                     }
 
@@ -280,7 +279,7 @@ public class WriteActivity extends Activity {
 
                 }
                 String newFullImageURL = mTapCloud.uploadToS3withURI(mContentURI, Account.getRandomString(16) +".jpg", this);
-                String newFUllImagePath = TapCloud.getRealPathFromURI(this,mContentURI);
+                String newFUllImagePath = TapCloud.getRealPathFromURI(this, mContentURI);
                 String newThumbImageURL = "";
                 try {
                     ExifInterface exif = new ExifInterface(newFUllImagePath);
@@ -402,9 +401,9 @@ public class WriteActivity extends Activity {
     //NFC TAG STUFF
     public void startWrite (View view){
 
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(WriteActivity.this);
-        mNfcPendingIntent = PendingIntent.getActivity(WriteActivity.this, 0,
-                new Intent(WriteActivity.this, WriteActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        mNfcPendingIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, WriteActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         enableTagWriteMode();
 

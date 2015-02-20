@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="@style/Theme.AppCompat.Light">
+    <style name="AppTheme" parent="android:Theme.Holo.Light">
         <item name="android:textColor">@color/text_color</item>
         <!-- buttonStyle seems to break onClick() on pre-L, do it the hard
              way until I figure out what's going on -->

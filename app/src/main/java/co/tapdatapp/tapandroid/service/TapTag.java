@@ -1,5 +1,6 @@
 package co.tapdatapp.tapandroid.service;
 
+import android.os.Bundle;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -8,29 +9,25 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-/**
- * Created by arash on 9/28/14.
- */
+import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+import co.tapdatapp.tapandroid.remotedata.WebServiceError;
+
 public class TapTag {
+    private HttpHelper httpHelper;
     private String mTagID;
     private String mTagName;
     private String mAuthToken;
     private TapCloud mTapCloud;
-    private ArrayList<TapYapa> mTapYapas = new ArrayList<TapYapa>();
+    private ArrayList<TapYapa> mTapYapas = new ArrayList<>();
 
+    public TapTag() {
+        httpHelper = new HttpHelper();
+    }
 
     public ArrayList<TapYapa> myYappas(){
         return mTapYapas;
-    }
-
-    public int YapaCount() {
-        if (mTapYapas == null){
-            return 0;
-        }
-        else {
-            return mTapYapas.size();
-        }
-
     }
 
     public void addYapa(String auth_token, TapYapa mYapa)
@@ -52,40 +49,39 @@ public class TapTag {
                 payload.put("mobile_payload_thumb_url", mYapa.getThumbYapa());
 
                 json.put("auth_token", mAuthToken);
-                json.put("tag_id", mTagID.replaceAll("-",""));
+                json.put("tag_id", mTagID.replaceAll("-", ""));
                 json.put("payload", payload);
                 //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
-                output = mTapCloud.httpPost(TapCloud.TAP_YAPA_API_ENDPOINT_URL, json);
-                mYapa.setYapaID( output.getString("response"));
-                String J = "dslkfj;";
-//                mAuthToken = output.getJSONObject("response").getString("auth_token");
- //               mNickName = output.getJSONObject("response").getString("nickname");
+                output = httpHelper.HttpPostJSON(httpHelper.getFullUrl(R.string.ENDPOINT_YAPA), new Bundle(), json);
+                mYapa.setYapaID(output.getString("response"));
             }
-            catch (JSONException e) {
-                e.printStackTrace();
-                Log.e("JSON", "" + e);
+            catch (Exception e) {
+                TapApplication.unknownFailure(e);
             }
-
         }
         else
         {
-            mYapa.loadYapa(auth_token, mYapa.getYapaID(), mTagID.replaceAll("-",""));
-            //load yappa from web
-
+            try {
+                mYapa.loadYapa(auth_token, mYapa.getYapaID(), mTagID.replaceAll("-", ""));
+                //load yappa from web
+            }
+            catch (JSONException je) {
+                TapApplication.unknownFailure(je);
+            }
         }
         mTapYapas.add(mYapa);
-
-
-
     }
+
     public void loadYapa(String auth_token){
         mAuthToken = auth_token;
-        String mURL = TapCloud.TAP_YAPA_API_ENDPOINT_URL + "?auth_token=" + mAuthToken + "&tag_id=" + mTagID.replaceAll("-","");
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
         mTapCloud = new TapCloud();
         JSONObject output;
         try {
-            output = mTapCloud.httpGet(mURL);
+            output = mTapCloud.httpGet(
+                httpHelper.getFullUrl(R.string.ENDPOINT_TAP_ONE_YAPA) +
+                "&tag_id=" + mTagID.replaceAll("-","")
+            );
             int tag_count = output.getInt("count");
             if (tag_count != 0 ){
                 JSONArray ja =  output.getJSONArray("response");
@@ -108,36 +104,32 @@ public class TapTag {
 
 
 
-    public void updateTag(String auth_token, String tag_id, String new_name){
+    public void
+    updateTag(String auth_token, String tag_id, String new_name)
+    throws JSONException {
         mAuthToken = auth_token;
 
         JSONObject json = new JSONObject();
         JSONObject output;
 
-        String mURL = TapCloud.TAP_TAG_API_ENDPOINT_URL + "?auth_token=" + mAuthToken;
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
         mTapCloud = new TapCloud();
 
-        try {
+        json.put("auth_token", mAuthToken);
+        json.put("id", "0");
+        json.put("name", new_name);
+        json.put("tag_id", tag_id);
 
-            json.put("auth_token", mAuthToken);
-            json.put("id", "0");
-            json.put("name", new_name);
-            json.put("tag_id", tag_id);
-
-            //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
-            output = mTapCloud.httpPut(mURL, json);
-            // = output.getJSONObject("response").getString("nickname");
-            //CHECK FOR BAD CASES HERE!
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("JSON", "" + e);
-        }
+        //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
+        output = mTapCloud.httpPut(httpHelper.getFullUrl(R.string.ENDPOINT_TAGS), json);
+        // = output.getJSONObject("response").getString("nickname");
+        //CHECK FOR BAD CASES HERE!
 
     }
 
-    public String generateNewTag(String auth_token, String default_yapa_thumb){
+    public String
+    generateNewTag(String auth_token, String default_yapa_thumb)
+    throws JSONException, WebServiceError {
         mAuthToken = auth_token;
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
         mTapCloud = new TapCloud();
@@ -146,21 +138,14 @@ public class TapTag {
         JSONObject tag   = new JSONObject();
 
         JSONObject output;
-        try {
-            tag.put("auth_token", mAuthToken);
-            //json.put("user", user);
-            //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
+        tag.put("auth_token", mAuthToken);
+        //json.put("user", user);
+        //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
 
-            //TODO: Update this to session controller instead of registration controller
-                output = mTapCloud.httpPost(TapCloud.TAP_TAGS_API_ENDPOINT_URL, tag);
-            mTagID = output.getJSONObject("response").getString("id");
-            mTagName = output.getJSONObject("response").getString("name");
-        //    Log.e(output.toString(), "" );
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("JSON", "" + e);
-        }
+        //TODO: Update this to session controller instead of registration controller
+        output = httpHelper.HttpPostJSON(httpHelper.getFullUrl(R.string.ENDPOINT_TAGS), new Bundle(), tag);
+        mTagID = output.getJSONObject("response").getString("id");
+        mTagName = output.getJSONObject("response").getString("name");
 
         //generate first Yapa!
         TapYapa new_yapa = new TapYapa();

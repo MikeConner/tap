@@ -8,13 +8,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
-import java.util.Currency;
+import java.text.ParseException;
 
+import co.tapdatapp.tapandroid.helpers.ISO8601Format;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class TransactionCodec {
+
+    private final ISO8601Format format = new ISO8601Format();
 
     /**
      * Turn the respone to a get transaction web request into a
@@ -25,15 +28,17 @@ public class TransactionCodec {
      * @throws JSONException in various situations
      */
     public Transaction unmarshall(String input)
-    throws JSONException {
+    throws JSONException, ParseException {
         return unmarshall(new JSONObject(input));
     }
 
     public Transaction unmarshall(JSONObject input)
-    throws JSONException {
+    throws JSONException, ParseException {
         Transaction rv = new Transaction();
         rv.setSlug(input.getString("id"));
-        rv.setTimestamp(Timestamp.valueOf(input.getString("date")));
+        // This is ridiculous. If ever there was a lousier set of
+        // classes for handling date/time, I haven't seen it.
+        rv.setTimestamp(new Timestamp(format.parse(input.getString("date")).getTime()));
         rv.setYapa_url(input.getString("payload_image"));
         rv.setYapa_thumb_url(input.getString("payload_thumb"));
         rv.setAmount(input.getInt("amount"));

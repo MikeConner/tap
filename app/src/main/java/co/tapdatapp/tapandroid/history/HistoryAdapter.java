@@ -29,20 +29,22 @@ public class HistoryAdapter extends BaseAdapter {
     private Integer recordCount = null;
     private TransactionDAO dao;
     private Activity activity;
+    private Transaction transaction;
 
     public HistoryAdapter(TransactionDAO t, Activity a) {
         dao = t;
         activity = a;
+        transaction = new Transaction();
     }
 
     @Override
     public boolean areAllItemsEnabled() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled(int i) {
-        return false;
+        return true;
     }
 
     @Override
@@ -74,19 +76,14 @@ public class HistoryAdapter extends BaseAdapter {
                     Context.LAYOUT_INFLATER_SERVICE
                 );
             v = inflater.inflate(
-                R.layout.history_line_item,
+                R.layout.history_grid_item,
                 viewGroup,
                 false
             );
         }
-        Transaction t = new Transaction();
-        t.moveTo(i);
-        ((TextView)v.findViewById(R.id.history_li_date)).setText(t.getTimestamp().toString());
-        ((TextView)v.findViewById(R.id.history_li_amount)).setText(Integer.toString(t.getAmount()));
-        ((TextView)v.findViewById(R.id.history_li_description)).setText(t.getDescription());
-        ((TextView)v.findViewById(R.id.history_li_recip_nick)).setText(t.getNickname());
-        ((ImageView)v.findViewById(R.id.history_li_thumbnail)).setImageBitmap(getRewardBitmap());
-        ((ImageView)v.findViewById(R.id.history_li_recip_image)).setImageBitmap(getIconBitmap());
+        transaction.moveTo(i);
+        ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getDescription());
+        ((ImageView)v.findViewById(R.id.history_picture)).setImageBitmap(getRewardBitmap());
         LoadHistoryImagesTask asyncLoad = new LoadHistoryImagesTask();
         asyncLoad.execute(v);
         return v;
@@ -94,7 +91,7 @@ public class HistoryAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int i) {
-        return R.layout.history_line_item;
+        return R.layout.history_grid_item;
     }
 
     @Override

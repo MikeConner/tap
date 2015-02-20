@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/yapaImageLayout"
+    android:weightSum="1">
+
+    <ImageView
+        android:layout_width="336dp"
+        android:layout_height="329dp"
+        android:id="@+id/yapaImage"
+        android:src="@drawable/aretha"
+        android:scaleType="centerCrop"
+        android:cropToPadding="false"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/image_sender"
+        android:layout_gravity="center_horizontal|left"
+        android:layout_weight="0.18" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/image_description"
+        android:layout_weight="0.46" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/image_date"
+        android:layout_weight="0.26" />
+
+</LinearLayout>

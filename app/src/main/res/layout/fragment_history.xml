@@ -11,16 +11,20 @@
     -->
     <ProgressBar
         android:layout_gravity="center"
-        android:id="@+id/history_progress_bar"
+        android:id="@+id/history_grid_progress_bar"
         android:layout_width="100dp"
         android:layout_height="100dp"
         />
 
-    <ListView
-        android:id="@+id/history_list_view"
+    <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
-    </ListView>
-
+        android:columnWidth="90dp"
+        android:id="@+id/history_grid_view"
+        android:numColumns="@integer/yapa_history_columns"
+        android:layout_gravity="center"
+        android:verticalSpacing="3dp"
+        android:horizontalSpacing="3dp"
+        android:stretchMode="columnWidth"
+        />
 </FrameLayout>

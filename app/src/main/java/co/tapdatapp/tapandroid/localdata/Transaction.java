@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class Transaction implements SingleTable, TransactionDAO {
     public final static String NAME = "transactions";
@@ -35,7 +36,7 @@ public class Transaction implements SingleTable, TransactionDAO {
         db.execSQL(
             "CREATE TABLE " + NAME + " ( " +
                 SLUG + " TEXT PRIMARY KEY, " +
-                TIMESTAMP + " TEXT NOT NULL, " +
+                TIMESTAMP + " BIGINT NOT NULL, " +
                 THUMB_URL + " TEXT NOT NULL, " +
                 YAPA_THUMB_URL + " TEXT, " +
                 YAPA_URL + " TEXT, " +
@@ -73,6 +74,27 @@ public class Transaction implements SingleTable, TransactionDAO {
         }
     }
 
+    public Timestamp getNewest() {
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+        Cursor c = null;
+        try {
+            c = db.rawQuery(
+                "SELECT MAX(" + TIMESTAMP + ") FROM " + NAME,
+                null,
+                null
+            );
+            if (c.moveToFirst()) {
+                return new Timestamp(c.getLong(0));
+            } else {
+                throw new RuntimeException("Rows returned = " + c.getCount());
+            }
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+    }
+
     @Override
     public Transaction getByOrder(int i) {
         Transaction rv = new Transaction();
@@ -98,7 +120,7 @@ public class Transaction implements SingleTable, TransactionDAO {
             );
             if (c.moveToFirst()) {
                 slug = c.getString(0);
-                timestamp = Timestamp.valueOf(c.getString(1));
+                timestamp = new Timestamp(c.getLong(1));
                 thumb_url = c.getString(2);
                 yapa_url = c.getString(3);
                 description = c.getString(4);
@@ -120,7 +142,7 @@ public class Transaction implements SingleTable, TransactionDAO {
         SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
         ContentValues v = new ContentValues();
         v.put(SLUG, slug);
-        v.put(TIMESTAMP, timestamp.toString());
+        v.put(TIMESTAMP, timestamp.getTime());
         v.put(THUMB_URL, thumb_url);
         v.put(YAPA_URL, yapa_url);
         v.put(DESCRIPTION, description);

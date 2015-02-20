@@ -2,8 +2,6 @@ package co.tapdatapp.tapandroid.remotedata;
 
 import org.json.JSONObject;
 
-import java.util.List;
-
 import co.tapdatapp.tapandroid.BaseUnitTest;
 import co.tapdatapp.tapandroid.localdata.Denomination;
 
@@ -36,14 +34,14 @@ public class CurrencyCodecTest extends BaseUnitTest {
         assertEquals("Fun Bucks", cc.getName());
         assertEquals("http://www.tapdatapp.co/mobile/v1/icons?id=134", cc.getIcon());
         assertEquals("$", cc.getSymbol());
-        List<Denomination> dl = cc.getDenominations();
-        Denomination d = dl.get(0);
+        Denomination[] dl = cc.getDenominations();
+        Denomination d = dl[0];
         assertEquals("http://www.tapdatapp.co/mobile/v1/icons?id=634", d.getURL());
         assertEquals(1, d.getAmount());
-        d = dl.get(1);
+        d = dl[1];
         assertEquals("http://www.tapdatapp.co/mobile/v1/icons?id=174", d.getURL());
         assertEquals(2, d.getAmount());
-        d = dl.get(2);
+        d = dl[2];
         assertEquals("http://www.tapdatapp.co/mobile/v1/icons?id=124", d.getURL());
         assertEquals(5, d.getAmount());
     }
@@ -54,6 +52,7 @@ public class CurrencyCodecTest extends BaseUnitTest {
             "\"status\" : \"active\",\n" +
             "\"icon_processing\" : true,\n" +
             "\"symbol\" : \"$\",\n" +
+            "\"max_amount\" : 500,\n" +
             "\"denominations\" : [\n" +
             " {\"amount\": 1,\n" +
             "  \"icon\": \"http://www.tapdatapp.co/mobile/v1/icons?id=634\"},\n" +
@@ -67,6 +66,7 @@ public class CurrencyCodecTest extends BaseUnitTest {
             "\"status\" : \"active\",\n" +
             "\"icon_processing\" : false,\n" +
             "\"symbol\" : \"%\",\n" +
+            "\"max_amount\" : 500,\n" +
             "\"denominations\" : [\n" +
             "]\n}"
     };

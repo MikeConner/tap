@@ -18,6 +18,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Map;
 import java.util.Set;
 
 import co.tapdatapp.tapandroid.R;
@@ -25,6 +28,45 @@ import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class HttpHelper {
+
+    /**
+     * General a full URL from the passed in information, including an
+     * auth token parameter if the account has one.
+     *
+     * @param endpoint The resource ID of the URL
+     * @param resource The actual resource part of the URL
+     * @param params Any query parameters to add to the URL
+     * @return String of the URL properly formed
+     */
+    public String
+    getFullUrl(int endpoint, String resource, Map<String, String> params) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(TapApplication.string(R.string.SERVER));
+        sb.append(TapApplication.string(R.string.API_VERSION));
+        sb.append(TapApplication.string(endpoint));
+        sb.append(resource);
+        boolean first = true;
+        for (String key : params.keySet()) {
+            if (first) {
+                sb.append("?");
+                first = false;
+            }
+            else {
+                sb.append("&");
+            }
+            sb.append(key);
+            sb.append("=");
+            try {
+                sb.append(URLEncoder.encode(params.get(key), "US-ASCII"));
+            }
+            catch (UnsupportedEncodingException uee) {
+                // This should never happen
+                throw new AssertionError(uee);
+            }
+        }
+        appendAuthTokenIfExists(sb, !first);
+        return sb.toString();
+    }
 
     /**
      * Generate the full URL from a resource ID pointing to the
@@ -44,14 +86,33 @@ public class HttpHelper {
     }
 
     /**
-     * Append an auth token to the URL if the config has one
+     * Append an auth token to the URL if the config has one. Always
+     * assumes that this is the only parameter.
      *
      * @param sb StringBuilder to append to
      */
     public void appendAuthTokenIfExists(StringBuilder sb) {
+        appendAuthTokenIfExists(sb, false);
+    }
+
+    /**
+     * append an auth token to the URL if the config has one, taking
+     * into account whether other parameters have already been added
+     *
+     * @param sb StringBuilder to append to
+     * @param additional true if there are already other parameters
+     */
+    public void
+    appendAuthTokenIfExists(StringBuilder sb, boolean additional) {
         Account a = new Account();
         if (a.created()) {
-            sb.append("?auth_token=");
+            if (additional) {
+                sb.append("&");
+            }
+            else {
+                sb.append("?");
+            }
+            sb.append("auth_token=");
             sb.append(a.getAuthToken());
         }
     }

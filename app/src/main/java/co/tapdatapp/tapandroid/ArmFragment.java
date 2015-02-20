@@ -1,6 +1,5 @@
 package co.tapdatapp.tapandroid;
 
-import android.content.ClipData;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -11,12 +10,17 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import co.tapdatapp.tapandroid.localdata.MockCurrency;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class ArmFragment extends Fragment {
+
+    Account account = new Account();
+
+    public int sendAmt = 1;
+    public int bankAmt = account.getArmedAmount();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,14 +30,66 @@ public class ArmFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_arm, container, false);
+        final TextView sendView = (TextView) view.findViewById(R.id.deposit_text);
+        final TextView bankView = (TextView) view.findViewById(R.id.txtAmount);
+        Button lessBtn = (Button) view.findViewById(R.id.decreaseButton);
+        Button moreBtn = (Button) view.findViewById(R.id.increaseButton);
+
+        lessBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendAmt--;
+                sendView.setText(Integer.toString(sendAmt));
+            }
+        });
+
+        moreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendAmt++;
+                sendView.setText(Integer.toString(sendAmt));
+            }
+        });
+
+        /**
+         * Adding :
+         * account.getActiveCurrency() +
+         * to the bankView.setText() line completely messes up the math, I'm not sure why.
+         *
+         * I'm also not sure if we want to reset the amount to send after it's sent.
+         */
+        sendView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bankAmt = bankAmt + sendAmt;
+                sendAmt = 1;
+                sendView.setText(Integer.toString(sendAmt));
+                account.setArmedAmount(bankAmt);
+                bankView.setText(String.valueOf(account.getArmedAmount()));
+            }
+        });
+
+        /**
+         * Click on the Armed Amount to reset it.
+         */
+        bankView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bankAmt = 0;
+                account.setArmedAmount(bankAmt);
+                bankView.setText(String.valueOf(account.getArmedAmount()));
+            }
+        });
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_arm, container, false);
+        return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)getActivity()).setArmedAmount(new Account().getArmedAmount());
+       account.setArmedAmount(account.getArmedAmount());
     }
 
     protected class myDragEventListener implements Button.OnDragListener {

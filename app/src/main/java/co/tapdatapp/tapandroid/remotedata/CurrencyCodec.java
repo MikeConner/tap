@@ -9,24 +9,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Denomination;
 
 public class CurrencyCodec {
     private int id;
     private String name;
     private String icon;
-    private boolean iconProcessing;
     private String symbol;
+    private int maxTap;
     private ArrayList<Denomination> denominations;
 
     private static final String NAME = "name";
     private static final String ICON = "icon";
-    private static final String STATUS = "status";
-    private static final String STATUS_ACTIVE = "active";
-    private static final String ICON_PROCESSING = "icon_processing";
     private static final String SYMBOL = "symbol";
+    private static final String MAX_TAP = "max_amount";
     private static final String DENOMINATIONS = "denominations";
     private static final String DENOMINATION_AMOUNT = "amount";
     private static final String DENOMINATION_ICON = "icon";
@@ -40,17 +39,9 @@ public class CurrencyCodec {
     public void parse(int currencyId, JSONObject json) throws JSONException {
         id = currencyId;
         name = json.getString(NAME);
-        if (!json.getString(STATUS).equals(STATUS_ACTIVE)) {
-            // @TODO this should probably be some other exception, but
-            // I'm unclear as to what the various status will mean and
-            // how they should be handled
-            throw new AssertionError(
-                "Currency " + name + " has non-active status"
-            );
-        }
         icon = json.getString(ICON);
-        iconProcessing = json.getBoolean(ICON_PROCESSING);
         symbol = json.getString(SYMBOL);
+        maxTap = json.getInt(MAX_TAP);
         JSONArray jsonDenominations = json.getJSONArray(DENOMINATIONS);
         parseDenominations(jsonDenominations);
     }
@@ -63,7 +54,7 @@ public class CurrencyCodec {
      * @param json JSONArray listing all denominations
      */
     public void parseDenominations(JSONArray json) throws JSONException {
-        denominations = new ArrayList<Denomination>();
+        denominations = new ArrayList<>();
         for (int i = 0; i < json.length(); i++) {
             denominations.add(parseDenomination(json.getJSONObject(i)));
         }
@@ -85,6 +76,19 @@ public class CurrencyCodec {
         );
     }
 
+    public BalanceList
+    parseBalances(JSONObject response) throws JSONException {
+        JSONObject in = response.getJSONObject("response");
+        BalanceList rv = new BalanceList();
+        rv.put(CurrencyDAO.CURRENCY_BITCOIN, in.getInt("btc_balance"));
+        JSONArray balances = in.getJSONArray("balances");
+        for (int i = 0; i < balances.length(); i++) {
+            JSONObject oneBalance = balances.getJSONObject(i);
+            rv.put(oneBalance.getInt("id"), oneBalance.getInt("amount"));
+        }
+        return rv;
+    }
+
     public int getId() {
         return id;
     }
@@ -97,15 +101,15 @@ public class CurrencyCodec {
         return icon;
     }
 
-    public boolean getIconProcessing() {
-        return iconProcessing;
-    }
-
     public String getSymbol() {
         return symbol;
     }
 
-    public List<Denomination> getDenominations() {
-        return denominations;
+    public int getMaxTap() {
+        return maxTap;
+    }
+
+    public Denomination[] getDenominations() {
+        return denominations.toArray(new Denomination[denominations.size()]);
     }
 }

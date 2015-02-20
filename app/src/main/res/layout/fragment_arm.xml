@@ -4,22 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity"
     >
 
+
     <TextView
         android:layout_weight="1"
         android:gravity="center"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:textStyle="bold"
         android:textSize="140sp"
-        android:text="$999"
-        android:id="@+id/txtAmount" />
+        android:background="@drawable/pixelated_open_chest"
+        android:id="@+id/txtAmount"
+        android:text="0"/>
 
     <LinearLayout
         android:gravity="center"
@@ -31,18 +30,30 @@
 
         <Button
             style="@style/AppTheme.circular_button"
-            android:text="&lt;-"
+            android:text="&lt;"
+            android:id="@+id/decreaseButton"
             android:layout_width="48dp"
             android:layout_height="48dp"/>
 
         <TextView
+            android:layout_width="235dp"
+            android:layout_height="70dp"
+            android:text=" 1 "
+            android:textSize="10pt"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:background="@drawable/currency"
+            android:id="@+id/deposit_text"/>
+
+        <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" amount here "/>
+            android:layout_height="match_parent"></FrameLayout>
 
         <Button
             style="@style/AppTheme.circular_button"
-            android:text="-&gt;"
+            android:text="&gt;"
+            android:id="@+id/increaseButton"
             android:layout_width="48dp"
             android:layout_height="48dp"/>
 

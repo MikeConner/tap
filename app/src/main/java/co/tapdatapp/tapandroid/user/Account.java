@@ -15,6 +15,8 @@ import java.util.Random;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.UserAccountCodec;
@@ -34,7 +36,7 @@ public class Account {
     private SharedPreferences preferences;
 
     // @TODO I don't think this belongs in this class ...
-    private static int armedAmount = 1;
+    private static int armedAmount = 0;
 
     public Account() {
         super();
@@ -70,9 +72,37 @@ public class Account {
             setPhoneSecret(phoneSecret);
             setNickname(codex.getNickname(response));
             setAuthToken(codex.getAuthToken(response));
+            setCurrencyOnNewUser();
         }
         catch (JSONException je) {
             throw new WebServiceError(je);
+        }
+    }
+
+    /**
+     * For a new user, set the default currency to whatever has the
+     * highest balance. Remains to be seen whether this becomes a
+     * production behavior, but it's probably a good idea, so that
+     * any promo balance the user gets by creating a new account
+     * automatically becomes the default
+     */
+    private void setCurrencyOnNewUser() throws WebServiceError {
+        UserBalance balance = new UserBalance();
+        BalanceList balances = balance.getAllBalances();
+        // Bitcoin is a special case
+        balance.ensureLocalCurrencyDetails(CurrencyDAO.CURRENCY_BITCOIN);
+        balance.ensureLocalCurrencyDetails(balances);
+        Integer currencyId = null;
+        int highestBalance = 0;
+        for (int currentId : balances.keySet()) {
+            int currentBalance = balances.get(currentId);
+            if (currentBalance >= highestBalance) {
+                highestBalance = currentBalance;
+                currencyId = currentId;
+            }
+        }
+        if (currencyId != null) {
+            setActiveCurrency(currencyId);
         }
     }
 
@@ -127,6 +157,9 @@ public class Account {
      * @param to user's nickname
      */
     public void setNickname(String to) {
+        if (to == null) {
+            throw new AssertionError("setting nickname to null");
+        }
         set(NICKNAME, to);
     }
 

@@ -1,67 +1,44 @@
 package co.tapdatapp.tapandroid;
 
-
-
 import android.app.DialogFragment;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.TextView;
 
-import co.tapdatapp.tapandroid.service.TapCloud;
+import co.tapdatapp.tapandroid.helpers.DevHelper;
+import co.tapdatapp.tapandroid.user.Account;
 
 
-/**
- * A simple {@link Fragment} subclass.
- *
- */
-public class ArmedFragment extends DialogFragment {
-    private String mAuthToken;
-    private float mAmount;
+public class ArmedFragment extends DialogFragment implements View.OnClickListener{
 
     public  void setValues (String message, String payload_url){
-
         TextView tv = (TextView) getView().findViewById(R.id.txtYap);
-        ImageView iv = (ImageView) getView().findViewById(R.id.imageYapa);
         tv.setText(message);
-
-        new TapCloud.DownloadImageTask(iv)
-                .execute(payload_url);
-
-        //iv.setImageDrawable(TapCloud.LoadImageFromWebOperations(payload_url));
-
-        //TODO: set options to do cropping in teh async background donwloader
-        //iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
     }
 
     public ArmedFragment() {
         // Required empty public constructor
     }
-    public ArmedFragment(String auth_token, float amount) {
-            mAuthToken = auth_token;
-            mAmount = amount;
-        // Required empty public constructor
-    }
-
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View
+    onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        return inflater.inflate(R.layout.fragment_armed, container, false);
-
-
+        View armedFragment = inflater.inflate(R.layout.fragment_armed, container, false);
+        if (DevHelper.isEnabled(R.string.CREATE_FAKE_DATA_ON_SERVER)) {
+            Button b = (Button) armedFragment.findViewById(R.id.btnRandomTransaction);
+            b.setVisibility(View.VISIBLE);
+            b.setOnClickListener(this);
+        }
+        return armedFragment;
     }
+
     @Override
     public void onResume(){
         super.onResume();
@@ -69,7 +46,7 @@ public class ArmedFragment extends DialogFragment {
         TextView tvAmount = (TextView)  getView().findViewById(R.id.txtArmedAmount);
 
         tv.setText( " TAP " );
-        tvAmount.setText(  "$" + String.format("%d", (long)mAmount));
+        tvAmount.setText(  "$" + String.format("%d", new Account().getArmedAmount()));
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -79,5 +56,10 @@ public class ArmedFragment extends DialogFragment {
         getDialog().getWindow().setLayout(width, height);
     }
 
-
+    @Override
+    public void onClick(View v) {
+        // Only a single button at this time
+        v.setEnabled(false);
+        ((MainActivity)getActivity()).clickRandomTransaction(v);
+    }
 }

@@ -5,9 +5,11 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by arash on 10/5/14.
- */
+import java.util.HashMap;
+
+import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+
 public class TapYapa {
     private String mURL;
     private String mContent;
@@ -18,26 +20,26 @@ public class TapYapa {
     private String mThumbnailURL;
     private String mAuthToken;
 
+    private HttpHelper httpHelper;
 
-    public void loadYapa(String auth_token, String yapa_id, String tag_id){
-        String mAPIURL = TapCloud.TAP_ONE_YAPA_API_ENDPOINT_URL + yapa_id + ".json?auth_token=" + auth_token + "&tag_id=" + tag_id;
+    public TapYapa() {
+        httpHelper = new HttpHelper();
+    }
+
+    public void
+    loadYapa(String auth_token, String yapa_id, String tag_id)
+    throws JSONException {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("tag_id", tag_id);
+        String url = httpHelper.getFullUrl(R.string.ENDPOINT_TAP_ONE_YAPA, yapa_id + ".json", params);
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
         mTapCloud = new TapCloud();
-        JSONObject output;
-        try {
-            output = mTapCloud.httpGet(mAPIURL);
-            mURL = output.getJSONObject("response").getString("uri");
-            mContent = output.getJSONObject("response").getString("text");
-            mThreshold = output.getJSONObject("response").getInt("threshold");
-            mYapaURL = output.getJSONObject("response").getString("payload_image");
-            mThumbnailURL = output.getJSONObject("response").getString("payload_thumb");
-
-
-        }
-        catch (Exception e)
-        {
-            //TODO: any errors possible here?
-        }
+        JSONObject output = mTapCloud.httpGet(url);
+        mURL = output.getJSONObject("response").getString("uri");
+        mContent = output.getJSONObject("response").getString("text");
+        mThreshold = output.getJSONObject("response").getInt("threshold");
+        mYapaURL = output.getJSONObject("response").getString("payload_image");
+        mThumbnailURL = output.getJSONObject("response").getString("payload_thumb");
     }
 
     public String getFullYapa(){
@@ -83,42 +85,37 @@ public class TapYapa {
         mThreshold=new_value;
     }
 
-    public void updateYapa(String auth_token, String tag_id){
+    public void updateYapa(String auth_token, String tag_id) throws JSONException {
         mAuthToken = auth_token;
 
         JSONObject json = new JSONObject();
         JSONObject payload = new JSONObject();
 
         JSONObject output;
-
-        String mRemoteURL = TapCloud.TAP_ONE_YAPA_API_ENDPOINT_URL + mYapaID + ".json?auth_token=" + auth_token + "&tag_id=" + tag_id;
+        HashMap<String, String> params = new HashMap<>();
+        params.put("tag_id", tag_id);
+        String url = httpHelper.getFullUrl(R.string.ENDPOINT_TAP_ONE_YAPA, mYapaID + ".json", params);
         //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
         mTapCloud = new TapCloud();
 
-        try {
+        payload.put("threshold", mThreshold);
+        payload.put("content", mContent);
+        payload.put("uri", mURL);
+        payload.put("mobile_payload_image_url", mYapaURL);
+        payload.put("mobile_payload_thumb_url", mThumbnailURL);
 
-            payload.put("threshold", mThreshold);
-            payload.put("content", mContent);
-            payload.put("uri", mURL);
-            payload.put("mobile_payload_image_url", mYapaURL);
-            payload.put("mobile_payload_thumb_url", mThumbnailURL);
-
-            json.put("auth_token", mAuthToken);
-            json.put("id", mYapaID);
-            json.put("tag_id", tag_id);
-            json.put("payload", payload);
+        json.put("auth_token", mAuthToken);
+        json.put("id", mYapaID);
+        json.put("tag_id", tag_id);
+        json.put("payload", payload);
 
 
 
-            //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
-            output = mTapCloud.httpPut(mRemoteURL, json);
-            // = output.getJSONObject("response").getString("nickname");
-            //CHECK FOR BAD CASES HERE!
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("JSON", "" + e);
-        }
+        //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
+        output = mTapCloud.httpPut(url, json);
+        // = output.getJSONObject("response").getString("nickname");
+        //CHECK FOR BAD CASES HERE!
+
     }
 }
 

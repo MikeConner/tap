@@ -113,6 +113,9 @@ public class WebResponse {
                 JSONObject error = getJSON();
                 message = error.getString("error_description");
             }
+            catch (JSONException je) {
+                message = new String(getBody());
+            }
             catch (Exception e) {
                 message = e.getMessage();
             }

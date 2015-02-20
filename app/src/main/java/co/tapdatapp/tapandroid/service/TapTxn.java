@@ -1,16 +1,18 @@
 package co.tapdatapp.tapandroid.service;
 
-import android.util.Log;
+import android.os.Bundle;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import co.tapdatapp.tapandroid.MainActivity;
+import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
+import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+import co.tapdatapp.tapandroid.user.Account;
 
-/**
- * Created by arash on 9/28/14.
- */
 public class TapTxn {
+
+    private final HttpHelper httpHelper;
+
     private String mTXNid = "";
     private String mPayloadURL = "";
     private String mUserNickname ="";
@@ -19,28 +21,26 @@ public class TapTxn {
     private int mAmountSatoshi = 0;
     private String mPayloadImageThumb = "";
     private String mUserImageThumb = "";
-
+    private int mCurrencyId;
 
 
     private String mTagID;
-    private TapCloud mTapCloud;
     private int mSatoshi;
     private String mMessage;
     private String mTxnDate;
     private int mEndingUserBalanaceSatoshi = 0;
 
-    private String mAuthToken;
-
     private float mTxnAmount;
+
+    public TapTxn() {
+        httpHelper = new HttpHelper();
+    }
 
     public void setTxnAmount(float new_amount){
         mTxnAmount = new_amount;
     }
     public void setTagID(String new_value){
         mTagID = new_value;
-    }
-    public void setAuthToken(String new_value){
-        mAuthToken = new_value;
     }
 
     public String getTxnDate(){
@@ -125,51 +125,41 @@ public class TapTxn {
         return mSatoshi;
     }
 
+    public void setCurrencyId(int to) {
+        mCurrencyId = to;
+    }
 
-    public void TapAfool(){
+    public void TapAfool() throws Exception {
 
-        //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
-        mTapCloud = new TapCloud();
-        //END
-
-        if (mAuthToken != null && mTagID != null && mTxnAmount != 0){
-
-
-            JSONObject json = new JSONObject();
-            JSONObject output;
-            try {
-                json.put("auth_token", mAuthToken);
-                json.put("tag_id", mTagID   );
-                json.put("amount", mTxnAmount);
-
-
-                //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
-                output = mTapCloud.httpPost(TapCloud.TAP_TXN_API_ENDPOINT_URL + "auth_token=" + mAuthToken, json);
-                mSatoshi = output.getJSONObject("response").getInt("satoshi_amount");
-                mAmountUSD = (float) (output.getJSONObject("response").getInt("dollar_amount") / 100);
-                mEndingUserBalanaceSatoshi = output.getJSONObject("response").getInt("final_balance");
-                mUserImageThumb = output.getJSONObject("response").getString("tapped_user_thumb");
-                mUserNickname = output.getJSONObject("response").getString("tapped_user_name");
-
-
-                mPayloadURL = output.getJSONObject("response").getJSONObject("payload").getString("uri");
-                mMessage = output.getJSONObject("response").getJSONObject("payload").getString("text");
-                mPayloadImageThumb = output.getJSONObject("response").getJSONObject("payload").getString("thumb");
-                mPayloadImage = output.getJSONObject("response").getJSONObject("payload").getString("image");
-
-
-
-    //            /{"response":{"satoshi":936593,"payload":{"uri":"https:\/\/s3.amazonaws.com\/tapyapa\/new_key_needed","text":"Enter Your message here"}}}
-                String b = "sdlfkjsdf";
-    //            mAuthToken = output.getJSONObject("response").getString("auth_token");
-    //            mNickName = output.getJSONObject("response").getString("nickname");
-
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-                Log.e("JSON", "" + e);
-            }
+        if (mTagID == null) {
+            throw new AssertionError("tag id == null");
         }
+        if (mTxnAmount == 0) {
+            throw new AssertionError("transaction amount == 0");
+        }
+
+        JSONObject json = new JSONObject();
+        JSONObject output;
+        json.put("auth_token", new Account().getAuthToken());
+        json.put("tag_id", mTagID   );
+        json.put("amount", mTxnAmount);
+        if (mCurrencyId != CurrencyDAO.CURRENCY_BITCOIN) {
+            json.put("currency_id", mCurrencyId);
+        }
+
+        output = httpHelper.HttpPostJSON(httpHelper.getFullUrl(R.string.ENDPOINT_TRANSACTION), new Bundle(), json);
+        mAmountUSD = (float) (output.getJSONObject("response").getInt("dollar_amount") / 100);
+        mEndingUserBalanaceSatoshi = output.getJSONObject("response").getInt("final_balance");
+        mUserImageThumb = output.getJSONObject("response").getString("tapped_user_thumb");
+        mUserNickname = output.getJSONObject("response").getString("tapped_user_name");
+
+        mPayloadURL = output.getJSONObject("response").getJSONObject("payload").getString("uri");
+        mMessage = output.getJSONObject("response").getJSONObject("payload").getString("text");
+        mPayloadImageThumb = output.getJSONObject("response").getJSONObject("payload").getString("thumb");
+        mPayloadImage = output.getJSONObject("response").getJSONObject("payload").getString("image");
+
+//            /{"response":{"satoshi":936593,"payload":{"uri":"https:\/\/s3.amazonaws.com\/tapyapa\/new_key_needed","text":"Enter Your message here"}}}
+
     }
 
 }

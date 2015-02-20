@@ -3,7 +3,6 @@ package co.tapdatapp.tapandroid;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,10 +22,8 @@ import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.user.Account;
 
 
-public class TagActivity extends Activity implements TagsFragment.OnFragmentInteractionListener {
+public class TagActivity extends Activity {
     private TapUser mTapUser;
-    private TapTag mTapTag;
-    private Map<String, String> mtagMap;
     private String mDefaultYapaString;
 
     @Override
@@ -50,7 +47,7 @@ public class TagActivity extends Activity implements TagsFragment.OnFragmentInte
         final Account account = new Account();
         if (account.created()) {
 //            mTapUser.LoadUser(AccountActivity.this, mAuthToken);
-            mtagMap = mTapUser.myTagHash();
+            Map<String, String> mtagMap = mTapUser.myTagHash();
             // @TODO: this is incomplete and should handle zero tags gracefully
             if (mtagMap != null) {
                 GridView gridview = (GridView) findViewById(R.id.gridView);
@@ -103,13 +100,6 @@ public class TagActivity extends Activity implements TagsFragment.OnFragmentInte
         }
         return super.onOptionsItemSelected(item);
     }
-    public void onFragmentInteraction(Uri uri) {
-        // we need this for fragments / menus
-        //not sure what we have to do here if anything
-    }
-    public void onFragmentInteraction(String id){
-        // do nothing
-    }
     public void makeNewTag(View view){
         mDefaultYapaString = new Account().getProfilePicThumbUrl();
         new NewTagTask().execute(mDefaultYapaString);
@@ -122,13 +112,14 @@ public class TagActivity extends Activity implements TagsFragment.OnFragmentInte
 
             // params comes from the execute() call: params[0] is the url.
             try {
-                mTapTag = new TapTag();
+                TapTag tapTag = new TapTag();
                 String authToken = new Account().getAuthToken();
-                mTapTag.generateNewTag(authToken, mDefaultYapaString);
+                tapTag.generateNewTag(authToken, mDefaultYapaString);
                 mTapUser.getTags(authToken);
                 return mDefaultYapaString;  
             } catch (Exception e) {
-                return "Unable to retrieve web page. URL may be invalid.";
+                TapApplication.unknownFailure(e);
+                return e.getMessage();
             }
         }
         // onPostExecute displays the results of the AsyncTask.

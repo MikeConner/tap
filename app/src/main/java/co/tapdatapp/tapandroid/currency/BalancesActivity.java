@@ -14,8 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import co.tapdatapp.tapandroid.R;
-import co.tapdatapp.tapandroid.localdata.MockCurrency;
-//import co.tapdatapp.tapandroid.localdata.UserBalance;
+import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class BalancesActivity
@@ -44,8 +43,7 @@ implements AdapterView.OnItemClickListener{
     private void fillInList() {
         findViewById(R.id.balances_progress_bar).setVisibility(View.VISIBLE);
         balanceList.setVisibility(View.GONE);
-        onBalancesLoaded(new MockCurrency().getAllBalances());
-        //new GetAllBalancesTask().execute(this);
+        new GetAllBalancesTask().execute(this);
     }
 
     /**
@@ -57,7 +55,7 @@ implements AdapterView.OnItemClickListener{
     public void onBalancesLoaded(BalanceList list) {
         BalanceListAdapter adapter = new BalanceListAdapter(
             this,
-            new MockCurrency(),
+            new UserBalance(),
             list
         );
         balanceList.setAdapter(adapter);

@@ -7,64 +7,44 @@ package co.tapdatapp.tapandroid.history;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.sql.Timestamp;
-import java.util.UUID;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.helpers.ISO8601Format;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+import co.tapdatapp.tapandroid.remotedata.TransactionCodec;
 
 public class HistorySyncTask
-extends AsyncTask<HistoryFragment, Void, Void> {
+extends AsyncTask<HistorySyncCallback, Void, Void> {
 
-    private HistoryFragment historyFragment;
+    private HistorySyncCallback historyFragment;
     private boolean success = false;
-    private Exception exception;
+    private Throwable exception;
 
     @Override
-    protected Void doInBackground(HistoryFragment... historyFragments) {
+    protected Void doInBackground(HistorySyncCallback...historyFragments) {
         if (historyFragments.length != 1) {
             throw new AssertionError(
                 "Must be called with single HistoryFragment"
             );
         }
         historyFragment = historyFragments[0];
-        /*
-        // This section is intended to actually communicate with the
-        // server, but it doesn't look like all the pieces are in place
-        // to do that yet.
-        HttpHelper http = new HttpHelper();
         try {
-            JSONObject response = http.HttpGetJSON(
-                http.getFullUrl(R.string.ENDPOINT_TRANSACTION_LIST),
-                new Bundle()
-            );
-            JSONArray responses = response.getJSONArray("response");
-            int responseNum = responses.length();
-
-            for (int i = 0; i < responseNum; i++) {
-                JSONObject oneResponse = responses.getJSONObject(i);
-
-            }
+            syncWithServer();
             success = true;
         }
-        catch (Exception e) {
-            exception = e;
-            success = false;
+        catch (Throwable t) {
+            exception = t;
         }
-        // End untested live code
-        */
-        // This is a hack to provide something visible to look at until
-        // We have actual network data to work with
-        for (int i = 0; i < 15; i++) {
-            createDummyRecord(i);
-        }
-        success = true;
-        // end testing section
         return null;
     }
 
@@ -79,20 +59,31 @@ extends AsyncTask<HistoryFragment, Void, Void> {
     }
 
     /**
-     * Hack to provide example data until such time as there's real
-     * data
-     *
-     * @param index
+     * Pull down any data from the server newer than what we already
+     * have
      */
-    private void createDummyRecord(int index) {
-        Transaction t = new Transaction();
-        t.setAmount(5 + index);
-        t.setDescription("Generated Test transaction # " + index );
-        t.setSlug(UUID.randomUUID().toString());
-        t.setThumb_url("http://www.example.com");
-        t.setYapa_url("http://www.example.com");
-        t.setTimestamp(Timestamp.valueOf("2014-11-" + Integer.toString(index + 10) + " 01:00:00.0"));
-        t.setNickname("Nickname" + index);
-        t.create();
+    private void syncWithServer() throws Exception {
+        HttpHelper http = new HttpHelper();
+        TransactionCodec tc = new TransactionCodec();
+        Date d = new Transaction().getNewest();
+        ISO8601Format df = new ISO8601Format();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("after", df.format(d));
+        String url = http.getFullUrl(
+            R.string.ENDPOINT_TRANSACTION_LIST,
+            "",
+            params
+        );
+        Log.d("WEB", url);
+        JSONObject response = http.HttpGetJSON(url, new Bundle());
+        JSONArray responses = response.getJSONArray("response");
+        int responseNum = responses.length();
+
+        for (int i = 0; i < responseNum; i++) {
+            JSONObject oneResponse = responses.getJSONObject(i);
+            Transaction t = tc.unmarshall(oneResponse);
+            t.create();
+        }
     }
+
 }
