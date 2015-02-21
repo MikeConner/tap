@@ -22,6 +22,7 @@ import co.tapdatapp.tapandroid.helpers.ISO8601Format;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.TransactionCodec;
+import co.tapdatapp.tapandroid.yapa.YapaImage;
 
 public class HistorySyncTask
 extends AsyncTask<HistorySyncCallback, Void, Void> {
@@ -29,6 +30,7 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
     private HistorySyncCallback historyFragment;
     private boolean success = false;
     private Throwable exception;
+    YapaImage yapaImage = new YapaImage();
 
     @Override
     protected Void doInBackground(HistorySyncCallback...historyFragments) {
@@ -83,6 +85,7 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
             JSONObject oneResponse = responses.getJSONObject(i);
             Transaction t = tc.unmarshall(oneResponse);
             t.create();
+            yapaImage.setTransaction(t);
         }
     }
 
