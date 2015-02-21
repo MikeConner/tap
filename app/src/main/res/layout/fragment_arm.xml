@@ -10,7 +10,7 @@
 
 
     <TextView
-        android:layout_weight="0.75"
+        android:layout_weight="1"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="0dp"
