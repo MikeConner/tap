@@ -12,7 +12,7 @@
             android:layout_height="125dp"
             android:id="@+id/ivTxnYap"
             android:layout_gravity="center_horizontal|top"
-            android:src="@drawable/andre"
+            android:src="@drawable/brienne"
             android:scaleType="centerCrop" />
 
         <TextView

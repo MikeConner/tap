@@ -10,7 +10,7 @@
         android:layout_width="336dp"
         android:layout_height="329dp"
         android:id="@+id/yapaImage"
-        android:src="@drawable/aretha"
+        android:src="@drawable/brienne"
         android:scaleType="centerCrop"
         android:cropToPadding="false"
         android:adjustViewBounds="true"
