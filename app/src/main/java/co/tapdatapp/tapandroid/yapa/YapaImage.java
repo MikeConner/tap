@@ -13,7 +13,10 @@ import android.graphics.BitmapFactory;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.IOException;
+
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
 public class YapaImage extends Activity {
@@ -27,11 +30,18 @@ public class YapaImage extends Activity {
         final TextView imageSender = (TextView) findViewById(R.id.image_sender);
         final TextView imageDescription = (TextView) findViewById(R.id.image_description);
         final TextView imageDate = (TextView) findViewById(R.id.image_date);
+        TapBitmap tapBitmap = new TapBitmap();
 
         /**
          * Commented out Timestamps, was causing a crash
          */
         Transaction transaction = new Transaction();
+        try {
+            ((ImageView) imageView.findViewById(R.id.yapaImage)).setImageBitmap(tapBitmap.fetchFromCacheOrWeb(transaction.getThumb_url()));
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
         ((TextView)imageSender.findViewById(R.id.image_sender)).setText(transaction.getNickname());
         ((TextView)imageDescription.findViewById(R.id.image_description)).setText(transaction.getDescription());
         //((TextView)imageDate.findViewById(R.id.image_date)).setText(transaction.getTimestamp().toString()
