@@ -10,7 +10,7 @@
         android:layout_height="287dp"
         android:id="@+id/yapaUrl"
         android:src="@drawable/logo"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:cropToPadding="false"
         android:adjustViewBounds="true"
         android:layout_gravity="center_horizontal" />

@@ -23,11 +23,14 @@ public class YapaUrl extends Activity{
         final TextView urlDescription = (TextView) findViewById(R.id.url_description);
         final TextView urlDate = (TextView) findViewById(R.id.url_date);
 
+        /**
+         * Commented out Timestamps, was causing a crash
+         */
         final Transaction transaction = new Transaction();
         ((TextView)urlSender.findViewById(R.id.url_sender)).setText(transaction.getNickname());
         ((TextView)urlDescription.findViewById(R.id.url_description)).setText(transaction.getDescription());
-        ((TextView)urlDate.findViewById(R.id.url_date)).setText(transaction.getTimestamp().toString()
-                + "  " + Integer.toString(transaction.getAmount()));
+        //((TextView)urlDate.findViewById(R.id.url_date)).setText(transaction.getTimestamp().toString()
+          //      + "  " + Integer.toString(transaction.getAmount()));
         /**
          * This opens up a webpage with the desired url
          */

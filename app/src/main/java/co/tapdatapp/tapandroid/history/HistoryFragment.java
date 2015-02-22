@@ -73,7 +73,7 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 /**
                  * openYapa is currently set to null so that, in the future, different things will
-                 * happen depending on the type of yapa. Alsoi currently operating under the assumption that
+                 * happen depending on the type of yapa. Also currently operating under the assumption that
                  * Yapas currently can only be images. More cases will be added later.
                  */
                 Intent openYapa = null;

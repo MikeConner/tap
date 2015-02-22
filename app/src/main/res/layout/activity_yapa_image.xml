@@ -7,11 +7,10 @@
     android:weightSum="1">
 
     <ImageView
-        android:layout_width="336dp"
-        android:layout_height="329dp"
+        android:layout_width="match_parent"
+        android:layout_height="275dp"
         android:id="@+id/yapaImage"
-        android:src="@drawable/aretha"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:cropToPadding="false"
         android:adjustViewBounds="true"
         android:layout_gravity="center_horizontal" />
