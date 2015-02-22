@@ -637,7 +637,7 @@ implements AccountFragment.OnFragmentInteractionListener,
             Fragment frag;
             switch (position) {
                 case 0:
-                    frag = new AccountFragment();
+                    frag = new TagsFragment();
                     break;
                 case 1:
                     frag = new AccountFragment();
