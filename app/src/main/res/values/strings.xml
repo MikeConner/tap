@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Tap Dat</string>
-    <string name="title_activity_activity_arm">Tap Dat</string>
+    <string name="app_name">TAP</string>
+    <string name="title_activity_activity_arm">Tap</string>
     <string name="title_section1">Account</string>
     <string name="title_section2">Tap</string>
     <string name="title_section3">History</string>
