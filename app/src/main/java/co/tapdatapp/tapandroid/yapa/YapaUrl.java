@@ -19,21 +19,23 @@ import co.tapdatapp.tapandroid.localdata.Transaction;
 
 public class YapaUrl extends Activity{
 
+    public final static String TRANSACTION_ID = "TxId";
+
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_yapa_url);
+
+        final int transactionId = getIntent().getExtras().getInt(TRANSACTION_ID);
+        final Transaction transaction = new Transaction();
+        transaction.moveTo(transactionId);
         final ImageView imageView = (ImageView) findViewById(R.id.yapaUrl);
         final TextView urlSender = (TextView) findViewById(R.id.url_sender);
         final TextView urlDescription = (TextView) findViewById(R.id.url_description);
         final TextView urlDate = (TextView) findViewById(R.id.url_date);
 
-        /**
-         * Commented out Timestamps, was causing a crash
-         */
-        final Transaction transaction = new Transaction();
         urlSender.setText(transaction.getNickname());
         urlDescription.setText(transaction.getDescription());
-        //urlDate.setText(transaction.getTimestamp().toString() + "  " + Integer.toString(transaction.getAmount()));
+        urlDate.setText(transaction.getTimestamp().toString() + "  " + Integer.toString(transaction.getAmount()));
 
         /**
          * This opens up a webpage with the desired url
