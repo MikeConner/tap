@@ -7,6 +7,8 @@ package co.tapdatapp.tapandroid.remotedata;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import co.tapdatapp.tapandroid.localdata.Tag;
+
 public class TagCodec {
 
     private String id;
@@ -26,6 +28,14 @@ public class TagCodec {
         catch (JSONException je) {
             throw new AssertionError(je);
         }
+    }
+
+    public Tag getTag() {
+        Tag rv = new Tag();
+        rv.tagId = id;
+        rv.name = name;
+
+        return rv;
     }
 
     public String getId() {

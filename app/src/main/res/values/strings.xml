@@ -25,5 +25,6 @@
     <string name="description_profile_picture">Profile Piture</string>
     <string name="calculating">calculating...</string>
     <string name="tap">Tap</string>
+    <string name="button_new_tag">CREATE NEW TAG</string>
 
 </resources>
