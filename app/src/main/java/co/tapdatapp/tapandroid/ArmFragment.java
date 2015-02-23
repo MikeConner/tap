@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +20,6 @@ public class ArmFragment extends Fragment {
 
     Account account = new Account();
 
-    public int sendAmt = 1;
     public int bankAmt = account.getArmedAmount();
 
     @Override
@@ -31,42 +31,40 @@ public class ArmFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_arm, container, false);
-        final TextView sendView = (TextView) view.findViewById(R.id.deposit_text);
+        final ImageView oneView = (ImageView) view.findViewById(R.id.currency_1);
+        final ImageView fiveView = (ImageView) view.findViewById(R.id.currency_5);
+        final ImageView tenView = (ImageView) view.findViewById(R.id.currency_10);
         final TextView bankView = (TextView) view.findViewById(R.id.txtAmount);
-        Button lessBtn = (Button) view.findViewById(R.id.decreaseButton);
-        Button moreBtn = (Button) view.findViewById(R.id.increaseButton);
 
-        lessBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-             if(sendAmt>0) {
-                 sendAmt--;
-                 sendView.setText(Integer.toString(sendAmt));
-             }
-             else {
-                 sendAmt = 0;
-                 sendView.setText(Integer.toString(sendAmt));
-             }
-            }
-        });
 
-        moreBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendAmt++;
-                sendView.setText(Integer.toString(sendAmt));
-            }
-        });
 
         /**
          * Adding :
          * account.getActiveCurrency() +
          * to the bankView.setText() line completely messes up the math, I'm not sure why.
          */
-        sendView.setOnClickListener(new View.OnClickListener() {
+        oneView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bankAmt = bankAmt + sendAmt;
+                bankAmt = bankAmt + 1;
+                account.setArmedAmount(bankAmt);
+                bankView.setText(String.valueOf(account.getArmedAmount()));
+            }
+        });
+
+        fiveView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bankAmt = bankAmt + 5;
+                account.setArmedAmount(bankAmt);
+                bankView.setText(String.valueOf(account.getArmedAmount()));
+            }
+        });
+
+        tenView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bankAmt = bankAmt + 10;
                 account.setArmedAmount(bankAmt);
                 bankView.setText(String.valueOf(account.getArmedAmount()));
             }
