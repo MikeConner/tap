@@ -33,13 +33,15 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
                 "Must provide callback and voucher code as execute() parameters"
             );
         }
-        callback = (Callback)params[0];
+       // callback = (Callback)params[0];
         String voucher = (String)params[1];
         HttpHelper http = new HttpHelper();
         try {
-            JSONObject httpResponse = http.HttpGetJSON(
+            JSONObject httpResponse = http.HttpPutJSON(
                 getRedeemVoucherURL(http, voucher),
-                new Bundle()
+                new Bundle(),
+                    new JSONObject()
+
             );
             VoucherCodec codec = new VoucherCodec();
             response = codec.parseRedeemResponse(httpResponse);
@@ -55,10 +57,10 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
     @Override
     protected void onPostExecute(Void value) {
         if (success) {
-            callback.onComplete(response);
+     //       callback.onComplete(response);
         }
         else {
-            callback.onFailure(exception);
+    //        callback.onFailure(exception);
         }
     }
 
