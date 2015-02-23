@@ -35,8 +35,7 @@ public class YapaImage extends Activity {
 
         imageSender.setText(transaction.getNickname());
         imageDescription.setText(transaction.getDescription());
-        imageDate.setText(transaction.getTimestamp().toString()
-                + "  " + Integer.toString(transaction.getAmount()));
+        imageDate.setText(transaction.getTimestamp().toString() + "  " + Integer.toString(transaction.getAmount()));
 
         /**
          * This makes clicking on the image turn it into a fullscreen view.
