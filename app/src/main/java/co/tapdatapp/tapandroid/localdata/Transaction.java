@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 public class Transaction implements SingleTable, TransactionDAO {
     public final static String NAME = "transactions";
