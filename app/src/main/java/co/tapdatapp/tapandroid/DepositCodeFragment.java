@@ -29,7 +29,7 @@ import co.tapdatapp.tapandroid.voucher.VoucherRedeemResponse;
  * Use the {@link DepositCodeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DepositCodeFragment extends DialogFragment {
+public class DepositCodeFragment extends DialogFragment implements RedeemVoucherTask.Callback {
 
 
     private EditText etCode;
@@ -66,7 +66,7 @@ public class DepositCodeFragment extends DialogFragment {
         redeem_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 etCode = (EditText) v.findViewById(R.id.etCode);
-                new RedeemVoucherTask().execute(getActivity(), "bd0ccb78");
+                new RedeemVoucherTask().execute(this, "bd0ccb78");
 
                 // When button is clicked, call up to owning activity.
   //              ((FragmentDialog)getActivity()).showDialog();
@@ -107,13 +107,18 @@ public class DepositCodeFragment extends DialogFragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    @Override
     public void onComplete(VoucherRedeemResponse response){
-        //do nothing?
-
-
+        // Here you need to do whatever action is appropriate once the voucher has been
+        // redeemed, such as show success dialog, or close the fragment, depending on the
+        // UI requireents
     }
-    public void onFailure( VoucherRedeemResponse response){
 
-        }
+    @Override
+    public void onFailure(Throwable error){
+        // Here needs to handle the error, which could be to tell the user that their
+        // network isn't available, or tell the that the voucher is invalid, or whatever
+        // is appropriate based on the cause of the error
+    }
 
 }
