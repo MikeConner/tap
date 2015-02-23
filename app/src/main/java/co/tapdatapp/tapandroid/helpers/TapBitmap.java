@@ -8,6 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import java.util.NoSuchElementException;
+
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
@@ -28,17 +30,26 @@ public class TapBitmap {
     Bitmap fetchFromCacheOrWeb(String url) throws Exception {
         Bitmap rv;
         AndroidCache cache = new AndroidCache();
-        byte[] data = cache.get(url);
-        if (data == null) {
+        byte[] data;
+        try {
+            data = cache.get(url);
+            rv = BitmapFactory.decodeByteArray(data, 0, data.length);
+            if (rv == null) {
+                throw new NullPointerException(
+                        "Null Bitmap from cache for " + url + " " + data.length
+                );
+            }
+        }
+        catch (NoSuchElementException nsee) {
             HttpHelper helper = new HttpHelper();
             WebResponse wr = helper.HttpGet(url, new Bundle());
             if (wr.isOK()) {
                 data = wr.getBody();
                 if (data == null) {
-                    throw new NullPointerException("Null data from cache");
+                    throw new NullPointerException("Null data from webservice");
                 }
                 if (data.length == 0) {
-                    throw new NullPointerException("0 length data from cache");
+                    throw new NullPointerException("0 length data from webservice");
                 }
                 rv = BitmapFactory.decodeByteArray(data, 0, data.length);
                 if (rv == null) {
@@ -50,14 +61,6 @@ public class TapBitmap {
             }
             else {
                 throw new Exception("Failure to fetch image: " + wr.getError());
-            }
-        }
-        else {
-            rv = BitmapFactory.decodeByteArray(data, 0, data.length);
-            if (rv == null) {
-                throw new NullPointerException(
-                    "Null Bitmap from cache for " + url + " " + data.length
-                );
             }
         }
         return rv;

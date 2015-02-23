@@ -1,54 +1,42 @@
 package co.tapdatapp.tapandroid.yapa;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
 import android.widget.ImageView;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.IOException;
-
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
 public class YapaImage extends Activity {
 
-    private boolean isImageFitToScreen = false;
-    Transaction transaction = new Transaction();
+    public final static String TRANSACTION_ID = "TxId";
 
+    private boolean isImageFitToScreen = false;
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_yapa_image);
+        final int transactionId = getIntent().getExtras().getInt(TRANSACTION_ID);
+        final Transaction transaction = new Transaction();
+        transaction.moveTo(transactionId);
         final ImageView imageView = (ImageView) findViewById(R.id.yapaImage);
         final TextView imageSender = (TextView) findViewById(R.id.image_sender);
         final TextView imageDescription = (TextView) findViewById(R.id.image_description);
         final TextView imageDate = (TextView) findViewById(R.id.image_date);
-        TapBitmap tapBitmap = new TapBitmap();
-        transaction = getTransaction();
 
-        /**
-         * Commented out Timestamps, was causing a crash
-         */
-        try {
-            ((ImageView) imageView.findViewById(R.id.yapaImage)).setImageBitmap(tapBitmap.fetchFromCacheOrWeb(transaction.getThumb_url()));
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        //((TextView)imageSender.findViewById(R.id.image_sender)).setText(transaction.getNickname());
-        //((TextView)imageDescription.findViewById(R.id.image_description)).setText(transaction.getDescription());
-        //((TextView)imageDate.findViewById(R.id.image_date)).setText(transaction.getTimestamp().toString()
-          //      + "  " + Integer.toString(transaction.getAmount()));
+        new ImageFetchTask().execute(imageView, transaction);
 
+        imageSender.setText(transaction.getNickname());
+        imageDescription.setText(transaction.getDescription());
+        imageDate.setText(transaction.getTimestamp().toString()
+                + "  " + Integer.toString(transaction.getAmount()));
 
         /**
          * This makes clicking on the image turn it into a fullscreen view.
@@ -68,22 +56,46 @@ public class YapaImage extends Activity {
             }
         });
 
-
     }
 
-    public void onResume() {
-        super.onResume();
+    /**
+     * Load the image onto the view in the background. This has to be a background task because
+     * the image may not be in the local cache, and thus a network fetch would be required.
+     */
+    private class ImageFetchTask extends AsyncTask<Object, Void, Void> {
+
+        Bitmap imageBitmap = null;
+        ImageView imageView = null;
+
+        /**
+         * @param params ImageView to set and Transaction to set from
+         * @return Void
+         */
+        @Override
+        protected Void doInBackground(Object... params) {
+            if (params.length != 2) {
+                throw new AssertionError("Requires ImageView and transaction");
+            }
+            imageView = (ImageView)params[0];
+            Transaction transaction = (Transaction)params[1];
+            try {
+                imageBitmap = TapBitmap.fetchFromCacheOrWeb(transaction.getThumb_url());
+            }
+            catch (Exception e) {
+                TapApplication.unknownFailure(e);
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void x) {
+            //noinspection StatementWithEmptyBody
+            if (imageBitmap != null) {
+                imageView.setImageBitmap(imageBitmap);
+            }
+            else {
+                // @TODO provide some sort of message to the user that the image can't be displayed
+            }
+        }
     }
 
-    public void onPause(){
-        super.onPause();
-    }
-
-    public void setTransaction(Transaction t){
-       transaction = t;
-    }
-
-    public Transaction getTransaction() {
-        return transaction;
-    }
 }

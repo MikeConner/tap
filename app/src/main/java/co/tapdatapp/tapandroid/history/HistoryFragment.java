@@ -76,8 +76,7 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
                  * happen depending on the type of yapa. Also currently operating under the assumption that
                  * Yapas currently can only be images. More cases will be added later.
                  */
-                Intent openYapa = null;
-
+                Intent openYapa;
                 switch (yapaType) {
 
                     case "image":
@@ -92,6 +91,7 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
                     default:
                         throw new AssertionError("Invalid Yapa Type: " + yapaType);
                 }
+                openYapa.putExtra(YapaImage.TRANSACTION_ID, position);
                 startActivity(openYapa);
             }
 
@@ -152,9 +152,8 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
 
     /**
      * Called when the background sync job fails to do its work.
-     *
-     * @TODO make this a user-friendly error
      */
+    // @TODO make this a user-friendly error
     public void syncFailure(Throwable cause) {
         TapApplication.unknownFailure(cause);
     }
