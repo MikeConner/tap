@@ -37,9 +37,11 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
         String voucher = (String)params[1];
         HttpHelper http = new HttpHelper();
         try {
-            JSONObject httpResponse = http.HttpGetJSON(
+            JSONObject httpResponse = http.HttpPutJSON(
                 getRedeemVoucherURL(http, voucher),
-                new Bundle()
+                new Bundle(),
+                    new JSONObject()
+
             );
             VoucherCodec codec = new VoucherCodec();
             response = codec.parseRedeemResponse(httpResponse);
@@ -63,7 +65,7 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
     }
 
     /**
-     * Since this is not a static URL (it changed depending on the
+     * Since this is not a static URL (it changes depending on the
      * voucher code) we can't use HttpHelper to build it.
      *
      * Some code here is duplicated against HttpHelper.getFullUrl()

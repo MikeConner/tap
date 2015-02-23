@@ -15,6 +15,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -35,7 +36,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,10 +53,14 @@ import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.user.Account;
 import co.tapdatapp.tapandroid.voucher.RedeemVoucherActivity;
+import co.tapdatapp.tapandroid.voucher.RedeemVoucherTask;
+import co.tapdatapp.tapandroid.voucher.VoucherRedeemResponse;
 
 public class MainActivity
 extends Activity
 implements AccountFragment.OnFragmentInteractionListener,
+           DepositBTCFragment.OnFragmentInteractionListener,
+           DepositCodeFragment.OnFragmentInteractionListener,
            ActionBar.TabListener,
            TapTxnTask.TapTxnInitiator {
 
@@ -73,6 +78,8 @@ implements AccountFragment.OnFragmentInteractionListener,
 
     private boolean mArmed = false;
     private ArmedFragment mArmFrag;
+    private DepositBTCFragment mDepositFrag;
+    private DepositCodeFragment mDepositCodeFrag;
 
     //For File Uploads
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -143,42 +150,23 @@ implements AccountFragment.OnFragmentInteractionListener,
             // primary sections of the activity.
 
             //set up action bar and nav tabs
-            mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+            mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager(), this);
             // Set up the action bar.
             final ActionBar actionBar = getActionBar();
-            if (actionBar == null) {
-                throw new AssertionError("null ActionBar on MainActivity");
-            }
+            actionBar.setDisplayShowTitleEnabled(false);
+//            if (actionBar == null) {
+//                throw new AssertionError("null ActionBar on MainActivity");
+//            }
 
             // Specify that the Home/Up button should not be enabled, since there is no hierarchical
             // parent.
-            actionBar.setHomeButtonEnabled(false);
+//            actionBar.setHomeButtonEnabled(false);
             // Specify that we will be displaying tabs in the action bar.
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+            //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
             // Set up the ViewPager with the sections adapter.
             mViewPager = (ViewPager) findViewById(R.id.pager);
             mViewPager.setAdapter(mSectionsPagerAdapter);
-            mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                @Override
-                public void onPageSelected(int position) {
-                    // When swiping between different app sections, select the corresponding tab.
-                    // We can also use ActionBar.Tab#select() to do this if we have a reference to the
-                    // Tab.
-                    actionBar.setSelectedNavigationItem(position);
-                }
-            });
-            for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-                // Create a tab with text corresponding to the page title defined by the adapter.
-                // Also specify this Activity object, which implements the TabListener interface, as the
-                // listener for when this tab is selected.
-                actionBar.addTab(
-                        actionBar.newTab()
-                                .setText(mSectionsPagerAdapter.getPageTitle(i))
-                                .setTabListener(this));
-            }
-            //sets home page to tap
-
-            mViewPager.setCurrentItem(1);
+            mViewPager.setCurrentItem(2);
         }
     }
 
@@ -383,6 +371,7 @@ implements AccountFragment.OnFragmentInteractionListener,
         }
     }
     private void setPic() {
+       /*
         ImageView mImageView = (ImageView) findViewById(R.id.profile_image);
         // Get the dimensions of the View
         int targetW = mImageView.getWidth();
@@ -405,6 +394,7 @@ implements AccountFragment.OnFragmentInteractionListener,
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         mImageView.setImageBitmap(bitmap);
+        */
     }
 
 
@@ -564,9 +554,42 @@ implements AccountFragment.OnFragmentInteractionListener,
 
     //ACCOUNT Stuff
     public void showDeposit(View view){
-        Intent i = new Intent(this, RedeemVoucherActivity.class);
-        startActivity(i);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("tapbtc");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        mDepositFrag =  new DepositBTCFragment();
+        mDepositFrag.show(ft, "tapbtc");
     }
+
+    public void showLoadCode(View view){
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("tapcode");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+         mDepositCodeFrag =  new DepositCodeFragment();
+        mDepositCodeFrag.show(ft, "tapcode");
+    }
+
+    public void onComplete(VoucherRedeemResponse response){
+        //do nothing?
+
+
+    }
+    public void onFailure( VoucherRedeemResponse response){
+
+    }
+
+
 
     public void showWithdraw(View view){
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -615,6 +638,11 @@ implements AccountFragment.OnFragmentInteractionListener,
         }
     }
 
+
+
+
+
+
     //generic stuff for fragments
     public   TapUser getUserContext(){
         return mTapUser;
@@ -642,9 +670,11 @@ implements AccountFragment.OnFragmentInteractionListener,
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        Context mContext;
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        public SectionsPagerAdapter(FragmentManager fm, Context context) {
             super(fm);
+            mContext = context;
         }
 
         @Override
@@ -653,12 +683,15 @@ implements AccountFragment.OnFragmentInteractionListener,
             Fragment frag;
             switch (position) {
                 case 0:
-                    frag = new AccountFragment();
+                    frag = new TagsFragment();
                     break;
                 case 1:
-                    frag = new ArmFragment();
+                    frag = new AccountFragment();
                     break;
                 case 2:
+                    frag = new ArmFragment();
+                    break;
+                case 3:
                     frag = new HistoryFragment();
                     break;
 
@@ -671,7 +704,7 @@ implements AccountFragment.OnFragmentInteractionListener,
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 4;
         }
 
         @Override
@@ -679,15 +712,19 @@ implements AccountFragment.OnFragmentInteractionListener,
             Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
-                    return getString(R.string.title_section1).toUpperCase(l);
+                    return "Tags".toUpperCase(l);
                 case 1:
-                    return getString(R.string.title_section2).toUpperCase(l);
+                    return getString(R.string.title_section1).toUpperCase(l);
                 case 2:
+                    return getString(R.string.title_section2).toUpperCase(l);
+                case 3:
                     return getString(R.string.title_section3).toUpperCase(l);
             }
             return null;
         }
     }
+
+
     @Override
     public void onFragmentInteraction(Uri uri) {
         // we need this for fragments / menus

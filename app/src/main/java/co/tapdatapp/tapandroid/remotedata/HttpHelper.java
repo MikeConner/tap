@@ -13,6 +13,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
@@ -188,6 +189,38 @@ public class HttpHelper {
         }
     }
 
+
+    /**
+     * Put  JSON via HTTP and return the result
+     *
+     * @param url full URL
+     * @param headers Content-Type and Accept headers are added
+     * @param payload The JSON object to post
+     * @return WebResponse of the response
+     * @throws WebServiceError on various network problems
+     */
+    public JSONObject
+    HttpPutJSON(String url, Bundle headers, JSONObject payload)
+            throws WebServiceError {
+        headers.putString("Accept", "application/json");
+        headers.putString("Content-Type", "application/json");
+        try {
+            WebResponse response = HttpPut(url, headers, payload.toString());
+            if (response.isOK()) {
+                return response.getJSON();
+            } else {
+                throw new WebServiceError(response);
+            }
+        }
+        catch (Exception e) {
+            throw new WebServiceError(e);
+        }
+    }
+
+
+
+
+
     /**
      * Do an HTTP POST
      *
@@ -211,6 +244,24 @@ public class HttpHelper {
         HttpResponse response = webClient.execute(post);
         return new WebResponse(response);
     }
+
+
+
+    public WebResponse HttpPut(String url,
+                                Bundle headers,
+                                String payload
+    ) throws IOException {
+        HttpClient webClient = new DefaultHttpClient();
+        HttpPut put = new HttpPut(url);
+        Set<String> keys = headers.keySet();
+        for (String key : keys) {
+            put.setHeader(key, headers.getString(key));
+        }
+        put.setEntity(new StringEntity(payload));
+        HttpResponse response = webClient.execute(put);
+        return new WebResponse(response);
+    }
+
 
     /**
      * Tests for network access

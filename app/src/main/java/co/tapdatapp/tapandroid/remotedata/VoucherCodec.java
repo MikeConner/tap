@@ -24,9 +24,10 @@ public class VoucherCodec {
     public VoucherRedeemResponse parseRedeemResponse(JSONObject in) {
         VoucherRedeemResponse rv = new VoucherRedeemResponse();
         try {
-            rv.setBalance(in.getInt(BALANCE));
-            rv.setAmountRedeemed(in.getInt(AMOUNT_REDEEMED));
-            rv.setCurrencyId(in.getJSONObject(CURRENCY).getInt(CURRENCY_ID));
+            JSONObject response = in.getJSONObject("response");
+            rv.setBalance(response.getInt(BALANCE));
+            rv.setAmountRedeemed(response.getInt(AMOUNT_REDEEMED));
+            rv.setCurrencyId(response.getJSONObject(CURRENCY).getInt(CURRENCY_ID));
         }
         catch (JSONException je) {
             throw new AssertionError(je);
