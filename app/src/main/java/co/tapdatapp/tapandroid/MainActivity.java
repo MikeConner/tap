@@ -36,7 +36,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,10 +53,14 @@ import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.user.Account;
 import co.tapdatapp.tapandroid.voucher.RedeemVoucherActivity;
+import co.tapdatapp.tapandroid.voucher.RedeemVoucherTask;
+import co.tapdatapp.tapandroid.voucher.VoucherRedeemResponse;
 
 public class MainActivity
 extends Activity
 implements AccountFragment.OnFragmentInteractionListener,
+           DepositBTCFragment.OnFragmentInteractionListener,
+           DepositCodeFragment.OnFragmentInteractionListener,
            ActionBar.TabListener,
            TapTxnTask.TapTxnInitiator {
 
@@ -74,6 +78,8 @@ implements AccountFragment.OnFragmentInteractionListener,
 
     private boolean mArmed = false;
     private ArmedFragment mArmFrag;
+    private DepositBTCFragment mDepositFrag;
+    private DepositCodeFragment mDepositCodeFrag;
 
     //For File Uploads
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -365,6 +371,7 @@ implements AccountFragment.OnFragmentInteractionListener,
         }
     }
     private void setPic() {
+       /*
         ImageView mImageView = (ImageView) findViewById(R.id.profile_image);
         // Get the dimensions of the View
         int targetW = mImageView.getWidth();
@@ -387,6 +394,7 @@ implements AccountFragment.OnFragmentInteractionListener,
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         mImageView.setImageBitmap(bitmap);
+        */
     }
 
 
@@ -546,9 +554,42 @@ implements AccountFragment.OnFragmentInteractionListener,
 
     //ACCOUNT Stuff
     public void showDeposit(View view){
-        Intent i = new Intent(this, RedeemVoucherActivity.class);
-        startActivity(i);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("tapbtc");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        mDepositFrag =  new DepositBTCFragment();
+        mDepositFrag.show(ft, "tapbtc");
     }
+
+    public void showLoadCode(View view){
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("tapcode");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+         mDepositCodeFrag =  new DepositCodeFragment();
+        mDepositCodeFrag.show(ft, "tapcode");
+    }
+
+    public void onComplete(VoucherRedeemResponse response){
+        //do nothing?
+
+
+    }
+    public void onFailure( VoucherRedeemResponse response){
+
+    }
+
+
 
     public void showWithdraw(View view){
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -596,6 +637,11 @@ implements AccountFragment.OnFragmentInteractionListener,
             et.setText(      result  );
         }
     }
+
+
+
+
+
 
     //generic stuff for fragments
     public   TapUser getUserContext(){

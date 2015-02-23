@@ -7,13 +7,6 @@
     tools:context=".profile_main"
     tools:ignore="MergeRootFrame">
 
-    <ImageView
-        android:id="@+id/profile_image"
-        android:src="@drawable/brienne"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/description_profile_picture"/>
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -63,18 +56,21 @@
     <Button
         style="@style/AppTheme.Button"
         android:layout_margin="5dp"
-        android:text="@string/button_load"
+        android:text="@string/button_load_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="showDeposit"/>
+        android:onClick="showLoadCode"
+        android:id="@+id/btn_Load_Code"
+        android:layout_gravity="center_horizontal"
+        android:nestedScrollingEnabled="false" />
 
     <Button
         style="@style/AppTheme.Button"
         android:layout_margin="5dp"
-        android:text="@string/button_my_tags"
+        android:text="@string/button_load"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="myTags"/>
+        android:onClick="showDeposit"/>
 
     <Button
         style="@style/AppTheme.Button"

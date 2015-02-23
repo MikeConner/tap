@@ -15,12 +15,13 @@
     <string name="yapa_thumbnail_alt">Tap to download content</string>
     <string name="title_activity_balances">Balances</string>
     <string name="currency_icon_description">Currency Logo</string>
-    <string name="scan_voucher">Scan this bad boy, get love.</string>
+    <string name="scan_voucher">Bitcoin Deposit</string>
     <string name="uppercase_load">LOAD</string>
     <string name="voucher_qr_code_description">What is this?</string>
     <string name="arm">ARM</string>
     <string name="button_balances">BALANCES</string>
-    <string name="button_load">LOAD</string>
+    <string name="button_load">Deposit BTC</string>
+    <string name="button_load_code">Enter CODE</string>
     <string name="button_my_tags">MY TAGS</string>
     <string name="description_profile_picture">Profile Piture</string>
     <string name="calculating">calculating...</string>
