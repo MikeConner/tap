@@ -1,13 +1,10 @@
 package co.tapdatapp.tapandroid.yapa;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,9 +43,15 @@ public class YapaImage extends Activity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent fullScreenIntent = new Intent(v.getContext(), FullScreenImage.class);
-                fullScreenIntent.putExtra(YapaImage.TRANSACTION_ID,transactionId);
-                YapaImage.this.startActivity(fullScreenIntent);
+                if(isImageFitToScreen) {
+                    isImageFitToScreen=false;
+                    imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    imageView.setAdjustViewBounds(true);
+                }else{
+                    isImageFitToScreen=true;
+                    imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                }
             }
         });
 
@@ -91,29 +94,6 @@ public class YapaImage extends Activity {
             else {
                 // @TODO provide some sort of message to the user that the image can't be displayed
             }
-        }
-    }
-
-    private class FullScreenImage extends Activity
-    {
-        public final static String TRANSACTION_ID = "TxId";
-        protected void onCreate(Bundle savedInstanceState) {
-            setContentView(R.layout.full_image);
-            final int transactionId = getIntent().getExtras().getInt(TRANSACTION_ID);
-            final Transaction transaction = new Transaction();
-            transaction.moveTo(transactionId);
-            ImageView fullView = (ImageView) findViewById(R.id.full_screen_image);
-            fullView.setLayoutParams( new ViewGroup.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT));
-            Bitmap imageBitmap = null;
-            try {
-                imageBitmap = TapBitmap.fetchFromCacheOrWeb(transaction.getThumb_url());
-            }
-            catch (Exception e) {
-                TapApplication.unknownFailure(e);
-            }
-
-            fullView.setScaleType(ImageView.ScaleType.FIT_XY);
-
         }
     }
 
