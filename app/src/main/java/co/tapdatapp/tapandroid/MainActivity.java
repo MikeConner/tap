@@ -36,7 +36,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,15 +51,12 @@ import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.user.Account;
-import co.tapdatapp.tapandroid.voucher.RedeemVoucherActivity;
-import co.tapdatapp.tapandroid.voucher.RedeemVoucherTask;
 import co.tapdatapp.tapandroid.voucher.VoucherRedeemResponse;
 
 public class MainActivity
 extends Activity
 implements AccountFragment.OnFragmentInteractionListener,
            DepositBTCFragment.OnFragmentInteractionListener,
-           DepositCodeFragment.OnFragmentInteractionListener,
            ActionBar.TabListener,
            TapTxnTask.TapTxnInitiator {
 
@@ -73,8 +69,6 @@ implements AccountFragment.OnFragmentInteractionListener,
     private NfcAdapter mNfcAdapter;
     private IntentFilter[] mNdefExchangeFilters;
     private PendingIntent mNfcPendingIntent;
-
-    private TextView txAmount = null;
 
     private boolean mArmed = false;
     private ArmedFragment mArmFrag;
@@ -154,9 +148,9 @@ implements AccountFragment.OnFragmentInteractionListener,
             // Set up the action bar.
             final ActionBar actionBar = getActionBar();
             actionBar.setDisplayShowTitleEnabled(false);
-//            if (actionBar == null) {
-//                throw new AssertionError("null ActionBar on MainActivity");
-//            }
+            if (actionBar == null) {
+                throw new AssertionError("null ActionBar on MainActivity");
+            }
 
             // Specify that the Home/Up button should not be enabled, since there is no hierarchical
             // parent.
