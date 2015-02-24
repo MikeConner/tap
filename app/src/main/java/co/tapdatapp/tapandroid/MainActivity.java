@@ -51,6 +51,7 @@ import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.user.Account;
+import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
 import co.tapdatapp.tapandroid.voucher.VoucherRedeemResponse;
 
 public class MainActivity

@@ -3,7 +3,7 @@
  * redeem
  */
 
-package co.tapdatapp.tapandroid;
+package co.tapdatapp.tapandroid.voucher;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +14,8 @@ import android.app.DialogFragment;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.voucher.RedeemVoucherTask;
 import co.tapdatapp.tapandroid.voucher.VoucherRedeemResponse;
 
