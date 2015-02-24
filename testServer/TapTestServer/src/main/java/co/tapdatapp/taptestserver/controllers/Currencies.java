@@ -15,10 +15,11 @@ public class Currencies {
   }
   
   public void reset() {
-    currencies = new Currency[2];
+    currencies = new Currency[3];
     // 0 = bitcoin
     currencies[0] = new Currency(0, "bitcoin", "S");
     currencies[1] = new Currency(1, "Kennywood Bucks", "K");
+    currencies[2] = new Currency(2, "Super bucks", "$");
   }
   
   public CurrencyResponse get(int id) {

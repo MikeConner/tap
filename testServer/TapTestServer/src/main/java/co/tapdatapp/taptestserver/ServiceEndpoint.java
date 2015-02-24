@@ -13,6 +13,7 @@ import co.tapdatapp.taptestserver.dev.Monitor;
 import co.tapdatapp.taptestserver.entities.NewTransactionRequest;
 import co.tapdatapp.taptestserver.entities.PayloadCreateRequest;
 import co.tapdatapp.taptestserver.entities.PayloadObject;
+import co.tapdatapp.taptestserver.entities.RedeemVoucherResponse;
 import co.tapdatapp.taptestserver.entities.ResponseResponse;
 import co.tapdatapp.taptestserver.entities.TagResponse;
 import co.tapdatapp.taptestserver.entities.TransactionCreatedResponse;
@@ -22,6 +23,7 @@ import java.util.Date;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -145,5 +147,17 @@ public class ServiceEndpoint {
     TransactionResponse[] rv = transactions.getTransactionsAfter(authId, d);
     Monitor.trace(authId + " returning " + rv.length + " transactions");
     return Response.ok(new ResponseResponse(rv)).build();
+  }
+  
+  @PUT
+  @Path("users/{id}/redeem_voucher")
+  @Produces({ MediaType.APPLICATION_JSON })
+  public Response redeemVoucher(
+    @QueryParam(AUTH_TOKEN) String authId,
+    @PathParam("id") String voucherId
+  ) {
+    Monitor.trace(authId + " redeeming voucher " + voucherId);
+    RedeemVoucherResponse response = balances.redeemVoucher(authId, voucherId);
+    return Response.ok(new ResponseResponse(response)).build();
   }
 }
