@@ -1,4 +1,4 @@
-package co.tapdatapp.tapandroid;
+package co.tapdatapp.tapandroid.arm;
 
 import android.app.DialogFragment;
 import android.graphics.Point;
@@ -11,6 +11,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import co.tapdatapp.tapandroid.MainActivity;
+import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.user.Account;
 

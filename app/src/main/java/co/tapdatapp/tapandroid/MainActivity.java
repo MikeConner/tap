@@ -41,6 +41,8 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import co.tapdatapp.tapandroid.arm.ArmFragment;
+import co.tapdatapp.tapandroid.arm.ArmedFragment;
 import co.tapdatapp.tapandroid.currency.BalancesActivity;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.history.HistoryFragment;

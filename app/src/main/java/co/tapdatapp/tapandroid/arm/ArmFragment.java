@@ -1,4 +1,4 @@
-package co.tapdatapp.tapandroid;
+package co.tapdatapp.tapandroid.arm;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,6 +22,8 @@ import android.view.View.OnTouchListener;
 
 import java.util.ArrayList;
 
+import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class ArmFragment extends Fragment {
