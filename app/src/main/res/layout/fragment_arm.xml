@@ -51,19 +51,19 @@
                 android:id="@+id/currency_1"
                 android:src="@drawable/generic_currency_1"
                 android:layout_gravity="center"
-                android:layout_marginLeft="50dp" />
+                android:layout_marginStart="45dp" />
             <ImageView
                 android:layout_width="300dp"
                 android:layout_height="100dp"
                 android:id="@+id/currency_5"
                 android:src="@drawable/generic_currency_5"
-                android:layout_marginLeft="50dp" />
+                android:layout_marginStart="45dp" />
             <ImageView
                 android:layout_width="300dp"
                 android:layout_height="100dp"
                 android:id="@+id/currency_10"
                 android:src="@drawable/generic_currency_10"
-                android:layout_marginLeft="50dp" />
+                android:layout_marginStart="45dp" />
         </LinearLayout>
     </HorizontalScrollView>
 
