@@ -14,7 +14,7 @@ public class Currencies {
     reset();
   }
   
-  public void reset() {
+  public final void reset() {
     currencies = new Currency[3];
     // 0 = bitcoin
     currencies[0] = new Currency(0, "bitcoin", "S");
