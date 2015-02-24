@@ -27,5 +27,9 @@
     <string name="calculating">calculating...</string>
     <string name="tap">Tap</string>
     <string name="button_new_tag">CREATE NEW TAG</string>
+    <string name="redeem_voucher">Enter Code To Load Balance:</string>
+    <string name="redeem_button">OK</string>
+    <string name="redeem_entry">Enter a redemption code here</string>
+    <string name="successful_redeem">Redeemed for</string>
 
 </resources>

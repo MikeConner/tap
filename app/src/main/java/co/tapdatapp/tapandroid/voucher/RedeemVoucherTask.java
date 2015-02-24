@@ -6,11 +6,13 @@ package co.tapdatapp.tapandroid.voucher;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.json.JSONObject;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.VoucherCodec;
 
@@ -45,6 +47,11 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
             );
             VoucherCodec codec = new VoucherCodec();
             response = codec.parseRedeemResponse(httpResponse);
+            // Post redeeming the voucher, simply ensure that the
+            // currency details are local. The balance is fetched
+            // when needed, os no need to do it now.
+            UserBalance balance = new UserBalance();
+            balance.ensureLocalCurrencyDetails(response.getCurrencyId());
             success = true;
         }
         catch (Throwable e) {
@@ -86,6 +93,7 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
         sb.append(voucherCode);
         sb.append("/redeem_voucher");
         http.appendAuthTokenIfExists(sb);
+        Log.d("VOUCHER", sb.toString());
         return sb.toString();
     }
 }

@@ -11,7 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.app.DialogFragment;
-import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.voucher.RedeemVoucherTask;
 import co.tapdatapp.tapandroid.voucher.VoucherRedeemResponse;
@@ -20,39 +21,41 @@ public class DepositCodeFragment
 extends DialogFragment
 implements RedeemVoucherTask.Callback, View.OnClickListener {
 
+    private View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        View v = inflater.inflate(R.layout.fragment_deposit_code, container, false);
-
-        v.findViewById(R.id.btnRedeem).setOnClickListener(this);
-
-        return v;
+        view = inflater.inflate(R.layout.fragment_deposit_code, container, false);
+        view.findViewById(R.id.btnRedeem).setOnClickListener(this);
+        return view;
     }
 
     @Override
     public void onClick(View v) {
-        EditText etCode = (EditText) v.findViewById(R.id.etCode);
-        new RedeemVoucherTask().execute(this, "bd0ccb78");
-
-        // When button is clicked, call up to owning activity.
-        //              ((FragmentDialog)getActivity()).showDialog();
+        TextView tv = (TextView)view.findViewById(R.id.etCode);
+        CharSequence text = tv.getText();
+        String code = text.toString();
+        new RedeemVoucherTask().execute(this, code);
     }
 
     @Override
     public void onComplete(VoucherRedeemResponse response){
-        // Here you need to do whatever action is appropriate once the voucher has been
-        // redeemed, such as show success dialog, or close the fragment, depending on the
-        // UI requireents
+        Toast toast = Toast.makeText(
+            getActivity().getApplicationContext(),
+            TapApplication.string(R.string.successful_redeem) +
+                " " + response.getAmountRedeemed(),
+            Toast.LENGTH_LONG
+        );
+        toast.show();
+        dismiss();
     }
 
     @Override
     public void onFailure(Throwable error){
-        // Here needs to handle the error, which could be to tell the user that their
-        // network isn't available, or tell the that the voucher is invalid, or whatever
-        // is appropriate based on the cause of the error
+        TapApplication.unknownFailure(error);
     }
 
 }
