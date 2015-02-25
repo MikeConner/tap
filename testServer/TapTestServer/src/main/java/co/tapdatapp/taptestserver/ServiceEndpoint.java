@@ -65,10 +65,10 @@ public class ServiceEndpoint {
   }
   
   @GET
-  @Path("/currencies.json/{id}")
+  @Path("/currencies/{id}.json")
   public Response getCurrency(@PathParam("id") int id) {
     Monitor.trace("getCurrency on ID " + id);
-    return Response.ok(currencies.get(id)).build();
+    return Response.ok(new ResponseResponse(currencies.get(id))).build();
   }
   
   @GET
