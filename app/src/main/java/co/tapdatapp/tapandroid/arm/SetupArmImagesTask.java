@@ -7,7 +7,6 @@ package co.tapdatapp.tapandroid.arm;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Denomination;
@@ -19,6 +18,7 @@ public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
     private ArmFragment armFragment;
     private Denomination[] denominations;
     private Bitmap[] bitmaps;
+    private Bitmap icon;
 
     /**
      * Fetch all currency details and all bitmaps associated with
@@ -37,6 +37,12 @@ public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
         CurrencyDAO currency = new UserBalance();
         Account account = new Account();
         currency.ensureLocalCurrencyDetails(account.getActiveCurrency());
+        try {
+            icon = TapBitmap.fetchFromCacheOrWeb(currency.getIconUrl());
+        }
+        catch (Exception e) {
+            // @TODO substitute a default image here
+        }
         denominations = currency.getDenominations(
             account.getActiveCurrency()
         );
@@ -61,6 +67,6 @@ public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
      */
     @Override
     protected void onPostExecute(Void v) {
-        armFragment.updateDenominations(denominations, bitmaps);
+        armFragment.updateDenominations(denominations, bitmaps, icon);
     }
 }
