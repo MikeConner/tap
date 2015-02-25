@@ -20,6 +20,7 @@ public class Transaction implements SingleTable, TransactionDAO {
     public final static String DESCRIPTION = "description";
     public final static String AMOUNT = "amount";
     public final static String NICKNAME = "nickname";
+    public final static String YAPA_CONTENT_TYPE = "yapa_content_type";
 
     private String slug;
     private Timestamp timestamp;
@@ -29,6 +30,7 @@ public class Transaction implements SingleTable, TransactionDAO {
     private String description;
     private int amount;
     private String nickname;
+    private String yapa_content_type;
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -41,7 +43,8 @@ public class Transaction implements SingleTable, TransactionDAO {
                 YAPA_URL + " TEXT, " +
                 DESCRIPTION + " TEXT NOT NULL, " +
                 AMOUNT + " DECIMAL NOT NULL, " +
-                NICKNAME + " TEXT NOT NULL " +
+                NICKNAME + " TEXT NOT NULL, " +
+                YAPA_CONTENT_TYPE + " TEXT NOT NULL" +
                 ")"
         );
     }
@@ -111,7 +114,7 @@ public class Transaction implements SingleTable, TransactionDAO {
                 new String[]{
                     SLUG, TIMESTAMP, THUMB_URL, YAPA_URL,
                     DESCRIPTION, AMOUNT, NICKNAME,
-                    YAPA_THUMB_URL,
+                    YAPA_THUMB_URL, YAPA_CONTENT_TYPE
                 },
                 null, null, null, null,
                 TIMESTAMP + " DESC",
@@ -126,6 +129,7 @@ public class Transaction implements SingleTable, TransactionDAO {
                 amount = c.getInt(5);
                 nickname = c.getString(6);
                 yapa_thumb_url = c.getString(7);
+                yapa_content_type = c.getString(8);
             } else {
                 throw new Error("No TX record at location " + location);
             }
@@ -148,6 +152,7 @@ public class Transaction implements SingleTable, TransactionDAO {
         v.put(AMOUNT, amount);
         v.put(NICKNAME, nickname);
         v.put(YAPA_THUMB_URL, yapa_thumb_url);
+        v.put(YAPA_CONTENT_TYPE, yapa_content_type);
         db.insertOrThrow(NAME, null, v);
     }
 
@@ -207,11 +212,15 @@ public class Transaction implements SingleTable, TransactionDAO {
         this.nickname = nickname;
     }
 
-    public String getYapa_thumb_url() {
-        return yapa_thumb_url;
-    }
-
     public void setYapa_thumb_url(String yapa_thumb_url) {
         this.yapa_thumb_url = yapa_thumb_url;
+    }
+
+    public void setContentType(String to) {
+        yapa_content_type = to;
+    }
+
+    public String getContentType() {
+        return yapa_content_type;
     }
 }

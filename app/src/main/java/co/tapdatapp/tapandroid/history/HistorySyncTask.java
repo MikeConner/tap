@@ -72,7 +72,6 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
             "",
             params
         );
-        Log.d("WEB", url);
         JSONObject response = http.HttpGetJSON(url, new Bundle());
         JSONArray responses = response.getJSONArray("response");
         int responseNum = responses.length();
@@ -80,7 +79,12 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
         for (int i = 0; i < responseNum; i++) {
             JSONObject oneResponse = responses.getJSONObject(i);
             Transaction t = tc.unmarshall(oneResponse);
-            t.create();
+            // The server may return transactions that do not contain
+            // payloads. At this time, we're not recording those
+            // locally
+            if (t.getYapa_url() != null && !t.getYapa_url().equals("null")) {
+                t.create();
+            }
         }
     }
 

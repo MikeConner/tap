@@ -20,7 +20,7 @@ public class TransactionCodec {
     private final ISO8601Format format = new ISO8601Format();
 
     /**
-     * Turn the respone to a get transaction web request into a
+     * Turn the response to a get transaction web request into a
      * Transaction object
      *
      * @param input the payload of a web request
@@ -41,6 +41,7 @@ public class TransactionCodec {
         rv.setTimestamp(new Timestamp(format.parse(input.getString("date")).getTime()));
         rv.setYapa_url(input.getString("payload_image"));
         rv.setYapa_thumb_url(input.getString("payload_thumb"));
+        rv.setContentType(input.getString("payload_content_type"));
         rv.setAmount(input.getInt("amount"));
         rv.setDescription(input.getString("comment"));
         rv.setThumb_url(input.getString("other_user_thumb"));
