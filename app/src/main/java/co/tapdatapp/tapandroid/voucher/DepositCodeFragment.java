@@ -16,14 +16,21 @@ import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
-import co.tapdatapp.tapandroid.voucher.RedeemVoucherTask;
-import co.tapdatapp.tapandroid.voucher.VoucherRedeemResponse;
 
 public class DepositCodeFragment
 extends DialogFragment
 implements RedeemVoucherTask.Callback, View.OnClickListener {
 
+    public interface Callback {
+        void refreshBalanceList();
+    }
+
+    /**
+     * The view contained within this Dialog
+     */
     private View view;
+
+    private Callback callback;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -43,6 +50,10 @@ implements RedeemVoucherTask.Callback, View.OnClickListener {
         new RedeemVoucherTask().execute(this, code);
     }
 
+    public void setCallback(Callback c) {
+        callback = c;
+    }
+
     @Override
     public void onComplete(VoucherRedeemResponse response){
         Toast toast = Toast.makeText(
@@ -52,6 +63,7 @@ implements RedeemVoucherTask.Callback, View.OnClickListener {
             Toast.LENGTH_LONG
         );
         toast.show();
+        callback.refreshBalanceList();
         dismiss();
     }
 

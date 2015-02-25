@@ -19,7 +19,7 @@ import co.tapdatapp.tapandroid.user.Account;
 
 public class BalancesActivity
 extends Activity
-implements AdapterView.OnItemClickListener{
+implements AdapterView.OnItemClickListener, GetAllBalancesTask.Callback {
 
     private ListView balanceList;
 

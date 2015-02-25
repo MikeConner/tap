@@ -1,75 +1,177 @@
 package co.tapdatapp.tapandroid;
 
-import android.net.Uri;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import co.tapdatapp.tapandroid.service.TapCloud;
+import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.currency.BalanceListAdapter;
+import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;
+import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.user.Account;
+import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
 
+public class AccountFragment
+extends Fragment
+implements View.OnClickListener,
+           AdapterView.OnItemClickListener,
+           GetAllBalancesTask.Callback,
+           DepositCodeFragment.Callback {
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AccountFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
-public class AccountFragment extends Fragment {
+    private ListView balanceList;
+    private Account account = new Account();
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_account, container, false);
     }
+
     @Override
     public void onResume(){
         super.onResume();
-        Account account = new Account();
 
         TextView nickName = (TextView)getActivity().findViewById(R.id.etNickName);
         nickName.setText(account.getNickname());
 
         TextView email = (TextView)getActivity().findViewById(R.id.etEmail);
         String mEmailAddy = account.getEmail();
-        if (mEmailAddy.equals("")){
+        if (mEmailAddy.isEmpty()) {
             email.setText("no@email.addy");
-        }else
-        {
-            email.setText(mEmailAddy);
-
         }
-        email.setEnabled(false);
-        nickName.setEnabled(false);
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-
-        return inflater.inflate(R.layout.fragment_account, container, false);
-
-
+        else {
+            email.setText(mEmailAddy);
+        }
+        getActivity().findViewById(R.id.btnAddTag).setOnClickListener(this);
+        getActivity().findViewById(R.id.btn_Load_Code).setOnClickListener(this);
+        // This will never be called with a null view
+        //noinspection ConstantConditions
+        balanceList = (ListView)getView().findViewById(R.id.balances_list);
+        balanceList.setOnItemClickListener(this);
+        fillInList();
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * This method is called any time the visibility of this
+     * fragment changes.
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+    @Override
+    public void setUserVisibleHint(boolean visible) {
+        super.setUserVisibleHint(visible);
+        if (visible) {
+            // Race condition exists where this might be called
+            // before the view is inflated
+            if (getView() != null) {
+                fillInList();
+            }
+        }
     }
 
+    /**
+     * Fill in the list with balances
+     */
+    private void fillInList() {
+        // This will never be called with a null view
+        //noinspection ConstantConditions
+        getView().findViewById(R.id.balances_progress_bar).setVisibility(View.VISIBLE);
+        balanceList.setVisibility(View.GONE);
+        new GetAllBalancesTask().execute(this);
+    }
 
+    /**
+     * Callback from GetAllBalancesTask once all balances are loaded.
+     * Update the UI from here to actually display the balances.
+     *
+     * @param list List of Currency ID -> balance mappings
+     */
+    @Override
+    public void onBalancesLoaded(BalanceList list) {
+        BalanceListAdapter adapter = new BalanceListAdapter(
+            getActivity(),
+            new UserBalance(),
+            list
+        );
+        balanceList.setAdapter(adapter);
+        // This will never be called with a null view
+        //noinspection ConstantConditions
+        getView().findViewById(R.id.balances_progress_bar).setVisibility(View.GONE);
+        balanceList.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * All button clicks go through this dispatcher
+     *
+     * @param v The button that was clicked
+     */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnAddTag :
+                addTag();
+                break;
+            case R.id.btn_Load_Code :
+                loadCode();
+                break;
+            default :
+                throw new AssertionError("Unknown button " + v.getId());
+        }
+    }
+
+    /**
+     * Launch tag Management screen
+     */
+    private void addTag() {
+        Intent i = new Intent(getActivity(), TagActivity.class);
+        getActivity().startActivity(i);
+    }
+
+    /**
+     * Start the dialog fragment to redeem a voucher
+     */
+    private void loadCode() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("tapcode");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        // Create and show the dialog.
+        DepositCodeFragment fragment = new DepositCodeFragment();
+        fragment.setCallback(this);
+        fragment.show(ft, "tapcode");
+    }
+
+    /**
+     * Taps on balances call this. All it does is set the active
+     * currency on the account.
+     *
+     * @param parent per spec
+     * @param view per spec
+     * @param position Item # in the list view
+     * @param id The currency ID
+     */
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (id > Integer.MAX_VALUE) {
+            throw new AssertionError("Currency ID exceeds int size");
+        }
+        account.setActiveCurrency((int) id);
+    }
+
+    /**
+     * Called by the voucher redemption dialog to tell this view that
+     * the list of balances has changed.
+     */
+    @Override
+    public void refreshBalanceList() {
+        fillInList();
+    }
 }

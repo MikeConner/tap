@@ -20,8 +20,10 @@
     <string name="voucher_qr_code_description">What is this?</string>
     <string name="arm">ARM</string>
     <string name="button_balances">BALANCES</string>
-    <string name="button_load">Deposit BTC</string>
-    <string name="button_load_code">Enter CODE</string>
+    <string name="button_load_code">LOAD CODE</string>
+    <string name="button_load_bitcoin">LOAD BITCOIN</string>
+    <string name="button_withdraw">WITHDRAW</string>
+    <string name="button_add_tag">ADD TAG</string>
     <string name="button_my_tags">MY TAGS</string>
     <string name="description_profile_picture">Profile Piture</string>
     <string name="calculating">calculating...</string>

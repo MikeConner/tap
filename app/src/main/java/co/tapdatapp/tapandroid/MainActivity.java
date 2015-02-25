@@ -54,12 +54,10 @@ import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.user.Account;
 import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
-import co.tapdatapp.tapandroid.voucher.VoucherRedeemResponse;
 
 public class MainActivity
 extends Activity
-implements AccountFragment.OnFragmentInteractionListener,
-           DepositBTCFragment.OnFragmentInteractionListener,
+implements DepositBTCFragment.OnFragmentInteractionListener,
            ActionBar.TabListener,
            TapTxnTask.TapTxnInitiator {
 
@@ -75,8 +73,6 @@ implements AccountFragment.OnFragmentInteractionListener,
 
     private boolean mArmed = false;
     private ArmedFragment mArmFrag;
-    private DepositBTCFragment mDepositFrag;
-    private DepositCodeFragment mDepositCodeFrag;
 
     //For File Uploads
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -419,36 +415,6 @@ implements AccountFragment.OnFragmentInteractionListener,
         mArmFrag.show(ft, "armed");
     }
 
-    /**
-     * Some of this is obsolete and currently breaking the app
-     */
-   /** public void setArmedAmount(int to) {
-        if (txAmount == null) {
-            txAmount = (TextView)findViewById(R.id.txtAmount);
-        }
-        new Account().setArmedAmount(to);
-        txAmount.setText(currency.getSymbol(new Account().getActiveCurrency()) + String.valueOf(to));
-    }
-
-    private void changeAmount(int amount, boolean addition){
-        Account account = new Account();
-        int tapAmount = account.getArmedAmount();
-        if (addition) {
-            tapAmount += amount;
-            int max = currency.getMaxPayout(account.getActiveCurrency());
-            if (tapAmount > max ) {
-                tapAmount = max;
-            }
-        }
-        else {
-            tapAmount -= amount;
-            if (tapAmount < 1) {
-                tapAmount = 1;}
-        }
-        setArmedAmount(tapAmount);
-    }
-    **/
-
     private View randomTransactionButton;
 
     /**
@@ -548,45 +514,6 @@ implements AccountFragment.OnFragmentInteractionListener,
         // dealing with all the UI stuff for errors just yet
         TapApplication.unknownFailure(t);
     }
-
-    //ACCOUNT Stuff
-    public void showDeposit(View view){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("tapbtc");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        // Create and show the dialog.
-        mDepositFrag =  new DepositBTCFragment();
-        mDepositFrag.show(ft, "tapbtc");
-    }
-
-    public void showLoadCode(View view){
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("tapcode");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        // Create and show the dialog.
-         mDepositCodeFrag =  new DepositCodeFragment();
-        mDepositCodeFrag.show(ft, "tapcode");
-    }
-
-    public void onComplete(VoucherRedeemResponse response){
-        //do nothing?
-
-
-    }
-    public void onFailure( VoucherRedeemResponse response){
-
-    }
-
-
 
     public void showWithdraw(View view){
         FragmentTransaction ft = getFragmentManager().beginTransaction();

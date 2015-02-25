@@ -5,6 +5,7 @@
 
 package co.tapdatapp.tapandroid.currency;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
@@ -24,9 +25,9 @@ public class BalanceListAdapter extends BaseAdapter {
     private final CurrencyDAO userBalance;
     private final BalanceList balanceList;
     private Bitmap loadingImage;
-    private BalancesActivity activity;
+    private Activity activity;
 
-    public BalanceListAdapter(BalancesActivity a,
+    public BalanceListAdapter(Activity a,
                               CurrencyDAO dao,
                               BalanceList list
     ) {

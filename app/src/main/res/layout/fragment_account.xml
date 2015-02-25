@@ -7,78 +7,89 @@
     tools:context=".profile_main"
     tools:ignore="MergeRootFrame">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <Button
+        android:id="@+id/btnAddTag"
+        style="@style/AppTheme.Button"
+        android:layout_margin="5dp"
+        android:text="@string/button_add_tag"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:text="n"
-            android:textSize="48sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="9pt"
-            android:text="angry helicopter"
-            android:id="@+id/etNickName"
-            android:layout_gravity="center_vertical" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:text="e"
-            android:textSize="48sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="random@random.com"
-            android:id="@+id/etEmail"
-            android:layout_gravity="center_vertical" />
-
-    </LinearLayout>
+        android:layout_height="wrap_content"/>
 
     <TextView
-        android:layout_weight="1"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"/>
+        android:layout_height="wrap_content"
+        android:text="angry helicopter"
+        android:id="@+id/etNickName"
+        android:layout_marginStart="10dp"
+        android:layout_gravity="start"
+        tools:ignore="HardcodedText"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="random@random.com"
+        android:id="@+id/etEmail"
+        android:layout_marginStart="10dp"
+        android:layout_gravity="start"
+        tools:ignore="HardcodedText"/>
+
+    <Space
+        android:layout_height="10dp"
+        android:layout_width="match_parent"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            style="@style/AppTheme.Button"
+            android:layout_margin="5dp"
+            android:text="@string/button_load_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_Load_Code"
+            android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:enabled="false"
+            style="@style/AppTheme.Button"
+            android:layout_margin="5dp"
+            android:text="@string/button_load_bitcoin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:layout_gravity="center"
+        android:id="@+id/balances_progress_bar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        />
+
+    <ListView
+        android:id="@+id/balances_list"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </ListView>
+
+    <Space
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"/>
 
     <Button
+        android:enabled="false"
         style="@style/AppTheme.Button"
         android:layout_margin="5dp"
-        android:text="@string/button_load_code"
+        android:text="@string/button_withdraw"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="showLoadCode"
-        android:id="@+id/btn_Load_Code"
-        android:layout_gravity="center_horizontal"
-        android:nestedScrollingEnabled="false" />
-
-    <Button
-        style="@style/AppTheme.Button"
-        android:layout_margin="5dp"
-        android:text="@string/button_load"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="showDeposit"/>
-
-    <Button
-        style="@style/AppTheme.Button"
-        android:layout_margin="5dp"
-        android:text="@string/button_balances"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="startBalancesActivity"/>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
 

@@ -14,14 +14,18 @@ import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
 public class GetAllBalancesTask
-extends AsyncTask<BalancesActivity, Void, Void> {
+extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
 
-    private BalancesActivity callback;
+    public interface Callback {
+        void onBalancesLoaded(BalanceList list);
+    }
+
+    private Callback callback;
     private BalanceList balanceList;
 
     @Override
     protected Void
-    doInBackground(BalancesActivity... balancesActivities) {
+    doInBackground(Callback... balancesActivities) {
         if (balancesActivities.length != 1) {
             throw new AssertionError("Must provide 1 callback class");
         }
