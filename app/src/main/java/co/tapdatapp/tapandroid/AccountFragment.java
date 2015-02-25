@@ -1,7 +1,6 @@
 package co.tapdatapp.tapandroid;
 
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -50,7 +49,6 @@ implements View.OnClickListener,
         else {
             email.setText(mEmailAddy);
         }
-        getActivity().findViewById(R.id.btnAddTag).setOnClickListener(this);
         getActivity().findViewById(R.id.btn_Load_Code).setOnClickListener(this);
         // This will never be called with a null view
         //noinspection ConstantConditions
@@ -114,23 +112,12 @@ implements View.OnClickListener,
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnAddTag :
-                addTag();
-                break;
             case R.id.btn_Load_Code :
                 loadCode();
                 break;
             default :
                 throw new AssertionError("Unknown button " + v.getId());
         }
-    }
-
-    /**
-     * Launch tag Management screen
-     */
-    private void addTag() {
-        Intent i = new Intent(getActivity(), TagActivity.class);
-        getActivity().startActivity(i);
     }
 
     /**

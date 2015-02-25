@@ -23,10 +23,9 @@
     <string name="button_load_code">LOAD CODE</string>
     <string name="button_load_bitcoin">LOAD BITCOIN</string>
     <string name="button_withdraw">WITHDRAW</string>
-    <string name="button_add_tag">ADD TAG</string>
     <string name="button_my_tags">MY TAGS</string>
-    <string name="description_profile_picture">Profile Piture</string>
-    <string name="calculating">calculating...</string>
+    <string name="description_profile_picture">Profile Picture</string>
+    <string name="calculating">calculating…</string>
     <string name="tap">Tap</string>
     <string name="button_new_tag">CREATE NEW TAG</string>
     <string name="redeem_voucher">Enter Code To Load Balance:</string>
