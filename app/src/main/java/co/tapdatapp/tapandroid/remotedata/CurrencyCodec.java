@@ -42,6 +42,9 @@ public class CurrencyCodec {
         name = nest.getString(NAME);
         icon = nest.getString(ICON);
         symbol = nest.getString(SYMBOL);
+        if (symbol == null || "null".equals(symbol)) {
+            symbol = "";
+        }
         maxTap = nest.getInt(MAX_TAP);
         JSONArray jsonDenominations = nest.getJSONArray(DENOMINATIONS);
         parseDenominations(jsonDenominations);
