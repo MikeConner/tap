@@ -91,4 +91,21 @@ public interface CurrencyDAO {
      * @return Maximum allowed single payout
      */
     int getMaxPayout(int currencyId);
+
+    /**
+     * Ensure that the provided currency has all of its details in
+     * the local database.
+     *
+     * @param currencyId Currency ID to operate on
+     */
+    void ensureLocalCurrencyDetails(int currencyId);
+
+    /**
+     * Return all the denominations (in ascending order) for the
+     * requested currency
+     *
+     * @param currencyId
+     * @return List of Denominations
+     */
+    Denomination[] getDenominations(int currencyId);
 }

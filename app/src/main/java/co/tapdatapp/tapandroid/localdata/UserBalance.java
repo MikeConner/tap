@@ -119,6 +119,11 @@ implements SingleTable, CurrencyDAO {
         }
     }
 
+    @Override
+    public Denomination[] getDenominations(int currencyId) {
+        return new Denomination().getAllForCurrency(currencyId);
+    }
+
     /**
      * Create a new currency with denominations or update and existing
      * one with the provided data. If denominations is null or an
@@ -297,13 +302,8 @@ implements SingleTable, CurrencyDAO {
         }
     }
 
-    /**
-     * Ensure that the provided currency has all of its details in
-     * the local database.
-     *
-     * @param currencyId Currency ID to operate on
-     */
     // @TODO needs an expiration time on the currency to refresh
+    @Override
     public void ensureLocalCurrencyDetails(int currencyId) {
         if (currencyId == CURRENCY_BITCOIN) {
             createOrUpdateAll(
