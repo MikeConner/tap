@@ -6,7 +6,6 @@ package co.tapdatapp.tapandroid.voucher;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -93,7 +92,6 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
         sb.append(voucherCode);
         sb.append("/redeem_voucher");
         http.appendAuthTokenIfExists(sb);
-        Log.d("VOUCHER", sb.toString());
         return sb.toString();
     }
 }
