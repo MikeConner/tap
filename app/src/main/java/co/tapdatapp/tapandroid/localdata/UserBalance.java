@@ -12,7 +12,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -374,8 +373,8 @@ implements SingleTable, CurrencyDAO {
         sb.append(TapApplication.string(R.string.ENDPOINT_GET_CURRENCY));
         sb.append("/");
         sb.append(Integer.toString(currencyId));
+        sb.append(".json");
         http.appendAuthTokenIfExists(sb);
-        Log.d("CURRENCY_REMOTE", sb.toString());
         return sb.toString();
     }
 
