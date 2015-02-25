@@ -8,6 +8,7 @@ public class TransactionResponse {
   public String date;
   public String payload_image;
   public String payload_thumb;
+  public String payload_content_type;
   public int amount;
   public int dollar_amount;
   public String comment;

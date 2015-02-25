@@ -62,6 +62,7 @@ public class Transactions {
           t.date = df.format(oneT.timestamp);
           t.payload_image = oneT.payload.payload_image;
           t.payload_thumb = oneT.payload.payload_thumb;
+          t.payload_content_type = "image";
           t.amount = oneT.amount;
           t.dollar_amount = 0;
           t.comment = oneT.payload.text;

@@ -103,7 +103,7 @@ public class Accounts {
     p.payload_image = ImageBuilder.getURL(300, 300, "Dynamic Yapa");
     p.payload_thumb = ImageBuilder.getURL(100, 100, "Dynamic Yapa");
     p.text = "Dynamic Yapa";
-    p.uri = "http://www.example.com";
+    p.uri = ImageBuilder.getURL(400, 400, slug);
     return p;
   }
 }
