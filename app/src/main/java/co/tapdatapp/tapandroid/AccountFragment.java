@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.currency.BalanceList;
 import co.tapdatapp.tapandroid.currency.BalanceListAdapter;
@@ -151,6 +152,15 @@ implements View.OnClickListener,
             throw new AssertionError("Currency ID exceeds int size");
         }
         account.setActiveCurrency((int) id);
+        UserBalance currency = new UserBalance();
+        currency.moveTo((int)id);
+        Toast toast = Toast.makeText(
+            getActivity(),
+            TapApplication.string(R.string.currency_changed) + " " +
+                currency.getName(),
+            Toast.LENGTH_LONG
+        );
+        toast.show();
     }
 
     /**
