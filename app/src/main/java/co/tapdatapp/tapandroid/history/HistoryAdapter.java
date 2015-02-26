@@ -99,6 +99,8 @@ public class HistoryAdapter extends BaseAdapter {
             case "text":
                 historyPicture.setImageDrawable(res.getDrawable(R.drawable._yapa_text));
                 break;
+            default:
+                historyPicture.setImageBitmap(getRewardBitmap());
 
         }
         LoadHistoryImagesTask asyncLoad = new LoadHistoryImagesTask();

@@ -32,7 +32,7 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
     /**
      * Defaulting yapaType to image for short-term functionality
      */
-    public String yapaType = "image";
+    public String yapaType = null;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -77,6 +77,10 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
                  * Yapas currently can only be images. More cases will be added later.
                  */
                 Intent openYapa;
+                Transaction transaction = new Transaction();
+                transaction.moveTo(position);
+                yapaType = transaction.getContentType();
+
                 switch (yapaType) {
 
                     case "image":
