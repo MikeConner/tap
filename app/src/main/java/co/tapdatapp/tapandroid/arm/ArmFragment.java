@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ implements View.OnClickListener {
         bankView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                bankView.performHapticFeedback(0);
                 account.setArmedAmount(0);
                 setAmount(account.getArmedAmount());
             }
