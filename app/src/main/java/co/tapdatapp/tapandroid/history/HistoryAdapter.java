@@ -31,7 +31,6 @@ public class HistoryAdapter extends BaseAdapter {
     private TransactionDAO dao;
     private Activity activity;
     private Transaction transaction;
-    private Context context = activity.getApplicationContext();
 
     public HistoryAdapter(TransactionDAO t, Activity a) {
         dao = t;
@@ -87,6 +86,7 @@ public class HistoryAdapter extends BaseAdapter {
         ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getDescription());
         String yapaType = transaction.getContentType();
         ImageView historyPicture = ((ImageView)v.findViewById(R.id.history_picture));
+        Context context = activity.getApplicationContext();
         Resources res = context.getResources();
         switch(yapaType){
 
