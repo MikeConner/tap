@@ -7,6 +7,7 @@ package co.tapdatapp.tapandroid.history;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ public class HistoryAdapter extends BaseAdapter {
     private TransactionDAO dao;
     private Activity activity;
     private Transaction transaction;
+    private Context context = activity.getApplicationContext();
 
     public HistoryAdapter(TransactionDAO t, Activity a) {
         dao = t;
@@ -83,7 +85,22 @@ public class HistoryAdapter extends BaseAdapter {
         }
         transaction.moveTo(i);
         ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getDescription());
-        ((ImageView)v.findViewById(R.id.history_picture)).setImageBitmap(getRewardBitmap());
+        String yapaType = transaction.getContentType();
+        ImageView historyPicture = ((ImageView)v.findViewById(R.id.history_picture));
+        Resources res = context.getResources();
+        switch(yapaType){
+
+            case "image":
+                historyPicture.setImageDrawable(res.getDrawable(R.drawable.yapa_image));
+                break;
+            case "url":
+                historyPicture.setImageDrawable(res.getDrawable(R.drawable.yapa_link));
+                break;
+            case "text":
+                historyPicture.setImageDrawable(res.getDrawable(R.drawable._yapa_text));
+                break;
+
+        }
         LoadHistoryImagesTask asyncLoad = new LoadHistoryImagesTask();
         asyncLoad.execute(v);
         return v;
