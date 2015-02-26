@@ -1,53 +1,44 @@
 package co.tapdatapp.tapandroid.yapa;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
-public class YapaImage extends Activity {
+public class FullScreenImage extends Activity
+{
 
     public final static String TRANSACTION_ID = "TxId";
+    Activity activity;
 
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
-        setContentView(R.layout.activity_yapa_image);
+    protected void onCreate(Bundle savedInstanceState) {
+        setContentView(R.layout.full_image);
         final int transactionId = getIntent().getExtras().getInt(TRANSACTION_ID);
         final Transaction transaction = new Transaction();
         transaction.moveTo(transactionId);
-        final ImageView imageView = (ImageView) findViewById(R.id.yapaImage);
-        final TextView imageSender = (TextView) findViewById(R.id.image_sender);
-        final TextView imageDescription = (TextView) findViewById(R.id.image_description);
-        final TextView imageDate = (TextView) findViewById(R.id.image_date);
+        final ImageView fullView = (ImageView) findViewById(R.id.full_screen_image);
 
-        new ImageFetchTask().execute(imageView, transaction);
+        Context context = activity.getApplicationContext();
+        Resources res = context.getResources();
+        fullView.setImageDrawable(res.getDrawable(R.drawable.full_screen_logo));
+       // new ImageFetchTask().execute(fullView,transaction);
 
-        imageSender.setText(transaction.getNickname());
-        imageDescription.setText(transaction.getDescription());
-        imageDate.setText(transaction.getTimestamp().toString() + "  " + Integer.toString(transaction.getAmount()));
-    }
-
-    public void makeFull(View view){
-        Intent fullScreenIntent = new Intent(YapaImage.this, FullScreenImage.class);
-        //fullScreenIntent.putExtra(FullScreenImage.TRANSACTION_ID,transactionId);
-        startActivity(fullScreenIntent);
     }
 
     /**
-     * Load the image onto the view in the background. This has to be a background task because
-     * the image may not be in the local cache, and thus a network fetch would be required.
+     * Copied this method from the YapaImage class, executing the FullScreenImage class as a subclass was causing problems
      */
-    private class ImageFetchTask extends AsyncTask<Object, Void, Void> {
+  private class ImageFetchTask extends AsyncTask<Object, Void, Void> {
 
         Bitmap imageBitmap = null;
         ImageView imageView = null;
@@ -56,8 +47,8 @@ public class YapaImage extends Activity {
          * @param params ImageView to set and Transaction to set from
          * @return Void
          */
-        @Override
-        protected Void doInBackground(Object... params) {
+       // @Override
+      protected Void doInBackground(Object... params) {
             if (params.length != 2) {
                 throw new AssertionError("Requires ImageView and transaction");
             }
@@ -82,6 +73,4 @@ public class YapaImage extends Activity {
             }
         }
     }
-
-
 }
