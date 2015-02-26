@@ -36,6 +36,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,7 +54,6 @@ import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.user.Account;
-import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
 
 public class MainActivity
 extends Activity
@@ -146,10 +146,8 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
             mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager(), this);
             // Set up the action bar.
             final ActionBar actionBar = getActionBar();
+            assert actionBar != null;
             actionBar.setDisplayShowTitleEnabled(false);
-            if (actionBar == null) {
-                throw new AssertionError("null ActionBar on MainActivity");
-            }
 
             // Specify that the Home/Up button should not be enabled, since there is no hierarchical
             // parent.
@@ -433,6 +431,21 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         new TapTxnTask().execute(this);
     }
 
+    /**
+     * For development builds only, tap the entered tag ID
+     */
+    public void clickEnteredTransaction(String tag) {
+        if (!DevHelper.isEnabled(R.string.CREATE_FAKE_DATA_ON_SERVER)) {
+            throw new AssertionError("Dev commands issued on dev-disabled build");
+        }
+        outgoingTransaction = new TapTxn();
+        outgoingTransaction.setTagID(tag);
+        outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
+        outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
+        Log.d("TAP", "entered Transaction starting");
+        new TapTxnTask().execute(this);
+    }
+
     //NFC STUFF
     @Override
     protected void onNewIntent(Intent intent) {
@@ -492,8 +505,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     public void onTapNetComplete() {
         mArmed = false;
         String mMessage = outgoingTransaction.getMessage();
-        String mYapURL = outgoingTransaction.getPayloadImageThumb();
-        mArmFrag.setValues(mMessage, mYapURL);
+        mArmFrag.updateWithResult(mMessage);
         outgoingTransaction = null;
         if (randomTransactionButton != null) {
             randomTransactionButton.setEnabled(true);

@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -274,10 +275,12 @@ implements SingleTable, CurrencyDAO {
     @Override
     public BalanceList getAllBalances() throws WebServiceError {
         HttpHelper http = new HttpHelper();
+        Log.d("BALANCE", http.getFullUrl(R.string.ENDPOINT_GET_BALANCES));
         JSONObject response = http.HttpGetJSON(
             http.getFullUrl(R.string.ENDPOINT_GET_BALANCES),
             new Bundle()
         );
+        Log.d("BALANCE", response.toString());
         CurrencyCodec cc = new CurrencyCodec();
         BalanceList rv = null;
         try {

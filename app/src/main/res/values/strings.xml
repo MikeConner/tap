@@ -33,5 +33,8 @@
     <string name="redeem_entry">Enter a redemption code here</string>
     <string name="successful_redeem">Redeemed for</string>
     <string name="currency_changed">Active currency set to</string>
+    <string name="tap_encouragement">Getting Ready to TAP TAP TAP</string>
+    <string name="armed_graphic">Armed</string>
+    <string name="amount">Amount</string>
 
 </resources>
