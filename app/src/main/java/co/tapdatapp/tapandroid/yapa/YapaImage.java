@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import co.tapdatapp.tapandroid.R;
@@ -31,15 +32,33 @@ public class YapaImage extends Activity {
         final TextView imageSender = (TextView) findViewById(R.id.image_sender);
         final TextView imageDescription = (TextView) findViewById(R.id.image_description);
         final TextView imageDate = (TextView) findViewById(R.id.image_date);
+        final Button fullButton = (Button) findViewById(R.id.full_screen_button);
 
         new ImageFetchTask().execute(imageView, transaction);
 
         imageSender.setText(transaction.getNickname());
         imageDescription.setText(transaction.getDescription());
         imageDate.setText(transaction.getTimestamp().toString() + "  " + Integer.toString(transaction.getAmount()));
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isImageFitToScreen) {
+                    isImageFitToScreen=false;
+                    imageView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+                    imageView.setAdjustViewBounds(true);
+                    fullButton.setVisibility(View.VISIBLE);
+                }else{
+                    isImageFitToScreen=true;
+                    imageView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                    fullButton.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
-    public void makeFull(View view){
+    /**public void makeFull(View view){
         /**
          * Currently reverting back to an old method of displaying full screen images.
          */
@@ -47,7 +66,7 @@ public class YapaImage extends Activity {
         //fullScreenIntent.putExtra(FullScreenImage.TRANSACTION_ID,transactionId);
         startActivity(fullScreenIntent);
         **/
-        final ImageView imageView = (ImageView) findViewById(R.id.yapaImage);
+        /**final ImageView imageView = (ImageView) findViewById(R.id.yapaImage);
 
         if(isImageFitToScreen) {
             isImageFitToScreen=false;
@@ -58,7 +77,7 @@ public class YapaImage extends Activity {
             imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
-    }
+    }**/
 
     /**
      * Load the image onto the view in the background. This has to be a background task because

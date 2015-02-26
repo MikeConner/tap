@@ -42,14 +42,14 @@
         android:layout_below="@+id/image_description"
         android:layout_alignParentStart="true" />
 
-    <Button
+   <Button
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:id="@+id/full_screen_button"
         android:layout_marginEnd="48dp"
         android:layout_above="@+id/image_description"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/expand_button"
-        android:onClick="makeFull"/>
+        android:background="@drawable/expand_button"/>
+       
 
 </RelativeLayout>
