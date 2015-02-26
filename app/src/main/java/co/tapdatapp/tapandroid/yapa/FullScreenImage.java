@@ -22,6 +22,7 @@ public class FullScreenImage extends Activity
     Activity activity;
 
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.full_image);
         final int transactionId = getIntent().getExtras().getInt(TRANSACTION_ID);
         final Transaction transaction = new Transaction();

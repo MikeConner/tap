@@ -64,7 +64,7 @@ public class YapaImage extends Activity {
             imageView = (ImageView)params[0];
             Transaction transaction = (Transaction)params[1];
             try {
-                imageBitmap = TapBitmap.fetchFromCacheOrWeb(transaction.getThumb_url());
+                imageBitmap = TapBitmap.fetchFromCacheOrWeb(transaction.getYapa_url());
             }
             catch (Exception e) {
                 TapApplication.unknownFailure(e);
