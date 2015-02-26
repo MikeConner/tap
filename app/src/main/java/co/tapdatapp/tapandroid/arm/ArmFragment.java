@@ -7,7 +7,6 @@ package co.tapdatapp.tapandroid.arm;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -123,6 +122,7 @@ implements View.OnClickListener {
     private void updateBitcoinDenominations() {
         TextView viewAmount = (TextView)getView().findViewById(R.id.txtAmount);
         viewAmount.setBackground(getActivity().getResources().getDrawable(R.drawable.bitcoin_icon));
+        viewAmount.getBackground().setAlpha(128);
         // This will never be called when getView() is null
         //noinspection ConstantConditions
         LinearLayout layout = (LinearLayout)getView().findViewById(R.id.currency_items);
@@ -179,6 +179,7 @@ implements View.OnClickListener {
         viewAmount.setBackground(
             new BitmapDrawable(getActivity().getResources(), logo)
         );
+        viewAmount.getBackground().setAlpha(128);
         // This will never be called when getView() is null
         //noinspection ConstantConditions
         LinearLayout layout = (LinearLayout)getView().findViewById(R.id.currency_items);
