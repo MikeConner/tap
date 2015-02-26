@@ -104,15 +104,8 @@ public class YapaImage extends Activity {
             transaction.moveTo(transactionId);
             ImageView fullView = (ImageView) findViewById(R.id.full_screen_image);
             fullView.setLayoutParams( new ViewGroup.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT));
-            Bitmap imageBitmap = null;
-            try {
-                imageBitmap = TapBitmap.fetchFromCacheOrWeb(transaction.getThumb_url());
-            }
-            catch (Exception e) {
-                TapApplication.unknownFailure(e);
-            }
 
-            fullView.setScaleType(ImageView.ScaleType.FIT_XY);
+            new ImageFetchTask().execute(fullView,transaction);
 
         }
     }
