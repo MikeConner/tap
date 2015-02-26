@@ -29,9 +29,6 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
     private ProgressBar progressBar;
     private GridView gridView;
     private boolean loaded = false;
-    /**
-     * Defaulting yapaType to image for short-term functionality
-     */
     public String yapaType = null;
 
     public HistoryFragment() {

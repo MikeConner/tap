@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import co.tapdatapp.tapandroid.R;
@@ -18,6 +19,7 @@ import co.tapdatapp.tapandroid.localdata.Transaction;
 public class YapaImage extends Activity {
 
     public final static String TRANSACTION_ID = "TxId";
+    private boolean isImageFitToScreen = false;
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -38,9 +40,24 @@ public class YapaImage extends Activity {
     }
 
     public void makeFull(View view){
-        Intent fullScreenIntent = new Intent(YapaImage.this, FullScreenImage.class);
+        /**
+         * Currently reverting back to an old method of displaying full screen images.
+         */
+        /**Intent fullScreenIntent = new Intent(YapaImage.this, FullScreenImage.class);
         //fullScreenIntent.putExtra(FullScreenImage.TRANSACTION_ID,transactionId);
         startActivity(fullScreenIntent);
+        **/
+        final ImageView imageView = (ImageView) findViewById(R.id.yapaImage);
+
+        if(isImageFitToScreen) {
+            isImageFitToScreen=false;
+            imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            imageView.setAdjustViewBounds(true);
+        }else{
+            isImageFitToScreen=true;
+            imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        }
     }
 
     /**
