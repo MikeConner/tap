@@ -153,7 +153,14 @@ public class Transaction implements SingleTable, TransactionDAO {
         v.put(NICKNAME, nickname);
         v.put(YAPA_THUMB_URL, yapa_thumb_url);
         v.put(YAPA_CONTENT_TYPE, yapa_content_type);
-        db.insertOrThrow(NAME, null, v);
+        // Sometimes the webservice returns the same transaction even
+        // though it's been told to only return newer. This is probably
+        // the result of precision lost in the date as it passes from
+        // java to JSON to PostgreSQL. Since the "slug" is unique on
+        // the server side, having it be the primary key here should
+        // allow SQLite to ignore the record without causing
+        // issues with duplicates.
+        db.insertWithOnConflict(NAME, null, v, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     public String getSlug() {
