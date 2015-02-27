@@ -31,7 +31,8 @@ implements View.OnClickListener, View.OnTouchListener {
     private Account account = new Account();
     private TextView bankView;
     private int amount;
-    final GestureDetector gestureDetector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener());
+    //Not currently used, might be in the future
+    //final GestureDetector gestureDetector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener());
 
 
     private final static LinearLayout.LayoutParams denominationLayoutParams;
@@ -256,7 +257,10 @@ implements View.OnClickListener, View.OnTouchListener {
         return Bitmap.createScaledBitmap(in, 275, 100, true);
     }
 
-
+    /**
+     * This isn't getting called, but is effectively replaced by code in onTouch. Depending on how
+     * much everyone wants a "true" gesture, this might get used in the future.
+     */
    /** public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                            float velocityY) {
         float sensitivity = 50;
