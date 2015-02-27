@@ -9,8 +9,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,10 +26,13 @@ import co.tapdatapp.tapandroid.user.Account;
 
 public class ArmFragment
 extends Fragment
-implements View.OnClickListener {
+implements View.OnClickListener, View.OnTouchListener {
 
     private Account account = new Account();
     private TextView bankView;
+    private int amount;
+    final GestureDetector gestureDetector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener());
+
 
     private final static LinearLayout.LayoutParams denominationLayoutParams;
 
@@ -204,9 +209,28 @@ implements View.OnClickListener {
      */
     @Override
     public void onClick(View v) {
-        int amount = (Integer)v.getTag();
+        amount = (Integer)v.getTag();
         account.setArmedAmount(account.getArmedAmount() + amount);
         setAmount(account.getArmedAmount());
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent event){
+        amount = (Integer)view.getTag();
+        if(event.getAction() == MotionEvent.ACTION_UP){
+            account.setArmedAmount(account.getArmedAmount() + amount);
+            setAmount(account.getArmedAmount());
+        }
+        return true;
+    }
+
+     /**
+     * This is to prevent onTouch from ending earlier than needed
+     * @param e
+     * @return
+     */
+    public boolean onDown(MotionEvent e) {
+        return true;
     }
 
     /**
@@ -218,6 +242,7 @@ implements View.OnClickListener {
      */
     private void commonDenominationSetup(ImageView iv) {
         iv.setOnClickListener(this);
+        iv.setOnTouchListener(this);
         iv.setLayoutParams(denominationLayoutParams);
     }
 
@@ -230,4 +255,21 @@ implements View.OnClickListener {
     public Bitmap scaleDenomination(Bitmap in) {
         return Bitmap.createScaledBitmap(in, 275, 100, true);
     }
+
+
+   /** public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                           float velocityY) {
+        float sensitivity = 50;
+
+        Toast.makeText(getActivity(),"Gesture Started", Toast.LENGTH_SHORT).show();
+        if ((e1.getY() - e2.getY()) > sensitivity){
+            account.setArmedAmount(account.getArmedAmount() + amount);
+            setAmount(account.getArmedAmount());
+            return true;
+        }
+
+
+        return true;
+    }**/
+
 }
