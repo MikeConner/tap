@@ -1,6 +1,7 @@
 package co.tapdatapp.tapandroid;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ implements View.OnClickListener,
             email.setText(mEmailAddy);
         }
         getActivity().findViewById(R.id.btn_Load_Code).setOnClickListener(this);
+        getActivity().findViewById(R.id.btn_bitcoin_load).setOnClickListener(this);
         // This will never be called with a null view
         //noinspection ConstantConditions
         balanceList = (ListView)getView().findViewById(R.id.balances_list);
@@ -116,6 +118,9 @@ implements View.OnClickListener,
             case R.id.btn_Load_Code :
                 loadCode();
                 break;
+            case R.id.btn_bitcoin_load:
+                openQR();
+                break;
             default :
                 throw new AssertionError("Unknown button " + v.getId());
         }
@@ -135,6 +140,14 @@ implements View.OnClickListener,
         DepositCodeFragment fragment = new DepositCodeFragment();
         fragment.setCallback(this);
         fragment.show(ft, "tapcode");
+    }
+
+    /**
+     *
+     */
+    public void openQR(){
+        Intent loadQR = new Intent(getActivity(), QRCode.class);
+        startActivity(loadQR);
     }
 
     /**

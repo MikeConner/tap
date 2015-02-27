@@ -65,6 +65,7 @@
         <activity android:name=".yapa.YapaImage"/>
         <activity android:name=".yapa.YapaUrl"/>
         <activity android:name=".yapa.YapaText"/>
+        <activity android:name=".QRCode"/>
 
     </application>
 

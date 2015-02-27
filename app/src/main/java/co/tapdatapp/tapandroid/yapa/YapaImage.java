@@ -58,6 +58,10 @@ public class YapaImage extends Activity {
         });
     }
 
+    /**
+     * This is another way of making the image fullscreen. It opens a new activity that is just a full screen image.
+     * It's commented-out because it is causing an error with the grid view adapter.
+     */
     /**public void makeFull(View view){
         /**
          * Currently reverting back to an old method of displaying full screen images.
