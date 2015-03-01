@@ -19,7 +19,6 @@
         android:gravity="center"
         android:layout_width="266dp"
         android:layout_height="214dp"
-        android:textStyle="bold"
         android:textSize="140sp"
         android:background="@drawable/bank_background"
         android:id="@+id/txtAmount"

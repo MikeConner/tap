@@ -14,6 +14,8 @@ public class UserAccountCodec {
     private final static String RESPONSE = "response";
     private final static String AUTH_TOKEN = "auth_token";
     private final static String NICKNAME = "nickname";
+    private final static String BITCOIN_QR = "inbound_btc_qrcode";
+    private final static String BITCOIN_ADDRESS = "inbound_btc_address";
 
     /**
      * Create a JSON request for creating a new account
@@ -56,6 +58,28 @@ public class UserAccountCodec {
     public String getNickname(JSONObject httpResponse)
     throws JSONException {
         return httpResponse.getJSONObject(RESPONSE).getString(NICKNAME);
+    }
+
+    /**
+     * Attempt to extract the QR Code url
+     * @param httpResponse
+     * @return
+     * @throws JSONException
+     */
+    public String getQRCode(JSONObject httpResponse)
+            throws JSONException {
+        return httpResponse.getJSONObject(RESPONSE).getString(BITCOIN_QR);
+    }
+
+    /**
+     * Attempt to extract the address for inbound bitcoin
+     * @param httpResponse
+     * @return
+     * @throws JSONException
+     */
+    public String getBitcoinAddress(JSONObject httpResponse)
+            throws JSONException {
+        return httpResponse.getJSONObject(RESPONSE).getString(BITCOIN_ADDRESS);
     }
 
 }

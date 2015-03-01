@@ -32,6 +32,8 @@ public class Account {
     private final static String NICKNAME = "NickName";
     private final static String EMAIL = "eMail";
     private final static String PROFILE_PIC_THUMB_URL = "ProfilePicThumbURL";
+    private final static String INBOUND_BITCOIN_ADDRESS = "InboundBTCAddress";
+    private final static String BITCOIN_QR_URL = "BitcoinQRCodeUrl";
 
     private SharedPreferences preferences;
 
@@ -72,6 +74,8 @@ public class Account {
             setPhoneSecret(phoneSecret);
             setNickname(codex.getNickname(response));
             setAuthToken(codex.getAuthToken(response));
+            setBitcoinAddress(codex.getBitcoinAddress(response));
+            setBitcoinQrUrl(codex.getQRCode(response));
             setCurrencyOnNewUser();
         }
         catch (JSONException je) {
@@ -152,23 +156,43 @@ public class Account {
     }
 
     /**
+     * Set the user's inbound bitcoin address
+     *
+     * @param to user's inbound bitcoin address
+     */
+    public void setBitcoinAddress(String to) {
+        if (to == null) {
+            throw new AssertionError("setting bitcoin address to null");
+        }
+        set(INBOUND_BITCOIN_ADDRESS, to);
+    }
+
+    /**
+     * @return the user's inbound bitcoin address
+     */
+    public String getBitcoinAddress() {
+        throwIfNoAccount();
+        return preferences.getString(INBOUND_BITCOIN_ADDRESS, null);
+    }
+
+    /**
      * Set the user's nickname
      *
      * @param to user's nickname
      */
-    public void setNickname(String to) {
+    public void setBitcoinQrUrl(String to) {
         if (to == null) {
-            throw new AssertionError("setting nickname to null");
+            throw new AssertionError("setting bitcoin QR to null");
         }
-        set(NICKNAME, to);
+        set(BITCOIN_QR_URL, to);
     }
 
     /**
      * @return the user's nickname
      */
-    public String getNickname() {
+    public String getBitcoinQrUrl() {
         throwIfNoAccount();
-        return preferences.getString(NICKNAME, null);
+        return preferences.getString(BITCOIN_QR_URL, null);
     }
 
     /**
@@ -251,6 +275,26 @@ public class Account {
         synchronized (Account.class) {
             return armedAmount;
         }
+    }
+
+    /**
+     * Set the user's nickname
+     *
+     * @param to user's nickname
+     */
+    public void setNickname(String to) {
+        if (to == null) {
+            throw new AssertionError("setting nickname to null");
+        }
+        set(NICKNAME, to);
+    }
+
+    /**
+     * @return the user's nickname
+     */
+    public String getNickname() {
+        throwIfNoAccount();
+        return preferences.getString(NICKNAME, null);
     }
 
     /**
