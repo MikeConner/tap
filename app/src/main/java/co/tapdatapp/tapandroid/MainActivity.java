@@ -36,7 +36,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -648,13 +647,13 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
             Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
-                    return "Tags".toUpperCase(l);
+                    return getString(R.string.title_tags).toUpperCase(l);
                 case 1:
-                    return getString(R.string.title_section1).toUpperCase(l);
+                    return getString(R.string.title_account).toUpperCase(l);
                 case 2:
-                    return getString(R.string.title_section2).toUpperCase(l);
+                    return getString(R.string.title_tap).toUpperCase(l);
                 case 3:
-                    return getString(R.string.title_section3).toUpperCase(l);
+                    return getString(R.string.title_history).toUpperCase(l);
             }
             return null;
         }
