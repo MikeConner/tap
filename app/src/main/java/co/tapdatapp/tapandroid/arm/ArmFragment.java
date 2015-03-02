@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -215,11 +216,14 @@ implements View.OnClickListener, View.OnTouchListener {
 
     @Override
     public boolean onTouch(View view, MotionEvent event){
+        HorizontalScrollView hsv = (HorizontalScrollView) getActivity().findViewById(R.id.currency_scroll);
         amount = (Integer)view.getTag();
         if(event.getAction() == MotionEvent.ACTION_UP){
+            hsv.setEnabled(false);
             account.setArmedAmount(account.getArmedAmount() + amount);
             setAmount(account.getArmedAmount());
         }
+        hsv.setEnabled(true);
         return true;
     }
 
