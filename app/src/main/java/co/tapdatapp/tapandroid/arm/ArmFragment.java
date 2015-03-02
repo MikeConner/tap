@@ -9,8 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.view.GestureDetector;
-import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -225,15 +223,6 @@ implements View.OnClickListener, View.OnTouchListener {
         return true;
     }
 
-     /**
-     * This is to prevent onTouch from ending earlier than needed
-     * @param e
-     * @return
-     */
-    public boolean onDown(MotionEvent e) {
-        return true;
-    }
-
     /**
      * Common operations when configuring the ImageView whether it's
      * dynamically done or pulled from static data. margins, click
@@ -250,11 +239,13 @@ implements View.OnClickListener, View.OnTouchListener {
     /**
      * Scale denomination Bitmap to the correct size
      *
+     * Made this 3 times bigger, seems to make it it's original size.
+     *
      * @param in Raw image
      * @return image scaled correctly
      */
     public Bitmap scaleDenomination(Bitmap in) {
-        return Bitmap.createScaledBitmap(in, 275, 100, true);
+        return Bitmap.createScaledBitmap(in, 825, 300, true);
     }
 
     /**
