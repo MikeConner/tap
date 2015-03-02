@@ -52,6 +52,7 @@ import co.tapdatapp.tapandroid.remotedata.TapTxnTask;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
+import co.tapdatapp.tapandroid.tags.TagsFragment;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class MainActivity

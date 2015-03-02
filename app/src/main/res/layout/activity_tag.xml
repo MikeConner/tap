@@ -9,7 +9,7 @@
     tools:context="co.tapdatapp.tapandroid.TagActivity"
     android:id="@+id/tagContainer">
 
-    <fragment android:name="co.tapdatapp.tapandroid.TagsFragment"
+    <fragment android:name="co.tapdatapp.tapandroid.tags.TagsFragment"
         android:id="@+id/tagFrag"
         android:layout_weight="1"
         android:layout_width="match_parent"
