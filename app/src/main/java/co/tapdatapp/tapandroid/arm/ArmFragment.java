@@ -30,9 +30,6 @@ implements View.OnClickListener, View.OnTouchListener {
     private Account account = new Account();
     private TextView bankView;
     private int amount;
-    //Not currently used, might be in the future
-    //final GestureDetector gestureDetector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener());
-
 
     private final static LinearLayout.LayoutParams denominationLayoutParams;
 
@@ -251,24 +248,5 @@ implements View.OnClickListener, View.OnTouchListener {
     public Bitmap scaleDenomination(Bitmap in) {
         return Bitmap.createScaledBitmap(in, 825, 300, true);
     }
-
-    /**
-     * This isn't getting called, but is effectively replaced by code in onTouch. Depending on how
-     * much everyone wants a "true" gesture, this might get used in the future.
-     */
-   /** public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                           float velocityY) {
-        float sensitivity = 50;
-
-        Toast.makeText(getActivity(),"Gesture Started", Toast.LENGTH_SHORT).show();
-        if ((e1.getY() - e2.getY()) > sensitivity){
-            account.setArmedAmount(account.getArmedAmount() + amount);
-            setAmount(account.getArmedAmount());
-            return true;
-        }
-
-
-        return true;
-    }**/
 
 }
