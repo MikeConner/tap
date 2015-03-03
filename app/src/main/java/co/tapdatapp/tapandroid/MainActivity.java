@@ -542,12 +542,6 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
 
     }
 
-    public void myTags(View view){
-        Intent i = new Intent(this,TagActivity.class);
-        i.putExtra("AuthToken", new Account().getAuthToken());
-        startActivity(i);
-
-    }
     public void newNickNameMe(View view){
        new newNickTask().execute(mTapUser);
 
