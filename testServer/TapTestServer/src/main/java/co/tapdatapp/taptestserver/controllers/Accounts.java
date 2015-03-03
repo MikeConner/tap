@@ -10,6 +10,7 @@ import co.tapdatapp.taptestserver.entities.PayloadCreateRequest;
 import co.tapdatapp.taptestserver.entities.PayloadObject;
 import co.tapdatapp.taptestserver.entities.ResponseResponse;
 import co.tapdatapp.taptestserver.entities.TagResponse;
+import co.tapdatapp.taptestserver.entities.UserDetailsResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -105,5 +106,21 @@ public class Accounts {
     p.text = "Dynamic Yapa";
     p.uri = ImageBuilder.getURL(400, 400, slug);
     return p;
+  }
+
+  public UserDetailsResponse userDetails(String authId) {
+    UserDetailsResponse rv = new UserDetailsResponse();
+    CreateAccountResponse account = accounts.get(authId);
+    if (account != null) {
+      rv.nickname = account.response.nickname;
+      rv.email = "test@example.com";
+      rv.satoshi_balance = balances.getBalance(authId).get(0);
+      rv.profile_image = ImageBuilder.getURL(200, 200, "profile image");
+      rv.profile_thumb = ImageBuilder.getURL(50, 50, "profile thumb");
+      rv.inbound_btc_qrcode.inbound_btc_qrcode.url = ImageBuilder.getURL(200, 200, "QR Code");
+      rv.outbound_btc_address = null; // Replicates current Ruby behavior
+      rv.inbound_btc_address = "ABC123abc456xyz123XYZ4561029384alhglash";
+    }
+    return rv;
   }
 }

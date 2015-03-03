@@ -65,6 +65,14 @@ public class ServiceEndpoint {
   }
   
   @GET
+  @Path("/users/me.json")
+  public Response getUserDetails(@QueryParam(AUTH_TOKEN) String authId) {
+    Monitor.trace("User details for " + authId);
+    Object details = accounts.userDetails(authId);
+    return Response.ok(new ResponseResponse(details)).build();
+  }
+  
+  @GET
   @Path("/currencies/{id}.json")
   public Response getCurrency(@PathParam("id") int id) {
     Monitor.trace("getCurrency on ID " + id);
