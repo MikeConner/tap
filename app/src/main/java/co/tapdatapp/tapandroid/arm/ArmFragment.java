@@ -36,13 +36,16 @@ implements View.OnClickListener, View.OnTouchListener {
     /**
      * Initialize layout parameters that will be reused for all
      * denomination images.
+     *
+     * I don't know what is going on with these numbers, but increasing them a lot solved the
+     * problem with them being too small.
      */
     static {
         denominationLayoutParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        denominationLayoutParams.setMargins(70, 0, 70, 0);
+        denominationLayoutParams.setMargins(150, 0, 100, 0);
     }
 
     @Override
