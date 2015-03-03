@@ -82,27 +82,21 @@ implements View.OnTouchListener {
                         final int SWIPE_MIN_DISTANCE = 200;
                         final int SWIPE_MAX_OFF_PATH = 250;
                         final int SWIPE_THRESHOLD_VELOCITY = 200;
-                        HorizontalScrollView hsv = (HorizontalScrollView) getActivity().findViewById(R.id.currency_scroll);
                         try {
                             if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
-                                hsv.setEnabled(false);
                                 account.setArmedAmount(account.getArmedAmount() + amount);
                                 setAmount(account.getArmedAmount());
                             }
                             else if (Math.abs(e2.getY() - e1.getY()) > SWIPE_MAX_OFF_PATH){
-                                hsv.setEnabled(false);
                             }
                             if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
                                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                                hsv.setEnabled(true);
                             } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
                                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                                hsv.setEnabled(true);
                             }
                         } catch (Exception e) {
                             // nothing
                         }
-                        hsv.setEnabled(true);
                         return super.onFling(e1, e2, velocityX, velocityY);
                     }
                 });
@@ -256,9 +250,7 @@ implements View.OnTouchListener {
      */
     @Override
     public boolean onTouch(View view, MotionEvent event){
-        HorizontalScrollView hsv = (HorizontalScrollView) getActivity().findViewById(R.id.currency_scroll);
         amount = (Integer)view.getTag();
-        hsv.setEnabled(false);
         return gesture.onTouchEvent(event);
     }
 
