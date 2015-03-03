@@ -81,7 +81,7 @@ implements View.OnTouchListener {
                                            float velocityY) {
                         final int SWIPE_MIN_DISTANCE = 200;
                         final int SWIPE_MAX_OFF_PATH = 250;
-                        final int SWIPE_THRESHOLD_VELOCITY = 2000;
+                        final int SWIPE_THRESHOLD_VELOCITY = 200;
                         HorizontalScrollView hsv = (HorizontalScrollView) getActivity().findViewById(R.id.currency_scroll);
                         try {
                             if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
