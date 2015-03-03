@@ -150,10 +150,17 @@ implements View.OnTouchListener {
     /**
      * Set the DISPLAY of the amount
      *
+     * Added a statement to shrink the text size to fit in the view
+     *
      * @param to int value of the amount
      */
     // @TODO include the currency symbol
     public void setAmount(int to) {
+
+        if(to>99){
+            bankView.setTextSize(100);
+        }
+
         bankView.setText(Integer.toString(to));
         // This will never be called when getView() is null
         //noinspection ConstantConditions
