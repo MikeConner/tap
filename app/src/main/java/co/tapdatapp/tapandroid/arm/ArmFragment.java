@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,11 +26,12 @@ import co.tapdatapp.tapandroid.user.Account;
 
 public class ArmFragment
 extends Fragment
-implements View.OnClickListener, View.OnTouchListener {
+implements View.OnTouchListener {
 
     private Account account = new Account();
     private TextView bankView;
     private int amount;
+    private GestureDetector gesture;
 
     private final static LinearLayout.LayoutParams denominationLayoutParams;
 
@@ -66,6 +68,40 @@ implements View.OnClickListener, View.OnTouchListener {
                 setAmount(account.getArmedAmount());
             }
         });
+        gesture = new GestureDetector(getActivity(),
+                new GestureDetector.SimpleOnGestureListener() {
+
+                    @Override
+                    public boolean onDown(MotionEvent e) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                                           float velocityY) {
+                        final int SWIPE_MIN_DISTANCE = 200;
+                        final int SWIPE_MAX_OFF_PATH = 250;
+                        final int SWIPE_THRESHOLD_VELOCITY = 2000;
+                        HorizontalScrollView hsv = (HorizontalScrollView) getActivity().findViewById(R.id.currency_scroll);
+                        try {
+                            if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
+                                account.setArmedAmount(account.getArmedAmount() + amount);
+                                setAmount(account.getArmedAmount());
+                            }
+                            else if (Math.abs(e2.getY() - e1.getY()) > SWIPE_MAX_OFF_PATH){
+                            }
+                            if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
+                                    && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                            } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
+                                    && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                            }
+                        } catch (Exception e) {
+                            // nothing
+                        }
+                        hsv.setEnabled(true);
+                        return super.onFling(e1, e2, velocityX, velocityY);
+                    }
+                });
         return view;
     }
 
@@ -201,30 +237,18 @@ implements View.OnClickListener, View.OnTouchListener {
     }
 
     /**
-     * Receives clicks from all denomination images. The method then
-     * determines the denomination amount from the tag that was
-     * set when the ImageView was created.
+     * This starts the event that causes up-swipes to deposit denominations into the bank.
      *
-     * @param v The view that was clicked
+     * @param view
+     * @param event
+     * @return
      */
-    @Override
-    public void onClick(View v) {
-        amount = (Integer)v.getTag();
-        account.setArmedAmount(account.getArmedAmount() + amount);
-        setAmount(account.getArmedAmount());
-    }
-
     @Override
     public boolean onTouch(View view, MotionEvent event){
         HorizontalScrollView hsv = (HorizontalScrollView) getActivity().findViewById(R.id.currency_scroll);
         amount = (Integer)view.getTag();
-        if(event.getAction() == MotionEvent.ACTION_UP){
-            hsv.setEnabled(false);
-            account.setArmedAmount(account.getArmedAmount() + amount);
-            setAmount(account.getArmedAmount());
-        }
-        hsv.setEnabled(true);
-        return true;
+        hsv.setEnabled(false);
+        return gesture.onTouchEvent(event);
     }
 
     /**
@@ -235,7 +259,6 @@ implements View.OnClickListener, View.OnTouchListener {
      * @param iv ImageView to set up to look correct as a denomination
      */
     private void commonDenominationSetup(ImageView iv) {
-        iv.setOnClickListener(this);
         iv.setOnTouchListener(this);
         iv.setLayoutParams(denominationLayoutParams);
     }
