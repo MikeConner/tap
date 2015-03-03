@@ -62,8 +62,8 @@ public class Account {
      */
     public void createNew() throws WebServiceError {
         String phoneSecret = generatePhoneSecret();
-        UserAccountCodec codex = new UserAccountCodec();
-        JSONObject request = codex.marshallCreateRequest(phoneSecret);
+        UserAccountCodec codec = new UserAccountCodec();
+        JSONObject request = codec.marshallCreateRequest(phoneSecret);
         HttpHelper http = new HttpHelper();
         JSONObject response = http.HttpPostJSON(
             http.getFullUrl(R.string.ENDPOINT_REGISTRATION),
@@ -72,15 +72,36 @@ public class Account {
         );
         try {
             setPhoneSecret(phoneSecret);
-            setNickname(codex.getNickname(response));
-            setAuthToken(codex.getAuthToken(response));
-            setBitcoinAddress(codex.getBitcoinAddress(response));
-            setBitcoinQrUrl(codex.getQRCode(response));
+            setNickname(codec.getNickname(response));
+            setAuthToken(codec.getAuthToken(response));
             setCurrencyOnNewUser();
         }
         catch (JSONException je) {
+            deleteAccount();
             throw new WebServiceError(je);
         }
+        response = http.HttpGetJSON(
+            http.getFullUrl(R.string.ENDPOINT_USER_API),
+            new Bundle()
+        );
+        try {
+            setBitcoinAddress(codec.getBitcoinAddress(response));
+            setBitcoinQrUrl(codec.getQRCode(response));
+        }
+        catch (JSONException je) {
+            deleteAccount();
+            throw new WebServiceError(je);
+        }
+    }
+
+    /**
+     * Remove anything related to the account. Mainly used to clean
+     * up after a 1/2 created account fails.
+     */
+    private void deleteAccount() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.commit();
     }
 
     /**

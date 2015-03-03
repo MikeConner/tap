@@ -62,13 +62,15 @@ public class UserAccountCodec {
 
     /**
      * Attempt to extract the QR Code url
-     * @param httpResponse
-     * @return
+     *
+     * @param httpResponse The JSON returned from the webservice
+     * @return The ULR for the QR code
      * @throws JSONException
      */
     public String getQRCode(JSONObject httpResponse)
-            throws JSONException {
-        return httpResponse.getJSONObject(RESPONSE).getString(BITCOIN_QR);
+    throws JSONException {
+        // This value is nested two levels deeper than I expected
+        return httpResponse.getJSONObject(RESPONSE).getJSONObject(BITCOIN_QR).getJSONObject(BITCOIN_QR).getString("url");
     }
 
     /**
