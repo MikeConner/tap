@@ -14,11 +14,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.HorizontalScrollView;
+import android.view.animation.Animation;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
@@ -46,7 +46,6 @@ implements View.OnTouchListener {
         vf = (ViewFlipper) view.findViewById(R.id.currency_items);
         prevDem = (TextView) view.findViewById(R.id.left_button);
         nextDem = (TextView) view.findViewById(R.id.right_button);
-
         /**
          * Click on the Armed Amount to reset it.
          */
@@ -59,20 +58,38 @@ implements View.OnTouchListener {
             }
         });
 
+        /**
+         * Button to show previous denomination
+         */
         prevDem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Animation
+                vf.setInAnimation(getActivity(),R.animator.in_from_left);
+                vf.setOutAnimation(getActivity(), R.animator.out_to_right);
+                
                 vf.showPrevious();
+
             }
         });
 
+        /**
+         * Button to show next denomination
+         */
         nextDem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Animation
+                vf.setInAnimation(getActivity(),R.animator.in_from_right);
+                vf.setOutAnimation(getActivity(), R.animator.out_to_left);
+
                 vf.showNext();
             }
         });
 
+        /**
+         * This is the fling event for adding money to the bank
+         */
         gesture = new GestureDetector(getActivity(),
                 new GestureDetector.SimpleOnGestureListener() {
 
