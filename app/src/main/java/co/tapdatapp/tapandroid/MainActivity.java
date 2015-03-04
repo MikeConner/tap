@@ -54,9 +54,9 @@ import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.tags.TagsFragment;
 import co.tapdatapp.tapandroid.user.Account;
-import co.tapdatapp.tapandroid.yapa.YapaImage;
-import co.tapdatapp.tapandroid.yapa.YapaText;
-import co.tapdatapp.tapandroid.yapa.YapaUrl;
+import co.tapdatapp.tapandroid.yapa.YapaImageSplash;
+import co.tapdatapp.tapandroid.yapa.YapaTextSplash;
+import co.tapdatapp.tapandroid.yapa.YapaUrlSplash;
 
 public class MainActivity
 extends Activity
@@ -444,18 +444,18 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         switch (yapaType) {
 
             case "image":
-                openYapa = new Intent(this, YapaImage.class);
+                openYapa = new Intent(this, YapaImageSplash.class);
                 break;
             case "url":
-                openYapa = new Intent(this, YapaUrl.class);
+                openYapa = new Intent(this, YapaUrlSplash.class);
                 break;
             case "text":
-                openYapa = new Intent(this, YapaText.class);
+                openYapa = new Intent(this, YapaTextSplash.class);
                 break;
             default:
                 throw new AssertionError("Invalid Yapa Type: " + yapaType);
         }
-        openYapa.putExtra(YapaImage.TRANSACTION_ID, transaction.getTransactionCounter());
+        openYapa.putExtra(YapaImageSplash.TRANSACTION_ID, transaction.getTransactionCounter());
         startActivity(openYapa);
     }
 
@@ -484,18 +484,18 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         switch (yapaType) {
 
             case "image":
-                openYapa = new Intent(this, YapaImage.class);
+                openYapa = new Intent(this, YapaImageSplash.class);
                 break;
             case "url":
-                openYapa = new Intent(this, YapaUrl.class);
+                openYapa = new Intent(this, YapaUrlSplash.class);
                 break;
             case "text":
-                openYapa = new Intent(this, YapaText.class);
+                openYapa = new Intent(this, YapaTextSplash.class);
                 break;
             default:
                 throw new AssertionError("Invalid Yapa Type: " + yapaType);
         }
-        openYapa.putExtra(YapaImage.TRANSACTION_ID, transaction.getTransactionCounter());
+        openYapa.putExtra(YapaImageSplash.TRANSACTION_ID, transaction.getTransactionCounter());
         startActivity(openYapa);
     }
 
