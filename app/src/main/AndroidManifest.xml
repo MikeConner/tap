@@ -41,20 +41,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TagActivity"
-            android:label="@string/title_activity_tag"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="co.tapdatapp.tapandroid.MainActivity" />
-        </activity>
-        <activity
             android:name=".WriteActivity"
-            android:label="@string/title_activity_write"
-            android:parentActivityName=".TagActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="co.tapdatapp.tapandroid.TagActivity" />
+            android:label="@string/title_activity_write" >
         </activity>
         <activity android:name=".AccountStartActivity" >
         </activity>
