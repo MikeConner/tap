@@ -22,7 +22,6 @@
         android:layout_height="92dp"
         android:id="@+id/imageButton"
         android:layout_gravity="center_horizontal|bottom"
-        android:src="@drawable/ic_action_new"
         android:onClick="makeNewTag"/>
 
 </FrameLayout>

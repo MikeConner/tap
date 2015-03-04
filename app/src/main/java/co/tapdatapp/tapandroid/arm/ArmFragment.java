@@ -67,7 +67,7 @@ implements View.OnTouchListener {
                 //Animation
                 vf.setInAnimation(getActivity(),R.animator.in_from_left);
                 vf.setOutAnimation(getActivity(), R.animator.out_to_right);
-                
+
                 vf.showPrevious();
 
             }
