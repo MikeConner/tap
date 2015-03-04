@@ -43,7 +43,6 @@ import org.json.JSONException;
 
 import co.tapdatapp.tapandroid.arm.ArmFragment;
 import co.tapdatapp.tapandroid.arm.ArmedFragment;
-import co.tapdatapp.tapandroid.currency.BalancesActivity;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
@@ -654,16 +653,10 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         }
     }
 
-
     @Override
     public void onFragmentInteraction(Uri uri) {
         // we need this for fragments / menus
         //not sure what we have to do here if anything
-    }
-
-    public void startBalancesActivity(View v) {
-        Intent i = new Intent(this, BalancesActivity.class);
-        startActivity(i);
     }
 
 }
