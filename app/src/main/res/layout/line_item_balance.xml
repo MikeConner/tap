@@ -20,7 +20,7 @@
             android:id="@+id/balance_line_item_balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24sp"/>
+            android:textSize="28sp"/>
 
     </LinearLayout>
 
