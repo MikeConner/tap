@@ -77,7 +77,9 @@ public class NewTagTask extends AsyncTask<NewTagTask.Callback, Void, Void> {
             new Bundle(),
             new JSONObject()
         );
-        return new TagCodec(response);
+        TagCodec rv = new TagCodec();
+        rv.parse(response);
+        return rv;
     }
 
 }

@@ -13,8 +13,6 @@ import co.tapdatapp.tapandroid.TapApplication;
 
 public class TagManagementActivity extends Activity implements SyncTagsTask.Callback {
 
-    private TagList tagList;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +36,8 @@ public class TagManagementActivity extends Activity implements SyncTagsTask.Call
     }
 
     @Override
-    public void onTagsSynced(TagList tl) {
-        tagList = tl;
+    public void onTagsSynced() {
+        // @TODO refresh the screen
     }
 
     @Override

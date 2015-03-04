@@ -41,6 +41,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         new AndroidCache().onCreate(sqLiteDatabase);
         new UserBalance().onCreate(sqLiteDatabase);
         new Denomination().onCreate(sqLiteDatabase);
+        new Tag().onCreate(sqLiteDatabase);
+        new Yapa().onCreate(sqLiteDatabase);
     }
 
     /**
@@ -62,6 +64,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         new AndroidCache().onUpgrade(sqLiteDatabase, oldVersion, newVersion);
         new UserBalance().onUpgrade(sqLiteDatabase, oldVersion, newVersion);
         new Denomination().onUpgrade(sqLiteDatabase, oldVersion, newVersion);
+        new Tag().onUpgrade(sqLiteDatabase, oldVersion, newVersion);
+        new Yapa().onUpgrade(sqLiteDatabase, oldVersion, newVersion);
         // This protects us from bizarre behaviour. As there are no
         // changes so far, this method should never get called, and if it
         // is, something is seriously wrong. As soon as there are actual
