@@ -46,10 +46,6 @@
         </activity>
         <activity android:name=".AccountStartActivity" >
         </activity>
-        <activity
-            android:name=".currency.BalancesActivity"
-            android:label="@string/title_activity_balances" >
-        </activity>
         <activity android:name=".yapa.YapaImage"/>
         <activity android:name=".yapa.YapaUrl"/>
         <activity android:name=".yapa.YapaText"/>
