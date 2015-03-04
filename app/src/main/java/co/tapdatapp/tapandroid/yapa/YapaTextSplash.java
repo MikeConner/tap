@@ -1,9 +1,11 @@
 package co.tapdatapp.tapandroid.yapa;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
@@ -25,6 +27,14 @@ public class YapaTextSplash extends Activity {
         textSender.setText(transaction.getNickname());
         textDescription.setText(transaction.getDescription());
         textDate.setText(transaction.getTimestamp().toString() + "  " + Integer.toString(transaction.getAmount()));
+    }
+
+    /**
+     * This makes clicking on the back button go back to the arm screen instead of the armed screen.
+     */
+    public void onBackPressed() {
+        Intent startMain = new Intent(this, MainActivity.class);
+        startActivity(startMain);
     }
 }
 

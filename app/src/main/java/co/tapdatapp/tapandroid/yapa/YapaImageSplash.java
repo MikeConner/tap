@@ -1,6 +1,7 @@
 package co.tapdatapp.tapandroid.yapa;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
@@ -54,6 +56,14 @@ public class YapaImageSplash extends Activity {
                 }
             }
         });
+    }
+
+    /**
+     * This makes clicking on the back button go back to the arm screen instead of the armed screen.
+     */
+    public void onBackPressed() {
+        Intent startMain = new Intent(this, MainActivity.class);
+        startActivity(startMain);
     }
 
     /**

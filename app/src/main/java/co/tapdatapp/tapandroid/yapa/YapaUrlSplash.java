@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
@@ -49,6 +50,15 @@ public class YapaUrlSplash extends Activity{
             }
         });
     }
+
+    /**
+     * This makes clicking on the back button go back to the arm screen instead of the armed screen.
+     */
+    public void onBackPressed() {
+        Intent startMain = new Intent(this, MainActivity.class);
+        startActivity(startMain);
+    }
+
     /**
      * Load the image onto the view in the background. This has to be a background task because
      * the image may not be in the local cache, and thus a network fetch would be required.
