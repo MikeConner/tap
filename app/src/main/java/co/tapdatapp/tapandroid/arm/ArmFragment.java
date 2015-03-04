@@ -18,6 +18,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
@@ -32,23 +33,9 @@ implements View.OnTouchListener {
     private TextView bankView;
     private int amount;
     private GestureDetector gesture;
-
-    private final static LinearLayout.LayoutParams denominationLayoutParams;
-
-    /**
-     * Initialize layout parameters that will be reused for all
-     * denomination images.
-     *
-     * I don't know what is going on with these numbers, but increasing them a lot solved the
-     * problem with them being too small.
-     */
-    static {
-        denominationLayoutParams = new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        denominationLayoutParams.setMargins(150, 0, 100, 0);
-    }
+    private ViewFlipper vf;
+    private TextView prevDem;
+    private TextView nextDem;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -56,6 +43,9 @@ implements View.OnTouchListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_arm, container, false);
         bankView = (TextView) view.findViewById(R.id.txtAmount);
+        vf = (ViewFlipper) view.findViewById(R.id.currency_items);
+        prevDem = (TextView) view.findViewById(R.id.left_button);
+        nextDem = (TextView) view.findViewById(R.id.right_button);
 
         /**
          * Click on the Armed Amount to reset it.
@@ -68,6 +58,21 @@ implements View.OnTouchListener {
                 setAmount(account.getArmedAmount());
             }
         });
+
+        prevDem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vf.showPrevious();
+            }
+        });
+
+        nextDem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vf.showNext();
+            }
+        });
+
         gesture = new GestureDetector(getActivity(),
                 new GestureDetector.SimpleOnGestureListener() {
 
@@ -173,7 +178,7 @@ implements View.OnTouchListener {
         viewAmount.getBackground().setAlpha(128);
         // This will never be called when getView() is null
         //noinspection ConstantConditions
-        LinearLayout layout = (LinearLayout)getView().findViewById(R.id.currency_items);
+        ViewFlipper layout = (ViewFlipper)getView().findViewById(R.id.currency_items);
         layout.removeAllViews();
         ImageView iv = new ImageView(getActivity());
         iv.setImageBitmap(
@@ -230,7 +235,7 @@ implements View.OnTouchListener {
         viewAmount.getBackground().setAlpha(128);
         // This will never be called when getView() is null
         //noinspection ConstantConditions
-        LinearLayout layout = (LinearLayout)getView().findViewById(R.id.currency_items);
+        ViewFlipper layout = (ViewFlipper)getView().findViewById(R.id.currency_items);
         layout.removeAllViews();
         for (int i = 0; i < d.length; i++) {
             ImageView iv = new ImageView(getActivity());
@@ -263,7 +268,6 @@ implements View.OnTouchListener {
      */
     private void commonDenominationSetup(ImageView iv) {
         iv.setOnTouchListener(this);
-        iv.setLayoutParams(denominationLayoutParams);
     }
 
     /**
