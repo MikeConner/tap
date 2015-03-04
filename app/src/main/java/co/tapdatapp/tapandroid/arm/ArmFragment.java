@@ -95,6 +95,8 @@ implements View.OnTouchListener {
 
                     @Override
                     public boolean onDown(MotionEvent e) {
+                        account.setArmedAmount(account.getArmedAmount() + amount);
+                        setAmount(account.getArmedAmount());
                         return true;
                     }
 

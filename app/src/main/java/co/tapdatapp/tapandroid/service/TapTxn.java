@@ -147,8 +147,44 @@ public class TapTxn {
             json.put("currency_id", mCurrencyId);
         }
 
+
+        /*
+
+        works for current case (bTC)
+
+        needs to consume this:
+
+        {"response":
+            {
+                "tapped_user_thumb":{"profile_thumb":{"url":null}},
+                "amount":1,
+                "payload":{"image":"","text":"Tapped!","content_type":"image","thumb":"","uri":""},
+                "currency_id":5,
+                "final_balance":98,
+                "tapped_user_name":"Demo Account",
+                "dollar_amount":null
+
+
+            }
+        }
+
+        */
+
         output = httpHelper.HttpPostJSON(httpHelper.getFullUrl(R.string.ENDPOINT_TRANSACTION), new Bundle(), json);
-        mAmountUSD = (float) (output.getJSONObject("response").getInt("dollar_amount") / 100);
+        try {
+            mAmountUSD = (float) (output.getJSONObject("response").getInt("dollar_amount") / 100);
+        }
+        catch (Exception e){
+            if(  output.getJSONObject("response").get("dollar_amount").equals(null)) {
+                //we're in a currency txn / no $ associated
+            }
+            else{
+
+                //throw an exception here
+            }
+
+
+        }
         mEndingUserBalanaceSatoshi = output.getJSONObject("response").getInt("final_balance");
         mUserImageThumb = output.getJSONObject("response").getString("tapped_user_thumb");
         mUserNickname = output.getJSONObject("response").getString("tapped_user_name");

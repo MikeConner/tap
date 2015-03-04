@@ -28,3 +28,4 @@ proguard/
 .idea/workspace.xml
 .idea*
 /testServer/TapTestServer/target/
+app/app.iml
