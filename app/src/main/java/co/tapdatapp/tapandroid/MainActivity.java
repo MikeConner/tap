@@ -46,6 +46,7 @@ import co.tapdatapp.tapandroid.arm.ArmedFragment;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
+import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.remotedata.TapTxnTask;
 import co.tapdatapp.tapandroid.service.TapCloud;
@@ -53,6 +54,9 @@ import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.tags.TagsFragment;
 import co.tapdatapp.tapandroid.user.Account;
+import co.tapdatapp.tapandroid.yapa.YapaImage;
+import co.tapdatapp.tapandroid.yapa.YapaText;
+import co.tapdatapp.tapandroid.yapa.YapaUrl;
 
 public class MainActivity
 extends Activity
@@ -428,6 +432,31 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
         Log.d("TAP", "Phoney Transaction starting");
         new TapTxnTask().execute(this);
+
+        /**
+         * This opens the new Yapa page after a transaction
+         */
+        Intent openYapa;
+        Transaction transaction = new Transaction();
+        transaction.moveTo(transaction.getTransactionCounter());
+        String yapaType = transaction.getContentType();
+
+        switch (yapaType) {
+
+            case "image":
+                openYapa = new Intent(this, YapaImage.class);
+                break;
+            case "url":
+                openYapa = new Intent(this, YapaUrl.class);
+                break;
+            case "text":
+                openYapa = new Intent(this, YapaText.class);
+                break;
+            default:
+                throw new AssertionError("Invalid Yapa Type: " + yapaType);
+        }
+        openYapa.putExtra(YapaImage.TRANSACTION_ID, transaction.getTransactionCounter());
+        startActivity(openYapa);
     }
 
     /**
@@ -443,6 +472,31 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
         Log.d("TAP", "entered Transaction starting");
         new TapTxnTask().execute(this);
+
+        /**
+         * This opens the new Yapa page after a transaction
+         */
+        Intent openYapa;
+        Transaction transaction = new Transaction();
+        transaction.moveTo(transaction.getTransactionCounter());
+        String yapaType = transaction.getContentType();
+
+        switch (yapaType) {
+
+            case "image":
+                openYapa = new Intent(this, YapaImage.class);
+                break;
+            case "url":
+                openYapa = new Intent(this, YapaUrl.class);
+                break;
+            case "text":
+                openYapa = new Intent(this, YapaText.class);
+                break;
+            default:
+                throw new AssertionError("Invalid Yapa Type: " + yapaType);
+        }
+        openYapa.putExtra(YapaImage.TRANSACTION_ID, transaction.getTransactionCounter());
+        startActivity(openYapa);
     }
 
     //NFC STUFF
