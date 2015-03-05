@@ -92,7 +92,12 @@ implements View.OnTouchListener {
          */
         gesture = new GestureDetector(getActivity(),
                 new GestureDetector.SimpleOnGestureListener() {
-
+                    /**
+                     * This is basically a constructor. If it doesn't return true, the gesture detector will exit,
+                     * but it shouldn't do anything.
+                     * @param e
+                     * @return
+                     */
                     @Override
                     public boolean onDown(MotionEvent e) {
                         return true;
