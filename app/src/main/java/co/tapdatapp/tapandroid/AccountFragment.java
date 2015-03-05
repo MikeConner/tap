@@ -36,14 +36,17 @@ implements View.OnClickListener,
         return inflater.inflate(R.layout.fragment_account, container, false);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onResume(){
         super.onResume();
 
-        TextView nickName = (TextView)getActivity().findViewById(R.id.etNickName);
+        View view = getView();
+
+        TextView nickName = (TextView)view.findViewById(R.id.etNickName);
         nickName.setText(account.getNickname());
 
-        TextView email = (TextView)getActivity().findViewById(R.id.etEmail);
+        TextView email = (TextView)view.findViewById(R.id.etEmail);
         String mEmailAddy = account.getEmail();
         if (mEmailAddy.isEmpty()) {
             email.setText("no@email.addy");
@@ -51,11 +54,10 @@ implements View.OnClickListener,
         else {
             email.setText(mEmailAddy);
         }
-        getActivity().findViewById(R.id.btn_Load_Code).setOnClickListener(this);
-        getActivity().findViewById(R.id.btn_bitcoin_load).setOnClickListener(this);
-        // This will never be called with a null view
-        //noinspection ConstantConditions
-        balanceList = (ListView)getView().findViewById(R.id.balances_list);
+        view.findViewById(R.id.btn_Load_Code).setOnClickListener(this);
+        view.findViewById(R.id.btn_bitcoin_load).setOnClickListener(this);
+
+        balanceList = (ListView)view.findViewById(R.id.balances_list);
         balanceList.setOnItemClickListener(this);
         fillInList();
     }

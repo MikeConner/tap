@@ -37,5 +37,12 @@
     <string name="tap_encouragement">Getting Ready to TAP TAP TAP</string>
     <string name="armed_graphic">Armed</string>
     <string name="amount">Amount</string>
+    <string name="tag_icon_description">Tag Icon</string>
+    <string name="tag_name_hint">Enter a name for the tag</string>
+    <string name="save">SAVE</string>
+    <string name="update">UPDATE</string>
+    <string name="write">WRITE</string>
+    <string name="add_yapa">ADD NEW YAPA</string>
+    <string name="hint_yapa_text">Enter some text to show your thanks</string>
 
 </resources>

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import co.tapdatapp.tapandroid.remotedata.TagCodec;
 import co.tapdatapp.tapandroid.remotedata.YapaCodec;
 
-public class Tag implements SingleTable {
+public class Tag  extends BaseDAO implements SingleTable {
 
     private final static String TABLE = "tags";
     private final static String TAG_ID = "tag_id";
@@ -17,7 +17,7 @@ public class Tag implements SingleTable {
 
     private String tagId;
     private String name;
-    private ArrayList<Yapa> yapa = null;
+    private Yapa[] yapa = null;
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -35,6 +35,55 @@ public class Tag implements SingleTable {
     }
 
     /**
+     * @return number of tags in the database
+     */
+    public int getCount() {
+        return getRecordCount(TABLE);
+    }
+
+    /**
+     * Get a new tag object ordered by alpha order of name
+     *
+     * @param position The position in the order
+     * @return populated Tag object
+     */
+    public Tag getByOrder(int position) {
+        Tag rv = new Tag();
+        rv.moveToByOrder(position);
+        return rv;
+    }
+
+    /**
+     * Load this tag's values with the values found at the specified
+     * position.
+     *
+     * @param position position in alphabetical order
+     */
+    public void moveToByOrder(int position) {
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = getDatabaseHelper().getReadableDatabase();
+            c = db.query(
+                TABLE,
+                new String[]{ TAG_ID, NAME },
+                null, null,
+                null, null,
+                NAME + " ASC", position + ", 1"
+            );
+            if (c.moveToFirst()) {
+                tagId = c.getString(0);
+                name = c.getString(1);
+            } else {
+                throw new Error("No Tag at position " + position);
+            }
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+    }
+
+    /**
      * Set this object to point to the specified tag
      *
      * @param tagId Tag ID to load
@@ -42,7 +91,7 @@ public class Tag implements SingleTable {
     public void moveTo(String tagId) {
         Cursor c = null;
         try {
-            SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+            SQLiteDatabase db = getDatabaseHelper().getReadableDatabase();
             c = db.query(
                 TABLE,
                 new String[]{ NAME },
@@ -86,7 +135,7 @@ public class Tag implements SingleTable {
     }
 
     public void create(String id, String name, Yapa[] yapa) {
-        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getWritableDatabase();
+        SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(TAG_ID, id);
         values.put(NAME, name);
@@ -102,7 +151,52 @@ public class Tag implements SingleTable {
     public void removeAll() {
         Yapa yapa = new Yapa();
         yapa.removeAll();
-        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getWritableDatabase();
+        SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
         db.delete(TABLE, null, null);
+    }
+
+    /**
+     * Remove all records associated with the passed ID
+     */
+    public void remove(String tagId) {
+        Yapa yapa = new Yapa();
+        yapa.remove(tagId);
+        SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
+        db.delete(TABLE, TAG_ID + " = ?", new String[] {tagId});
+    }
+
+    /**
+     * Get the next highest threshold that's not in use
+     */
+    public int getNextAvailableThreshold() {
+        return new Yapa().getNextAvailableThreshold(tagId);
+    }
+
+    public String getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(String tagId) {
+        this.tagId = tagId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Lazy load yapa objects for this tag
+     *
+     * @return Array of Yapa objects
+     */
+    public synchronized Yapa[] getYapa() {
+        if (yapa == null) {
+            yapa = new Yapa().getAllForTag(tagId);
+        }
+        return yapa;
     }
 }

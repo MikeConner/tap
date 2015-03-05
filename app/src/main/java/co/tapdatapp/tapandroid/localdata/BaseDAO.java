@@ -57,6 +57,29 @@ public class BaseDAO {
     }
 
     /**
+     * Count the number of records in the specified table
+     *
+     * @param tableName Table to count
+     * @return number of records in the table
+     */
+    protected int getRecordCount(String tableName) {
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+            c = db.rawQuery("SELECT count(*) FROM " + tableName, null);
+            if (c.moveToFirst()) {
+                return c.getInt(0);
+            } else {
+                throw new Error("Unexplained failure to count records");
+            }
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+    }
+
+    /**
      * Simplify the call to fetch a single string value from a single
      * row in a table.
      */
