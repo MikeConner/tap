@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Transaction;
@@ -12,6 +16,7 @@ import co.tapdatapp.tapandroid.localdata.Transaction;
 public class YapaTextSplash extends Activity {
 
     public final static String TRANSACTION_ID = "TxId";
+    private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -23,6 +28,17 @@ public class YapaTextSplash extends Activity {
         final TextView textSender = (TextView) findViewById(R.id.text_sender);
         final TextView textDescription = (TextView) findViewById(R.id.text_description);
         final TextView textDate = (TextView) findViewById(R.id.text_date);
+
+        /**
+         * This makes the Yapa appear for 5 seconds, then disappear.
+         */
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                onBackPressed();
+            }
+        };
+        worker.schedule(task, 5, TimeUnit.SECONDS);
 
         textSender.setText(transaction.getNickname());
         textDescription.setText(transaction.getDescription());

@@ -10,6 +10,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
@@ -19,6 +23,7 @@ import co.tapdatapp.tapandroid.localdata.Transaction;
 public class YapaUrlSplash extends Activity{
 
     public final static String TRANSACTION_ID = "TxId";
+    private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -31,6 +36,17 @@ public class YapaUrlSplash extends Activity{
         final TextView urlSender = (TextView) findViewById(R.id.url_sender);
         final TextView urlDescription = (TextView) findViewById(R.id.url_description);
         final TextView urlDate = (TextView) findViewById(R.id.url_date);
+
+        /**
+         * This makes the Yapa appear for 5 seconds, then disappear.
+         */
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                onBackPressed();
+            }
+        };
+        worker.schedule(task, 5, TimeUnit.SECONDS);
 
         urlSender.setText(transaction.getNickname());
         urlDescription.setText(transaction.getDescription());

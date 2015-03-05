@@ -11,6 +11,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
@@ -21,6 +25,7 @@ public class YapaImageSplash extends Activity {
 
     public final static String TRANSACTION_ID = "TxId";
     private boolean isImageFitToScreen = false;
+    private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -33,6 +38,17 @@ public class YapaImageSplash extends Activity {
         final TextView imageDescription = (TextView) findViewById(R.id.image_description);
         final TextView imageDate = (TextView) findViewById(R.id.image_date);
         final Button fullButton = (Button) findViewById(R.id.full_screen_button);
+
+        /**
+         * This makes the Yapa appear for 5 seconds, then disappear.
+         */
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                onBackPressed();
+            }
+        };
+        worker.schedule(task, 5, TimeUnit.SECONDS);
 
         new ImageFetchTask().execute(imageView, transaction);
 
