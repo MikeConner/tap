@@ -29,3 +29,5 @@ proguard/
 .idea*
 /testServer/TapTestServer/target/
 app/app.iml
+
+*.iml
