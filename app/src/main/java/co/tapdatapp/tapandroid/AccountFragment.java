@@ -2,12 +2,16 @@ package co.tapdatapp.tapandroid;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,14 +30,29 @@ implements View.OnClickListener,
            GetAllBalancesTask.Callback,
            DepositCodeFragment.Callback {
 
+    private static final int SELECT_PICTURE = 1;
     private ListView balanceList;
     private Account account = new Account();
+    private String selectedImagePath;
+    private String filemanagerstring;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_account, container, false);
+        View view = inflater.inflate(R.layout.fragment_account, container, false);
+        ImageView profilePic = (ImageView) view.findViewById(R.id.profile_picture);
+        profilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent newImage = new Intent();
+                newImage.setType("image/*");
+                newImage.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(newImage, "Select Image"),SELECT_PICTURE);
+            }
+        });
+
+        return view;
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -185,5 +204,53 @@ implements View.OnClickListener,
     @Override
     public void refreshBalanceList() {
         fillInList();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == getActivity().RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+
+                //OI FILE Manager
+                filemanagerstring = selectedImageUri.getPath();
+
+                //MEDIA GALLERY
+                selectedImagePath = getPath(selectedImageUri);
+
+                //DEBUG PURPOSE - you can delete this if you want
+                if(selectedImagePath!=null)
+                    System.out.println(selectedImagePath);
+                else System.out.println("selectedImagePath is null");
+                if(filemanagerstring!=null)
+                    System.out.println(filemanagerstring);
+                else System.out.println("filemanagerstring is null");
+
+                //NOW WE HAVE OUR WANTED STRING
+                if(selectedImagePath!=null)
+                    System.out.println("selectedImagePath is the right one for you!");
+                else
+                    System.out.println("filemanagerstring is the right one for you!");
+            }
+        }
+    }
+
+    /**
+     * This helps get the path for an image
+     * @param uri
+     * @return
+     */
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
+        if(cursor!=null)
+        {
+            //HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
+            //THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+        else return null;
     }
 }
