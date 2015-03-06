@@ -438,7 +438,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
          */
         Intent openYapa;
         Transaction transaction = new Transaction();
-        transaction.moveTo(transaction.getTransactionCounter());
+        transaction.moveTo(0);
         String yapaType = transaction.getContentType();
 
         switch (yapaType) {
@@ -455,7 +455,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
             default:
                 throw new AssertionError("Invalid Yapa Type: " + yapaType);
         }
-        openYapa.putExtra(YapaImageSplash.TRANSACTION_ID, transaction.getTransactionCounter());
+        openYapa.putExtra(YapaImageSplash.TRANSACTION_ID, 0);
         startActivity(openYapa);
     }
 
@@ -478,7 +478,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
          */
         Intent openYapa;
         Transaction transaction = new Transaction();
-        transaction.moveTo(transaction.getTransactionCounter());
+        transaction.moveTo(0);
         String yapaType = transaction.getContentType();
 
         switch (yapaType) {
@@ -495,7 +495,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
             default:
                 throw new AssertionError("Invalid Yapa Type: " + yapaType);
         }
-        openYapa.putExtra(YapaImageSplash.TRANSACTION_ID, transaction.getTransactionCounter());
+        openYapa.putExtra(YapaImageSplash.TRANSACTION_ID, 0);
         startActivity(openYapa);
     }
 
