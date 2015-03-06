@@ -48,4 +48,19 @@ public class YapaDisplay {
         }
     }
 
+    public Class getSplashClass(Transaction transaction) {
+        switch (transaction.getContentType()) {
+            case IMAGE :
+                return YapaImageSplash.class;
+            case URL :
+                return YapaUrlSplash.class;
+            case TEXT :
+                return YapaTextSplash.class;
+            default :
+                throw new AssertionError(
+                        "Invalid Yapa Type: " + transaction.getContentType()
+                );
+        }
+    }
+
 }
