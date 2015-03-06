@@ -3,6 +3,7 @@ package co.tapdatapp.tapandroid;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -35,20 +36,21 @@ implements View.OnClickListener,
     private Account account = new Account();
     private String selectedImagePath;
     private String filemanagerstring;
+    private ImageView profilePic;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
-        ImageView profilePic = (ImageView) view.findViewById(R.id.profile_picture);
+        profilePic = (ImageView) view.findViewById(R.id.profile_picture);
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent newImage = new Intent();
                 newImage.setType("image/*");
                 newImage.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(newImage, "Select Image"),SELECT_PICTURE);
+                startActivityForResult(Intent.createChooser(newImage, "Select Image"), SELECT_PICTURE);
             }
         });
 
@@ -206,6 +208,12 @@ implements View.OnClickListener,
         fillInList();
     }
 
+    /**
+     * This actually only works if you select from the gallery.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == getActivity().RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
@@ -227,9 +235,10 @@ implements View.OnClickListener,
 
                 //NOW WE HAVE OUR WANTED STRING
                 if(selectedImagePath!=null)
-                    System.out.println("selectedImagePath is the right one for you!");
-                else
-                    System.out.println("filemanagerstring is the right one for you!");
+                    profilePic.setImageBitmap(BitmapFactory.decodeFile(selectedImagePath));
+                else{
+                    //@TODO set an error message if the file path is null;
+                }
             }
         }
     }
