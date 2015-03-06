@@ -9,6 +9,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ScaleDrawable;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,22 +90,25 @@ public class HistoryAdapter extends BaseAdapter {
         transaction.moveTo(i);
         ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getDescription());
         String yapaType = transaction.getContentType();
-        ImageView historyPicture = ((ImageView)v.findViewById(R.id.history_picture));
+        ImageView historyIcon = ((ImageView)v.findViewById(R.id.history_icon));
+        ImageView historyPreview = ((ImageView)v.findViewById(R.id.history_preview));
         Context context = activity.getApplicationContext();
         Resources res = context.getResources();
+
         switch(yapaType){
 
             case "image":
-                historyPicture.setImageDrawable(res.getDrawable(R.drawable.yapa_image));
+                historyIcon.setImageDrawable(res.getDrawable(R.drawable.yapa_image));
+                new ImageFetchTask().execute(historyPreview, transaction);
                 break;
             case "url":
-                historyPicture.setImageDrawable(res.getDrawable(R.drawable.yapa_link));
+                historyIcon.setImageDrawable(res.getDrawable(R.drawable.yapa_link));
                 break;
             case "text":
-                historyPicture.setImageDrawable(res.getDrawable(R.drawable._yapa_text));
+                historyIcon.setImageDrawable(res.getDrawable(R.drawable._yapa_text));
                 break;
             default:
-                historyPicture.setImageBitmap(getRewardBitmap());
+                historyIcon.setImageBitmap(getRewardBitmap());
 
         }
         LoadHistoryImagesTask asyncLoad = new LoadHistoryImagesTask();
@@ -173,4 +181,57 @@ public class HistoryAdapter extends BaseAdapter {
         return iconBitmap;
     }
 
+    /**
+     * Scales the image icon
+     * @param in
+     * @return
+     */
+    private Drawable scaleIcon(Drawable in){
+        ScaleDrawable scaler = new ScaleDrawable(in,0, 500, 500);
+        return scaler;
+    }
+
+    /**
+     * Load the image onto the view in the background. This has to be a background task because
+     * the image may not be in the local cache, and thus a network fetch would be required.
+     */
+    private class ImageFetchTask extends AsyncTask<Object, Void, Void> {
+
+        Bitmap imageBitmap = null;
+        ImageView imageView = null;
+
+        /**
+         * @param params ImageView to set and Transaction to set from
+         * @return Void
+         */
+        @Override
+        protected Void doInBackground(Object... params) {
+            if (params.length != 2) {
+                throw new AssertionError("Requires ImageView and transaction");
+            }
+            imageView = (ImageView)params[0];
+            Transaction transaction = (Transaction)params[1];
+            try {
+                imageBitmap = TapBitmap.fetchFromCacheOrWeb(transaction.getYapa_url());
+            }
+            catch (Exception e) {
+                TapApplication.unknownFailure(e);
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void x) {
+            //noinspection StatementWithEmptyBody
+            if (imageBitmap != null) {
+                Context context = activity.getApplicationContext();
+                Resources res = context.getResources();
+                BitmapDrawable yapaImage = new BitmapDrawable(res, imageBitmap);
+                yapaImage.setAlpha(130);
+                imageView.setImageDrawable(yapaImage);
+            }
+            else {
+                // @TODO provide some sort of message to the user that the image can't be displayed
+            }
+        }
+    }
 }

@@ -154,7 +154,6 @@ public class Transaction implements SingleTable, TransactionDAO {
         v.put(NICKNAME, nickname);
         v.put(YAPA_THUMB_URL, yapa_thumb_url);
         v.put(YAPA_CONTENT_TYPE, yapa_content_type);
-        transactionCounter++;
         // Sometimes the webservice returns the same transaction even
         // though it's been told to only return newer. This is probably
         // the result of precision lost in the date as it passes from
@@ -231,13 +230,5 @@ public class Transaction implements SingleTable, TransactionDAO {
 
     public String getContentType() {
         return yapa_content_type;
-    }
-
-    /**
-     * This is to get the most recent transaction
-     * @return
-     */
-    public int getTransactionCounter(){
-        return transactionCounter;
     }
 }
