@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -44,16 +45,8 @@ implements View.OnClickListener,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
         profilePic = (ImageView) view.findViewById(R.id.profile_picture);
-        profilePic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent newImage = new Intent();
-                newImage.setType("image/*");
-                newImage.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(newImage, "Select Image"), SELECT_PICTURE);
-            }
-        });
-
+        profilePic.setOnClickListener(this);
+        profilePic.setImageBitmap(BitmapFactory.decodeFile(account.getProfilePicThumbUrl()));
         return view;
     }
 
@@ -144,6 +137,12 @@ implements View.OnClickListener,
             case R.id.btn_bitcoin_load:
                 openQR();
                 break;
+            case R.id.profile_picture:
+                Intent newImage = new Intent();
+                newImage.setType("image/*");
+                newImage.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(newImage, "Select Image"), SELECT_PICTURE);
+                break;
             default :
                 throw new AssertionError("Unknown button " + v.getId());
         }
@@ -209,6 +208,8 @@ implements View.OnClickListener,
     }
 
     /**
+     * This is needed to set a profile picture
+     *
      * This actually only works if you select from the gallery.
      * @param requestCode
      * @param resultCode
@@ -219,15 +220,15 @@ implements View.OnClickListener,
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
 
-                //OI FILE Manager
                 filemanagerstring = selectedImageUri.getPath();
 
-                //MEDIA GALLERY
                 selectedImagePath = getPath(selectedImageUri);
 
-                //NOW WE HAVE OUR WANTED STRING
-                if(selectedImagePath!=null)
-                    profilePic.setImageBitmap(BitmapFactory.decodeFile(selectedImagePath));
+                if(selectedImagePath!=null) {
+                    account.setProfilePicThumbUrl(selectedImagePath);
+                    //This seems kind of redundant
+                    profilePic.setImageBitmap(BitmapFactory.decodeFile(account.getProfilePicThumbUrl()));
+                }
                 else{
                     //@TODO set an error message if the file path is null;
                 }
