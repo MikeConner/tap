@@ -31,7 +31,6 @@ public class Transaction implements SingleTable, TransactionDAO {
     private int amount;
     private String nickname;
     private String yapa_content_type;
-    private int transactionCounter=0;
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -101,12 +100,12 @@ public class Transaction implements SingleTable, TransactionDAO {
     @Override
     public Transaction getByOrder(int i) {
         Transaction rv = new Transaction();
-        rv.moveTo(i);
+        rv.moveToByOrder(i);
         return rv;
     }
 
     @Override
-    public void moveTo(int location) {
+    public void moveToByOrder(int location) {
         Cursor c = null;
         try {
             SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
@@ -121,23 +120,56 @@ public class Transaction implements SingleTable, TransactionDAO {
                 TIMESTAMP + " DESC",
                 location + ", 1"
             );
-            if (c.moveToFirst()) {
-                slug = c.getString(0);
-                timestamp = new Timestamp(c.getLong(1));
-                thumb_url = c.getString(2);
-                yapa_url = c.getString(3);
-                description = c.getString(4);
-                amount = c.getInt(5);
-                nickname = c.getString(6);
-                yapa_thumb_url = c.getString(7);
-                yapa_content_type = c.getString(8);
-            } else {
-                throw new Error("No TX record at location " + location);
-            }
+            loadFromCursor(c);
         } finally {
             if (c != null) {
                 c.close();
             }
+        }
+    }
+
+    /**
+     * Move to the record with the supplied slug
+     *
+     * @param slug The unique ID for the transaction
+     */
+    public void moveToSlug(String slug) {
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+            c = db.query(
+                NAME,
+                new String[]{
+                    SLUG, TIMESTAMP, THUMB_URL, YAPA_URL,
+                    DESCRIPTION, AMOUNT, NICKNAME,
+                    YAPA_THUMB_URL, YAPA_CONTENT_TYPE
+                },
+                SLUG + " = ?",
+                new String[] { slug },
+                null, null,
+                null, null
+            );
+            loadFromCursor(c);
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+    }
+
+    private void loadFromCursor(Cursor c) {
+        if (c.moveToFirst()) {
+            slug = c.getString(0);
+            timestamp = new Timestamp(c.getLong(1));
+            thumb_url = c.getString(2);
+            yapa_url = c.getString(3);
+            description = c.getString(4);
+            amount = c.getInt(5);
+            nickname = c.getString(6);
+            yapa_thumb_url = c.getString(7);
+            yapa_content_type = c.getString(8);
+        } else {
+            throw new Error("No TX record found");
         }
     }
 

@@ -19,9 +19,8 @@ import android.widget.GridView;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.Transaction;
+import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 import co.tapdatapp.tapandroid.yapa.YapaImage;
-import co.tapdatapp.tapandroid.yapa.YapaUrl;
-import co.tapdatapp.tapandroid.yapa.YapaText;
 
 public class HistoryFragment extends Fragment implements HistorySyncCallback {
 
@@ -29,7 +28,6 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
     private ProgressBar progressBar;
     private GridView gridView;
     private boolean loaded = false;
-    public String yapaType = null;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -73,25 +71,13 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
                  * happen depending on the type of yapa. Also currently operating under the assumption that
                  * Yapas currently can only be images. More cases will be added later.
                  */
-                Intent openYapa;
+
                 Transaction transaction = new Transaction();
-                transaction.moveTo(position);
-                yapaType = transaction.getContentType();
-
-                switch (yapaType) {
-
-                    case "image":
-                        openYapa = new Intent(getActivity(), YapaImage.class);
-                        break;
-                    case "url":
-                        openYapa = new Intent(getActivity(), YapaUrl.class);
-                        break;
-                    case "text":
-                        openYapa = new Intent(getActivity(), YapaText.class);
-                        break;
-                    default:
-                        throw new AssertionError("Invalid Yapa Type: " + yapaType);
-                }
+                transaction.moveToByOrder(position);
+                Intent openYapa = new Intent(
+                    getActivity(),
+                    new YapaDisplay().getDisplayClass(transaction)
+                );
                 openYapa.putExtra(YapaImage.TRANSACTION_ID, position);
                 startActivity(openYapa);
             }

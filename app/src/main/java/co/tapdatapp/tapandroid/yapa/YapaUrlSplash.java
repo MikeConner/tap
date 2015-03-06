@@ -31,7 +31,7 @@ public class YapaUrlSplash extends Activity{
 
         final int transactionId = getIntent().getExtras().getInt(TRANSACTION_ID);
         final Transaction transaction = new Transaction();
-        transaction.moveTo(transactionId);
+        transaction.moveToByOrder(transactionId);
         final ImageView imageView = (ImageView) findViewById(R.id.yapaUrl);
         final TextView urlSender = (TextView) findViewById(R.id.url_sender);
         final TextView urlDescription = (TextView) findViewById(R.id.url_description);

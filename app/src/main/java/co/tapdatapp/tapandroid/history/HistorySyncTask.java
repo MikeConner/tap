@@ -60,7 +60,7 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
      * Pull down any data from the server newer than what we already
      * have
      */
-    private void syncWithServer() throws Exception {
+    public void syncWithServer() throws Exception {
         HttpHelper http = new HttpHelper();
         TransactionCodec tc = new TransactionCodec();
         Date d = new Transaction().getNewest();

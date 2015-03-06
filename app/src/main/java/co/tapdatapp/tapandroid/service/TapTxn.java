@@ -23,7 +23,7 @@ public class TapTxn {
     private String mUserImageThumb = "";
     private int mCurrencyId;
 
-
+    private String slug;
     private String mTagID;
     private int mSatoshi;
     private String mMessage;
@@ -185,6 +185,8 @@ public class TapTxn {
 
 
         }
+        // @TODO this webservice call has to return the slug
+        //slug = output.getJSONObject("response").getString("id");
         mEndingUserBalanaceSatoshi = output.getJSONObject("response").getInt("final_balance");
         mUserImageThumb = output.getJSONObject("response").getString("tapped_user_thumb");
         mUserNickname = output.getJSONObject("response").getString("tapped_user_name");
@@ -198,4 +200,7 @@ public class TapTxn {
 
     }
 
+    public String getSlug() {
+        return slug;
+    }
 }

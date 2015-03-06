@@ -6,6 +6,8 @@ package co.tapdatapp.tapandroid.remotedata;
 
 import android.os.AsyncTask;
 
+import co.tapdatapp.tapandroid.history.HistorySyncTask;
+import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.service.TapTxn;
 
 public class TapTxnTask
@@ -20,7 +22,7 @@ extends AsyncTask<TapTxnTask.TapTxnInitiator, Void, Void> {
         /**
          * Called when a successful network operation has occurred
          */
-        void onTapNetComplete();
+        void onTapNetComplete(Transaction t);
 
         /**
          * Called when a failure of any type occurs
@@ -32,6 +34,7 @@ extends AsyncTask<TapTxnTask.TapTxnInitiator, Void, Void> {
 
     private TapTxnInitiator callback;
     private Throwable error;
+    private Transaction result;
 
     protected Void doInBackground(TapTxnInitiator... callbacks) {
         if (callbacks.length != 1) {
@@ -41,6 +44,11 @@ extends AsyncTask<TapTxnTask.TapTxnInitiator, Void, Void> {
         TapTxn tapTxn = callback.getTapTxn();
         try {
             tapTxn.TapAfool();
+            HistorySyncTask hst = new HistorySyncTask();
+            hst.syncWithServer();
+            result = new Transaction();
+            //@TODO enable this once fixed
+            // result.moveToSlug(tapTxn.getSlug());
         }
         catch (Throwable t) {
             error = t;
@@ -50,7 +58,7 @@ extends AsyncTask<TapTxnTask.TapTxnInitiator, Void, Void> {
 
     protected void onPostExecute(Void x) {
         if (error == null) {
-            callback.onTapNetComplete();
+            callback.onTapNetComplete(result);
         }
         else {
             callback.onTapNetFailure(error);

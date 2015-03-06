@@ -14,16 +14,14 @@ import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
 public class YapaTextSplash extends Activity {
-
-    public final static String TRANSACTION_ID = "TxId";
     private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_yapa_text);
-        final int transactionId = getIntent().getExtras().getInt(TRANSACTION_ID);
+        final int transactionId = getIntent().getExtras().getInt(YapaDisplay.TRANSACTION_ID);
         final Transaction transaction = new Transaction();
-        transaction.moveTo(transactionId);
+        transaction.moveToByOrder(transactionId);
 
         final TextView textSender = (TextView) findViewById(R.id.text_sender);
         final TextView textDescription = (TextView) findViewById(R.id.text_description);

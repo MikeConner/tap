@@ -8,8 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.content.ContentUris;
 import android.widget.TextView;
 
 import co.tapdatapp.tapandroid.R;
@@ -27,7 +25,7 @@ public class YapaUrl extends Activity{
 
         final int transactionId = getIntent().getExtras().getInt(TRANSACTION_ID);
         final Transaction transaction = new Transaction();
-        transaction.moveTo(transactionId);
+        transaction.moveToByOrder(transactionId);
         final ImageView imageView = (ImageView) findViewById(R.id.yapaUrl);
         final TextView urlSender = (TextView) findViewById(R.id.url_sender);
         final TextView urlDescription = (TextView) findViewById(R.id.url_description);

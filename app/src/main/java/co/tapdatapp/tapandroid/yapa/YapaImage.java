@@ -1,14 +1,12 @@
 package co.tapdatapp.tapandroid.yapa;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,7 +25,7 @@ public class YapaImage extends Activity {
         setContentView(R.layout.activity_yapa_image);
         final int transactionId = getIntent().getExtras().getInt(TRANSACTION_ID);
         final Transaction transaction = new Transaction();
-        transaction.moveTo(transactionId);
+        transaction.moveToByOrder(transactionId);
         final ImageView imageView = (ImageView) findViewById(R.id.yapaImage);
         final TextView imageSender = (TextView) findViewById(R.id.image_sender);
         final TextView imageDescription = (TextView) findViewById(R.id.image_description);

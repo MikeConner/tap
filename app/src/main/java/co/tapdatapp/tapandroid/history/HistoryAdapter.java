@@ -11,7 +11,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
@@ -26,6 +25,7 @@ import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.localdata.TransactionDAO;
+import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
 public class HistoryAdapter extends BaseAdapter {
 
@@ -87,32 +87,15 @@ public class HistoryAdapter extends BaseAdapter {
                 false
             );
         }
-        transaction.moveTo(i);
+        transaction.moveToByOrder(i);
         ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getDescription());
-        String yapaType = transaction.getContentType();
         ImageView historyIcon = ((ImageView)v.findViewById(R.id.history_icon));
         ImageView historyPreview = ((ImageView)v.findViewById(R.id.history_preview));
-        Context context = activity.getApplicationContext();
-        Resources res = context.getResources();
-
-        switch(yapaType){
-
-            case "image":
-                historyIcon.setImageDrawable(res.getDrawable(R.drawable.yapa_image));
-                new ImageFetchTask().execute(historyPreview, transaction);
-                break;
-            case "url":
-                historyIcon.setImageDrawable(res.getDrawable(R.drawable.yapa_link));
-                break;
-            case "text":
-                historyIcon.setImageDrawable(res.getDrawable(R.drawable._yapa_text));
-                break;
-            default:
-                historyIcon.setImageBitmap(getRewardBitmap());
-
+        if (transaction.getContentType().equals(YapaDisplay.IMAGE)) {
+            new ImageFetchTask().execute(historyPreview, transaction);
         }
-        LoadHistoryImagesTask asyncLoad = new LoadHistoryImagesTask();
-        asyncLoad.execute(v);
+        YapaDisplay yl = new YapaDisplay();
+        historyIcon.setImageDrawable(yl.getIcon(transaction));
         return v;
     }
 
@@ -183,12 +166,9 @@ public class HistoryAdapter extends BaseAdapter {
 
     /**
      * Scales the image icon
-     * @param in
-     * @return
      */
     private Drawable scaleIcon(Drawable in){
-        ScaleDrawable scaler = new ScaleDrawable(in,0, 500, 500);
-        return scaler;
+        return new ScaleDrawable(in,0, 500, 500);
     }
 
     /**

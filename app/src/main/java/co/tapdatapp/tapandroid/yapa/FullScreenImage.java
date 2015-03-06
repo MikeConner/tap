@@ -6,8 +6,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 import co.tapdatapp.tapandroid.R;
@@ -26,7 +24,7 @@ public class FullScreenImage extends Activity
         setContentView(R.layout.full_image);
         final int transactionId = getIntent().getExtras().getInt(TRANSACTION_ID);
         final Transaction transaction = new Transaction();
-        transaction.moveTo(transactionId);
+        transaction.moveToByOrder(transactionId);
         final ImageView fullView = (ImageView) findViewById(R.id.full_screen_image);
 
         Context context = activity.getApplicationContext();

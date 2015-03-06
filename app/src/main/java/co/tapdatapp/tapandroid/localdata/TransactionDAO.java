@@ -22,11 +22,12 @@ public interface TransactionDAO {
   public TransactionDAO getByOrder(int itemLocation);
 
   /**
-   * Load this object with the data from transaction #x
+   * Load this object with the data from transaction #x, ordered in
+   * reverse chronological order
    *
    * @param location the transaction # to move to
    */
-  public void moveTo(int location);
+  public void moveToByOrder(int location);
 
   /**
    * Create a new transaction record from the data currently in this

@@ -55,9 +55,7 @@ import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.tags.TagsFragment;
 import co.tapdatapp.tapandroid.user.Account;
-import co.tapdatapp.tapandroid.yapa.YapaImageSplash;
-import co.tapdatapp.tapandroid.yapa.YapaTextSplash;
-import co.tapdatapp.tapandroid.yapa.YapaUrlSplash;
+import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
 public class MainActivity
 extends Activity
@@ -433,31 +431,6 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
         Log.d("TAP", "Phoney Transaction starting");
         new TapTxnTask().execute(this);
-
-        /**
-         * This opens the new Yapa page after a transaction
-         */
-        Intent openYapa;
-        Transaction transaction = new Transaction();
-        transaction.moveTo(0);
-        String yapaType = transaction.getContentType();
-
-        switch (yapaType) {
-
-            case "image":
-                openYapa = new Intent(this, YapaImageSplash.class);
-                break;
-            case "url":
-                openYapa = new Intent(this, YapaUrlSplash.class);
-                break;
-            case "text":
-                openYapa = new Intent(this, YapaTextSplash.class);
-                break;
-            default:
-                throw new AssertionError("Invalid Yapa Type: " + yapaType);
-        }
-        openYapa.putExtra(YapaImageSplash.TRANSACTION_ID, 0);
-        startActivity(openYapa);
     }
 
     /**
@@ -473,31 +446,6 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
         Log.d("TAP", "entered Transaction starting");
         new TapTxnTask().execute(this);
-
-        /**
-         * This opens the new Yapa page after a transaction
-         */
-        Intent openYapa;
-        Transaction transaction = new Transaction();
-        transaction.moveTo(0);
-        String yapaType = transaction.getContentType();
-
-        switch (yapaType) {
-
-            case "image":
-                openYapa = new Intent(this, YapaImageSplash.class);
-                break;
-            case "url":
-                openYapa = new Intent(this, YapaUrlSplash.class);
-                break;
-            case "text":
-                openYapa = new Intent(this, YapaTextSplash.class);
-                break;
-            default:
-                throw new AssertionError("Invalid Yapa Type: " + yapaType);
-        }
-        openYapa.putExtra(YapaImageSplash.TRANSACTION_ID, 0);
-        startActivity(openYapa);
     }
 
     //NFC STUFF
@@ -556,7 +504,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
      * Called when the webservice has responded to a transaction
      */
     @Override
-    public void onTapNetComplete() {
+    public void onTapNetComplete(Transaction t) {
         mArmed = false;
         String mMessage = outgoingTransaction.getMessage();
         mArmFrag.updateWithResult(mMessage);
@@ -565,6 +513,18 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
             randomTransactionButton.setEnabled(true);
             randomTransactionButton = null;
         }
+        /**
+         * This opens the new Yapa page after a transaction
+         */
+        // @TODO re-enable this once everything works ...
+        /*
+        Intent openYapa = new Intent(
+            this,
+            new YapaDisplay().getDisplayClass(t)
+        );
+        openYapa.putExtra(YapaDisplay.TRANSACTION_ID, t.getSlug());
+        startActivity(openYapa);
+        */
     }
 
     /**

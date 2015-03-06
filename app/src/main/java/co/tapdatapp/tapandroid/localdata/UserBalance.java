@@ -147,7 +147,7 @@ implements SingleTable, CurrencyDAO {
     }
 
     /**
-     * Does the legwork of moveTo() but does not ensure the currency
+     * Does the legwork of moveToByOrder() but does not ensure the currency
      * is already loaded, thus preventing endless loops in
      * ensureLocalCurrencyDetails()
      *
