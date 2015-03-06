@@ -165,13 +165,6 @@ public class HistoryAdapter extends BaseAdapter {
     }
 
     /**
-     * Scales the image icon
-     */
-    private Drawable scaleIcon(Drawable in){
-        return new ScaleDrawable(in,0, 500, 500);
-    }
-
-    /**
      * Load the image onto the view in the background. This has to be a background task because
      * the image may not be in the local cache, and thus a network fetch would be required.
      */
