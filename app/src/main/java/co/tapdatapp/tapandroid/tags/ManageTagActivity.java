@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.util.UUID;
+
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Tag;
 import co.tapdatapp.tapandroid.localdata.Yapa;
@@ -139,6 +141,7 @@ implements YapaAdapter.OnChangeListener,
         y.setThreshold(tag.getNextAvailableThreshold());
         y.setThumb("");
         y.setTagId(tag.getTagId());
+        y.setSlug(UUID.randomUUID());
         y.create();
         fillIn();
     }

@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.util.UUID;
+
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.BaseAdapter;
@@ -28,14 +30,16 @@ implements SeekBar.OnSeekBarChangeListener {
 
     private OnChangeListener changeListener;
     private Yapa[] yapa;
+    private String tagId;
 
     /**
      * Constructor establishes adapter parameters
      *
      * @param ocl triggered whenever data is changed
-     * @param tagId Initialize with Yapa for this tag
+     * @param id Initialize with Yapa for this tag
      */
-    public YapaAdapter(OnChangeListener ocl, String tagId) {
+    public YapaAdapter(OnChangeListener ocl, String id) {
+        tagId = id;
         changeListener = ocl;
         Tag tag = new Tag();
         tag.moveTo(tagId);
@@ -72,10 +76,14 @@ implements SeekBar.OnSeekBarChangeListener {
         return false;
     }
 
+    /**
+     * ViewHolder class to simplify object access
+     */
     private class ViewHolder {
         EditText etYapaText;
         TextView tvYapaThreshold;
         SeekBar seekYapaThreshold;
+        UUID slug;
     }
 
     @Override
@@ -94,23 +102,22 @@ implements SeekBar.OnSeekBarChangeListener {
             vh.etYapaText = (EditText)v.findViewById(R.id.etYapaText);
             vh.tvYapaThreshold = (TextView)v.findViewById(R.id.tvYapaThreshold);
             vh.seekYapaThreshold = (SeekBar)v.findViewById(R.id.seekYapaThreshold);
-            vh.seekYapaThreshold.setTag(vh.tvYapaThreshold);
+            vh.seekYapaThreshold.setTag(v);
             v.setTag(vh);
         }
         Yapa y = yapa[position];
         ViewHolder vh = (ViewHolder)v.getTag();
         vh.etYapaText.setText(y.getContent());
         vh.tvYapaThreshold.setText(Integer.toString(y.getThreshold()));
-        /**
-         * A good max seems to depend more on the phone than anything
-         * else, since too high of a max makes it difficult to select
-         * a precise value. Of course, too low of a max will disallow
-         * values that we might want to allow.
-         */
-        // @TODO find out what the max should be
+        // A good max seems to depend more on the phone than anything
+        // else, since too high of a max makes it difficult to select
+        // a precise value. Of course, too low of a max will disallow
+        // values that we might want to allow.
+        // @TODO Make this n -> n+10 where n is the lowest allowed value
         vh.seekYapaThreshold.setMax(30);
         vh.seekYapaThreshold.setProgress(y.getThreshold());
         vh.seekYapaThreshold.setOnSeekBarChangeListener(this);
+        vh.slug = y.getSlug();
         return v;
     }
 
@@ -140,7 +147,10 @@ implements SeekBar.OnSeekBarChangeListener {
     public void
     onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
-            ((TextView)seekBar.getTag()).setText(Integer.toString(progress));
+            View v = (View)seekBar.getTag();
+            ViewHolder vh = (ViewHolder)v.getTag();
+            vh.tvYapaThreshold.setText(Integer.toString(progress));
+            updateYapaRecord(v);
             changeListener.onChange();
         }
     }
@@ -163,5 +173,18 @@ implements SeekBar.OnSeekBarChangeListener {
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         // Do nothing here
+    }
+
+    /**
+     * Update the SQL Yapa record with the data from the view
+     *
+     * @param v The view displaying the yapa to be updated
+     */
+    private void updateYapaRecord(View v) {
+        Yapa y = new Yapa();
+        ViewHolder h = (ViewHolder)v.getTag();
+        y.setSlug(h.slug);
+        y.setTagId(tagId);
+        // @TODO this is incomplete ... finish it
     }
 }
