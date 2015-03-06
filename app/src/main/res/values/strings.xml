@@ -44,5 +44,6 @@
     <string name="write">WRITE</string>
     <string name="add_yapa">ADD NEW YAPA</string>
     <string name="hint_yapa_text">Enter some text to show your thanks</string>
+    <string name="unknown_error">An unknown error has occurred.</string>
 
 </resources>

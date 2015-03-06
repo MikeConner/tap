@@ -25,5 +25,11 @@
     <!-- Feature enabling settings -->
     <!-- User can create fake data (good for testing) -->
     <string name="CREATE_FAKE_DATA_ON_SERVER">false</string>
+    <!-- Crash the app on an unexpected failure: this makes development
+         easier because the app stops (causing the dev to look) and
+         a full stack trace is reported. However, we don't want it
+         doing this on demos or production builds.
+    -->
+    <string name="CRASH_ON_FAILURE">false</string>
 
 </resources>

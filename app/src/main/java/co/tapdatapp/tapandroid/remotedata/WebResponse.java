@@ -99,6 +99,20 @@ public class WebResponse {
     }
 
     /**
+     * @return An error safe to show the user, or null if there is none
+     */
+    public String getUserError() {
+        try {
+            return getJSON().getString("user_error");
+        }
+        catch (Throwable t) {
+            // If anything fails while trying to get the error, just
+            // return null
+            return null;
+        }
+    }
+
+    /**
      * Create a useful string of response if it was an error
      *
      * @return informational string if the response was an error

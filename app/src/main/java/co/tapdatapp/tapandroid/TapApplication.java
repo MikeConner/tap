@@ -7,7 +7,9 @@
 package co.tapdatapp.tapandroid;
 
 import android.app.Application;
+import android.widget.Toast;
 
+import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.localdata.CacheManager;
 
@@ -85,16 +87,39 @@ public class TapApplication extends Application {
      * turn on their NFC). This method is purely for catching and
      * handling things that we would never expect to happen.
      *
-     * This method will eventually perform 3 actions
-     * 1) Handle known exceptions in a sane way when possible
-     * 2) Present a friendly, generic error message to the user when necessary
-     * 3) Push error data to the server when it can't be managed locally
-     *
      * @param t Exception that caused the problem
      */
-    // @TODO bounce this up to the error reporting service on the server
-    // @TODO show a generic "unknown error" message to the user
     public static void unknownFailure(Throwable t) {
-        throw new AssertionError(t);
+        if (DevHelper.isEnabled(R.string.CRASH_ON_FAILURE)) {
+            throw new AssertionError(t);
+        }
+        else {
+            errorToUser(string(R.string.unknown_error));
+            errorToServer(t);
+        }
+    }
+
+    /**
+     * Call this method any time you need to send an error message to
+     * a user. This implementation uses Android's Toast, but by
+     * keeping it centralized, we can make the presentation more
+     * elaborate if need be.
+     *
+     * @param message The message to display
+     */
+    public static void errorToUser(String message) {
+        Toast t = Toast.makeText(app, message, Toast.LENGTH_LONG);
+        t.show();
+    }
+
+    /**
+     * Send an exception to the server error reporting endpoint so
+     * we can diagnose it later.
+     *
+     * @param t The exception that cause the error
+     */
+    // @TODO add the guts to make this work
+    public static void errorToServer(Throwable t) {
+
     }
 }

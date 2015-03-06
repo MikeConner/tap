@@ -1,3 +1,7 @@
+/**
+ * Send a tap transaction to the server
+ */
+
 package co.tapdatapp.tapandroid.remotedata;
 
 import android.os.AsyncTask;

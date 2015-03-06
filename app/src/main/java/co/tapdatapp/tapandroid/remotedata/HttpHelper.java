@@ -137,6 +137,9 @@ public class HttpHelper {
                 throw new WebServiceError(response);
             }
         }
+        catch (WebServiceError wse) {
+            throw wse;
+        }
         catch (Exception e) {
             throw new WebServiceError(e);
         }
@@ -184,6 +187,9 @@ public class HttpHelper {
                 throw new WebServiceError(response);
             }
         }
+        catch (WebServiceError wse) {
+            throw wse;
+        }
         catch (Exception e) {
             throw new WebServiceError(e);
         }
@@ -212,14 +218,13 @@ public class HttpHelper {
                 throw new WebServiceError(response);
             }
         }
+        catch (WebServiceError wse) {
+            throw wse;
+        }
         catch (Exception e) {
             throw new WebServiceError(e);
         }
     }
-
-
-
-
 
     /**
      * Do an HTTP POST

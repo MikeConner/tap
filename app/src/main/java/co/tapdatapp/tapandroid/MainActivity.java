@@ -44,6 +44,7 @@ import org.json.JSONException;
 import co.tapdatapp.tapandroid.arm.ArmFragment;
 import co.tapdatapp.tapandroid.arm.ArmedFragment;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Transaction;
@@ -574,10 +575,20 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     @Override
     public void onTapNetFailure(Throwable t) {
         outgoingTransaction = null;
-        // @TODO friendlier error message
-        // This is a holdover to get us to a demoable state without
-        // dealing with all the UI stuff for errors just yet
-        TapApplication.unknownFailure(t);
+        try {
+            throw t;
+        }
+        catch (UserFriendlyError ufe) {
+            if (ufe.hasUserError()) {
+                TapApplication.errorToUser(ufe.getUserError());
+            }
+            else {
+                TapApplication.unknownFailure(t);
+            }
+        }
+        catch (Throwable catchall) {
+            TapApplication.unknownFailure(t);
+        }
     }
 
     public void showWithdraw(View view){

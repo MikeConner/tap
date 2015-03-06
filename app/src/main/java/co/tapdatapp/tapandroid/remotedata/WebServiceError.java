@@ -4,7 +4,9 @@
 
 package co.tapdatapp.tapandroid.remotedata;
 
-public class WebServiceError extends Exception {
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
+
+public class WebServiceError extends UserFriendlyError {
 
     private WebResponse webResponse = null;
 
@@ -17,6 +19,7 @@ public class WebServiceError extends Exception {
     public WebServiceError(WebResponse wr) {
         super();
         webResponse = wr;
+        setUserError(wr.getUserError());
     }
 
     /**
