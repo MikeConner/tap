@@ -10,6 +10,7 @@ import android.app.Application;
 import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.helpers.DevHelper;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.localdata.CacheManager;
 
@@ -96,6 +97,15 @@ public class TapApplication extends Application {
         else {
             errorToUser(string(R.string.unknown_error));
             errorToServer(t);
+        }
+    }
+
+    public static void errorToUser(UserFriendlyError e) {
+        if (e.hasUserError()) {
+            errorToUser(e.getUserError());
+        }
+        else {
+            unknownFailure(e);
         }
     }
 
