@@ -1,6 +1,8 @@
 package co.tapdatapp.tapandroid;
 
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
@@ -12,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,15 +40,16 @@ implements View.OnClickListener,
     private String selectedImagePath;
     private String filemanagerstring;
     private ImageView profilePic;
+    private TextView email;
+    private TextView nickname;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
-        profilePic = (ImageView) view.findViewById(R.id.profile_picture);
-        profilePic.setOnClickListener(this);
-        profilePic.setImageBitmap(BitmapFactory.decodeFile(account.getProfilePicThumbUrl()));
+
+
         return view;
     }
 
@@ -57,10 +60,13 @@ implements View.OnClickListener,
 
         View view = getView();
 
-        TextView nickName = (TextView)view.findViewById(R.id.etNickName);
-        nickName.setText(account.getNickname());
+        nickname = (TextView)view.findViewById(R.id.etNickName);
+        profilePic = (ImageView) view.findViewById(R.id.profile_picture);
+        email = (TextView) view.findViewById(R.id.etEmail);
+        nickname.setText(account.getNickname());
+        profilePic.setOnClickListener(this);
+        profilePic.setImageBitmap(BitmapFactory.decodeFile(account.getProfilePicThumbUrl()));
 
-        TextView email = (TextView)view.findViewById(R.id.etEmail);
         String mEmailAddy = account.getEmail();
         if (mEmailAddy.isEmpty()) {
             email.setText("no@email.addy");
@@ -70,6 +76,8 @@ implements View.OnClickListener,
         }
         view.findViewById(R.id.btn_Load_Code).setOnClickListener(this);
         view.findViewById(R.id.btn_bitcoin_load).setOnClickListener(this);
+        view.findViewById(R.id.edit_email).setOnClickListener(this);
+        view.findViewById(R.id.edit_nickname).setOnClickListener(this);
 
         balanceList = (ListView)view.findViewById(R.id.balances_list);
         balanceList.setOnItemClickListener(this);
@@ -143,6 +151,12 @@ implements View.OnClickListener,
                 newImage.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(newImage, "Select Image"), SELECT_PICTURE);
                 break;
+            case R.id.edit_nickname:
+                changeNickname();
+                break;
+            case R.id.edit_email:
+                changeEmail();
+                break;
             default :
                 throw new AssertionError("Unknown button " + v.getId());
         }
@@ -170,6 +184,70 @@ implements View.OnClickListener,
     public void openQR(){
         Intent loadQR = new Intent(getActivity(), QRCode.class);
         startActivity(loadQR);
+    }
+
+    /**
+     * Opens a dialog to change the nickname
+     */
+    public void changeNickname(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+
+        alert.setTitle("Edit Nickname");
+        alert.setMessage("Enter a new nickname:");
+
+        final EditText input = new EditText(getActivity());
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                CharSequence text = input.getText();
+                String newName = text.toString();
+                account.setNickname(newName);
+                nickname.setText(account.getNickname());
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
+    }
+
+    /**
+     * Opens a dialog to change the e-mail
+     *
+     * TODO make sure it's a valid e-mail
+     */
+    public void changeEmail(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+
+        alert.setTitle("Edit E-mail");
+        alert.setMessage("Enter a new e-mail address:");
+
+        final EditText input = new EditText(getActivity());
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                CharSequence text = input.getText();
+                String newEmail = text.toString();
+                account.setEmail(newEmail);
+                email.setText(account.getEmail());
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
     }
 
     /**
