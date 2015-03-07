@@ -56,7 +56,7 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
     @Override
     protected Void doInBackground(Object... params) {
         if (params.length != 2) {
-            throw new AssertionError("Must provide image URL and callback");
+            throw new AssertionError("Must provide callback and image URL");
         }
         callback = (Callback)params[0];
         String imageId = (String)params[1];

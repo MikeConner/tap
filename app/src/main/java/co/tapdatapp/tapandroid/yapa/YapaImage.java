@@ -1,8 +1,8 @@
 package co.tapdatapp.tapandroid.yapa;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,43 +10,41 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.concurrent.TimeUnit;
+
+import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
-public class YapaImage extends Activity {
+public class YapaImage extends Activity implements TapBitmap.Callback {
 
-    public final static String TRANSACTION_ID = "TxId";
     private boolean isImageFitToScreen = false;
+    private ImageView imageView;
+    private boolean forceReturnToArmScreen = false;
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_yapa_image);
-        final int transactionId = getIntent().getExtras().getInt(TRANSACTION_ID);
+        Bundle extras = getIntent().getExtras();
+        final String transactionId = extras.getString(YapaDisplay.TRANSACTION_ID);
         final Transaction transaction = new Transaction();
-        transaction.moveToByOrder(transactionId);
-        final ImageView imageView = (ImageView) findViewById(R.id.yapaImage);
-        final TextView imageSender = (TextView) findViewById(R.id.image_sender);
-        final TextView imageDescription = (TextView) findViewById(R.id.image_description);
-        final TextView imageDate = (TextView) findViewById(R.id.image_date);
+        transaction.moveToSlug(transactionId);
+
         final Button fullButton = (Button) findViewById(R.id.full_screen_button);
-
-        new ImageFetchTask().execute(imageView, transaction);
-
-        imageSender.setText(transaction.getNickname());
-        imageDescription.setText(transaction.getDescription());
-        imageDate.setText(transaction.getTimestamp().toString() + "  " + Integer.toString(transaction.getAmount()));
-
+        imageView = (ImageView)findViewById(R.id.yapaImage);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isImageFitToScreen) {
+                if (isImageFitToScreen) {
                     isImageFitToScreen=false;
                     imageView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
                     imageView.setAdjustViewBounds(true);
                     fullButton.setVisibility(View.VISIBLE);
-                }else{
+                }
+                else {
                     isImageFitToScreen=true;
                     imageView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -54,6 +52,66 @@ public class YapaImage extends Activity {
                 }
             }
         });
+        new TapBitmap().execute(this, transaction.getYapa_url());
+
+        final TextView imageSender = (TextView) findViewById(R.id.image_sender);
+        final TextView imageDescription = (TextView) findViewById(R.id.image_description);
+        final TextView imageDate = (TextView) findViewById(R.id.image_date);
+        imageSender.setText(transaction.getNickname());
+        imageDescription.setText(transaction.getDescription());
+        imageDate.setText(transaction.getTimestamp().toString() + "  " + Integer.toString(transaction.getAmount()));
+
+        int showTime = extras.getInt(YapaDisplay.DELAY_TIME, -1);
+        if (showTime != -1) {
+            /**
+             * This makes the view disappear after the specified wait
+             */
+            forceReturnToArmScreen = true;
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    onBackPressed();
+                }
+            };
+            YapaDisplay.delayWorker.schedule(task, showTime, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public void onImageRetrieved(Bitmap image) {
+        imageView.setImageBitmap(image);
+    }
+
+    @Override
+    public void onImageRetrievalError(Throwable t) {
+        try {
+            throw t;
+        }
+        catch (UserFriendlyError ufe) {
+            TapApplication.errorToUser(ufe);
+        }
+        catch (Throwable t1) {
+            TapApplication.unknownFailure(t1);
+        }
+    }
+
+    /**
+     * This makes clicking on the back button go back to the arm screen
+     * instead of the armed screen.
+     */
+    // @TODO I don't think this is correct, I have a feeling it is
+    // creating an infinite backstack that will eventually run the
+    // device out of RAM if the user does a lot of transactions.
+    // Research needs to be done.
+    @Override
+    public void onBackPressed() {
+        if (forceReturnToArmScreen) {
+            Intent startMain = new Intent(this, MainActivity.class);
+            startActivity(startMain);
+        }
+        else {
+            finish();
+        }
     }
 
     /**
@@ -80,46 +138,5 @@ public class YapaImage extends Activity {
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
     }**/
-
-    /**
-     * Load the image onto the view in the background. This has to be a background task because
-     * the image may not be in the local cache, and thus a network fetch would be required.
-     */
-    private class ImageFetchTask extends AsyncTask<Object, Void, Void> {
-
-        Bitmap imageBitmap = null;
-        ImageView imageView = null;
-
-        /**
-         * @param params ImageView to set and Transaction to set from
-         * @return Void
-         */
-        @Override
-        protected Void doInBackground(Object... params) {
-            if (params.length != 2) {
-                throw new AssertionError("Requires ImageView and transaction");
-            }
-            imageView = (ImageView)params[0];
-            Transaction transaction = (Transaction)params[1];
-            try {
-                imageBitmap = TapBitmap.fetchFromCacheOrWeb(transaction.getYapa_url());
-            }
-            catch (Exception e) {
-                TapApplication.unknownFailure(e);
-            }
-            return null;
-        }
-
-        protected void onPostExecute(Void x) {
-            //noinspection StatementWithEmptyBody
-            if (imageBitmap != null) {
-                imageView.setImageBitmap(imageBitmap);
-            }
-            else {
-                // @TODO provide some sort of message to the user that the image can't be displayed
-            }
-        }
-    }
-
 
 }

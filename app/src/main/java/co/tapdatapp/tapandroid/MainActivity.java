@@ -516,15 +516,13 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         /**
          * This opens the new Yapa page after a transaction
          */
-        // @TODO re-enable this once everything works ...
-        /*
         Intent openYapa = new Intent(
             this,
             new YapaDisplay().getSplashClass(t)
         );
         openYapa.putExtra(YapaDisplay.TRANSACTION_ID, t.getSlug());
+        openYapa.putExtra(YapaDisplay.DELAY_TIME, 5);
         startActivity(openYapa);
-        */
     }
 
     /**
@@ -539,12 +537,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
             throw t;
         }
         catch (UserFriendlyError ufe) {
-            if (ufe.hasUserError()) {
-                TapApplication.errorToUser(ufe.getUserError());
-            }
-            else {
-                TapApplication.unknownFailure(t);
-            }
+            TapApplication.errorToUser(ufe);
         }
         catch (Throwable catchall) {
             TapApplication.unknownFailure(t);

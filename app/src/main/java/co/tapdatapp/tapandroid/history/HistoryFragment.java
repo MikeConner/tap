@@ -20,7 +20,6 @@ import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.yapa.YapaDisplay;
-import co.tapdatapp.tapandroid.yapa.YapaImage;
 
 public class HistoryFragment extends Fragment implements HistorySyncCallback {
 
@@ -78,7 +77,10 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
                     getActivity(),
                     new YapaDisplay().getDisplayClass(transaction)
                 );
-                openYapa.putExtra(YapaImage.TRANSACTION_ID, position);
+                openYapa.putExtra(
+                    YapaDisplay.TRANSACTION_ID,
+                    transaction.getSlug()
+                );
                 startActivity(openYapa);
             }
 

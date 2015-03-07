@@ -7,6 +7,9 @@ package co.tapdatapp.tapandroid.yapa;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.Transaction;
@@ -18,7 +21,20 @@ public class YapaDisplay {
     public static final String TEXT = "text";
 
     public final static String TRANSACTION_ID = "TxId";
+    public final static String DELAY_TIME = "delayTime";
 
+    public static final ScheduledExecutorService delayWorker;
+
+    static {
+        delayWorker = Executors.newSingleThreadScheduledExecutor();
+    }
+
+    /**
+     * Get a drawable of the correct icon for the type of Yapa
+     *
+     * @param t Transaction to determine the yapa type
+     * @return drawable of the correct icon
+     */
     public Drawable getIcon(Transaction t) {
         Resources res = TapApplication.get().getResources();
         switch(t.getContentType()){
@@ -33,6 +49,12 @@ public class YapaDisplay {
         }
     }
 
+    /**
+     * Get the correct Activity to display the yapa based on the type
+     *
+     * @param transaction the transaciton containing the yapa
+     * @return class to instantiate to display the yapa
+     */
     public Class getDisplayClass(Transaction transaction) {
         switch (transaction.getContentType()) {
             case IMAGE :
@@ -48,10 +70,21 @@ public class YapaDisplay {
         }
     }
 
+    /**
+     * Get the correct Activity to display the yapa based on the type
+     * for the splash image (shortly displayed immediately after
+     * the transaction is executed)
+     *
+     * @param transaction the transaciton containing the yapa
+     * @return class to instantiate to display the yapa
+     */
+    // @TODO once the Yapa display classes are refactored, this method
+    // will be identical to getDisplayClass() and should be removed
+    @Deprecated()
     public Class getSplashClass(Transaction transaction) {
         switch (transaction.getContentType()) {
             case IMAGE :
-                return YapaImageSplash.class;
+                return YapaImage.class;
             case URL :
                 return YapaUrlSplash.class;
             case TEXT :
