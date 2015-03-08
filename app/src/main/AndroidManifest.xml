@@ -49,7 +49,6 @@
         <activity android:name=".yapa.YapaImage"/>
         <activity android:name=".yapa.YapaUrl"/>
         <activity android:name=".yapa.YapaText"/>
-        <activity android:name=".yapa.YapaImageSplash"/>
         <activity android:name=".yapa.YapaUrlSplash"/>
         <activity android:name=".yapa.YapaTextSplash"/>
         <activity android:name=".QRCode"/>
