@@ -49,12 +49,7 @@ extends AsyncTask<TapTxnTask.TapTxnInitiator, Void, Void> {
             HistorySyncTask hst = new HistorySyncTask();
             hst.syncWithServer();
             result = new Transaction();
-            //@TODO This should go to the slug, but the slug is not
-            // returned by the webservice, so we move to the most
-            // recent transaction. The cases where this will be wrong
-            // are rare, but fixing it by having the webservice return
-            // the slug is simple, and will guarantee correctness.
-            result.moveToByOrder(0);
+            result.moveToSlug(tapTxn.getSlug());
         }
         catch (Throwable t) {
             error = t;

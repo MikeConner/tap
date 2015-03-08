@@ -186,7 +186,7 @@ public class TapTxn {
 
         }
         // @TODO this webservice call has to return the slug
-        //slug = output.getJSONObject("response").getString("id");
+        slug = output.getJSONObject("response").getString("slug");
         mEndingUserBalanaceSatoshi = output.getJSONObject("response").getInt("final_balance");
         mUserImageThumb = output.getJSONObject("response").getString("tapped_user_thumb");
         mUserNickname = output.getJSONObject("response").getString("tapped_user_name");
