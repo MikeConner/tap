@@ -9,6 +9,7 @@ import co.tapdatapp.taptestserver.entities.TransactionResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class Transactions {
   
@@ -43,6 +44,7 @@ public class Transactions {
       transactions.put(request.auth_token, txns);
     }
     txns.add(t);
+    rv.slug = t.payload.getSlug();
     rv.payload = new TransactionPayloadObject(t.payload);
     rv.amount = t.amount;
     rv.currency_id = t.currency_id;
