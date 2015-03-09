@@ -10,6 +10,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.UUID;
+
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.Tag;
@@ -44,11 +46,17 @@ implements View.OnClickListener,
      * Generate dummy data for testing ... replace this as soon as the
      * network stuff is sorted out
      */
+    // @TODO remove this code when the rest is finished
     private void generateTestTags() {
         Tag t = new Tag();
         t.removeAll();
         for (int i = 0; i < 10; i++) {
-            t.create("ABC-DEF-000" + i, "Tag #" + i, new Yapa[0]);
+            Yapa yapa = new Yapa();
+            yapa.setTagId(ManageTagActivity.NEW_TAG);
+            yapa.setThreshold(1);
+            yapa.setSlug(UUID.randomUUID());
+            yapa.setType(Yapa.TYPE_TEXT);
+            t.create("ABC-DEF-000" + i, "Tag #" + i, new Yapa[]{yapa});
         }
         onTagsSynced();
     }
@@ -62,12 +70,8 @@ implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnNewTag :
-                Intent i = new Intent(getActivity(), ManageTagActivity.class);
-                i.putExtra(ManageTagActivity.MODE, ManageTagActivity.MODE_NEW);
+                Intent i = new Intent(getActivity(), SelectTagTypeActivity.class);
                 startActivity(i);
-                break;
-            case R.layout.line_item_tag :
-                // @TODO edit tag
                 break;
             default :
                 throw new AssertionError("Unknown button " + v.getId());

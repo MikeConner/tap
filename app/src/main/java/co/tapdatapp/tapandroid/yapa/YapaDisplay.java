@@ -13,12 +13,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.Transaction;
+import co.tapdatapp.tapandroid.localdata.Yapa;
 
 public class YapaDisplay {
-
-    public static final String IMAGE = "image";
-    public static final String URL = "url";
-    public static final String TEXT = "text";
 
     public final static String TRANSACTION_ID = "TxId";
     public final static String DELAY_TIME = "delayTime";
@@ -38,11 +35,11 @@ public class YapaDisplay {
     public Drawable getIcon(Transaction t) {
         Resources res = TapApplication.get().getResources();
         switch(t.getContentType()){
-            case IMAGE :
+            case Yapa.TYPE_IMAGE :
                 return res.getDrawable(R.drawable.yapa_image);
-            case URL :
+            case Yapa.TYPE_URL :
                 return res.getDrawable(R.drawable.yapa_link);
-            case TEXT :
+            case Yapa.TYPE_TEXT :
                 return res.getDrawable(R.drawable._yapa_text);
             default :
                 throw new AssertionError("Unknown Yapa type " + t.getContentType());
@@ -57,11 +54,11 @@ public class YapaDisplay {
      */
     public Class getDisplayClass(Transaction transaction) {
         switch (transaction.getContentType()) {
-            case IMAGE :
+            case Yapa.TYPE_IMAGE :
                 return YapaImage.class;
-            case URL :
+            case Yapa.TYPE_URL :
                 return YapaUrl.class;
-            case TEXT :
+            case Yapa.TYPE_TEXT :
                 return YapaText.class;
             default :
                 throw new AssertionError(

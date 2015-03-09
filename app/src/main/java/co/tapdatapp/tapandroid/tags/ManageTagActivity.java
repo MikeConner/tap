@@ -29,8 +29,7 @@ implements YapaAdapter.OnChangeListener,
     public final static String TAG_ID = "tagId";
     public final static int MODE_NEW = 1;
     public final static int MODE_MODIFY = 2;
-
-    private final static String NEW_TAG = "=NEW=TAG=";
+    public final static String NEW_TAG = "=NEW=TAG=";
 
     private boolean needsSaved;
     private Tag tag = null;

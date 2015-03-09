@@ -8,6 +8,13 @@ import java.util.UUID;
 
 public class Yapa extends BaseDAO implements SingleTable {
 
+    public static final String TYPE_IMAGE = "image";
+    public static final String TYPE_URL = "url";
+    public static final String TYPE_TEXT = "text";
+    public static final String TYPE_VIDEO = "video";
+    public static final String TYPE_AUDIO = "audio";
+    public static final String TYPE_COUPON = "coupon";
+
     private final static String TABLE = "yapa";
     private final static String TAG_ID = "tag_id";
     private final static String THRESHOLD = "threshold";
@@ -15,6 +22,7 @@ public class Yapa extends BaseDAO implements SingleTable {
     private final static String IMAGE = "image";
     private final static String THUMB = "thumb";
     private final static String SLUG = "slug";
+    private final static String TYPE = "type";
 
     private String tagId;
     private String content;
@@ -22,6 +30,7 @@ public class Yapa extends BaseDAO implements SingleTable {
     private String thumb;
     private String image;
     private UUID slug;
+    private String type;
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -33,6 +42,7 @@ public class Yapa extends BaseDAO implements SingleTable {
                 IMAGE + " VARCHAR(255), " +
                 THUMB + " VARCHAR(255), " +
                 SLUG + " VARCHAR(36) NOT NULL UNIQUE, " +
+                TYPE + " VARCHAR(50) NOT NULL," +
                 "PRIMARY KEY(" + TAG_ID + "," + THRESHOLD + ") " +
                 ")"
         );
@@ -63,6 +73,7 @@ public class Yapa extends BaseDAO implements SingleTable {
         values.put(IMAGE, image);
         values.put(THUMB, thumb);
         values.put(SLUG, slug.toString());
+        values.put(TYPE, type);
         db.insert(TABLE, null, values);
     }
 
@@ -115,7 +126,7 @@ public class Yapa extends BaseDAO implements SingleTable {
             SQLiteDatabase db = getDatabaseHelper().getReadableDatabase();
             c = db.query(
                 TABLE,
-                new String[]{THRESHOLD, CONTENT, IMAGE, THUMB, SLUG},
+                new String[]{THRESHOLD, CONTENT, IMAGE, THUMB, SLUG, TYPE},
                 TAG_ID + " = ?",
                 new String[]{id},
                 null, null,
@@ -131,6 +142,7 @@ public class Yapa extends BaseDAO implements SingleTable {
                 y.setThumb(c.getString(3));
                 y.setSlug(UUID.fromString(c.getString(4)));
                 y.setTagId(id);
+                y.setType(c.getString(5));
                 rv[r] = y;
             }
             return rv;
@@ -190,5 +202,13 @@ public class Yapa extends BaseDAO implements SingleTable {
             throw new NullPointerException("null slug");
         }
         return slug;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

@@ -51,6 +51,7 @@
         <activity android:name=".yapa.YapaText"/>
         <activity android:name=".QRCode"/>
         <activity android:name=".tags.ManageTagActivity"/>
+        <activity android:name=".tags.SelectTagTypeActivity"/>
     </application>
 
 </manifest>

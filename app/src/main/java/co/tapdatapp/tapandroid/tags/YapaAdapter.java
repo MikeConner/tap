@@ -123,7 +123,14 @@ implements SeekBar.OnSeekBarChangeListener {
 
     @Override
     public int getItemViewType(int position) {
-        return R.layout.line_item_yapa;
+        switch (yapa[0].getType()) {
+            case Yapa.TYPE_TEXT :
+                return R.layout.line_item_yapa_text;
+            case Yapa.TYPE_IMAGE :
+                return R.layout.line_item_yapa_image;
+            default :
+                throw new AssertionError("Unknown yapa type " + yapa[0].getType());
+        }
     }
 
     @Override

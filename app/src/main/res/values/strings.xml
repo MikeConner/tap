@@ -45,5 +45,14 @@
     <string name="add_yapa">ADD NEW YAPA</string>
     <string name="hint_yapa_text">Enter some text to show your thanks</string>
     <string name="unknown_error">An unknown error has occurred.</string>
+    <string name="select_yapa_type">Select Yapa Type:</string>
+    <string name="select_currency">Select Currency:</string>
+    <string name="select_yapa_text">Select Text Yapa</string>
+    <string name="select_yapa_image">Select Image Yapa</string>
+    <string name="select_yapa_url">Select URL Yapa</string>
+    <string name="select_yapa_video">Select Video Yapa</string>
+    <string name="select_yapa_audio">Select Audio Yapa</string>
+    <string name="select_yapa_coupon">Select Coupon Yapa</string>
+    <string name="yapa_image_hint">Click to add an image</string>
 
 </resources>

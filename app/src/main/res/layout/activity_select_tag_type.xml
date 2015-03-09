@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:text="@string/select_yapa_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:columnCount="3">
+
+        <ImageButton
+            android:contentDescription="@string/select_yapa_text"
+            android:src="@drawable/_yapa_text"
+            android:id="@+id/btnYapaText"
+            android:onClick="onTypeSelect"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"/>
+
+        <ImageButton
+            android:contentDescription="@string/select_yapa_image"
+            android:src="@drawable/yapa_image"
+            android:id="@+id/btnYapaImage"
+            android:onClick="onTypeSelect"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"/>
+
+        <!-- @TODO uncomment these buttons as they are enabled
+        <ImageButton
+            android:enabled="false"
+            android:contentDescription="@string/select_yapa_url"
+            android:src="@drawable/yapa_link"
+            android:id="@+id/btnYapaUrl"
+            android:onClick="onTypeSelect"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"/>
+
+        <ImageButton
+            android:enabled="false"
+            android:contentDescription="@string/select_yapa_video"
+            android:src="@drawable/yapa_video"
+            android:id="@+id/btnYapaVideo"
+            android:onClick="onTypeSelect"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"/>
+
+        <ImageButton
+            android:enabled="false"
+            android:contentDescription="@string/select_yapa_audio"
+            android:src="@drawable/yapa_audio"
+            android:id="@+id/btnYapaAudio"
+            android:onClick="onTypeSelect"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"/>
+
+        <ImageButton
+            android:enabled="false"
+            android:contentDescription="@string/select_yapa_coupon"
+            android:src="@drawable/_yapa_coupon"
+            android:id="@+id/btnYapaCoupon"
+            android:onClick="onTypeSelect"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"/>
+        -->
+    </GridLayout>
+
+    <TextView
+        android:text="@string/select_currency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Spinner
+        android:id="@+id/spinnerSelectCurrency"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        style="@style/AppTheme.Button"
+        android:id="@+id/btnCreateTag"
+        android:text="@string/button_new_tag"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="clickCreateTag"/>
+    
+</LinearLayout>

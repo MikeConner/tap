@@ -10,8 +10,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,12 +23,10 @@ import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.localdata.TransactionDAO;
+import co.tapdatapp.tapandroid.localdata.Yapa;
 import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
 public class HistoryAdapter extends BaseAdapter {
-
-    private static Bitmap rewardBitmap;
-    private static Bitmap iconBitmap;
 
     private Integer recordCount = null;
     private TransactionDAO dao;
@@ -91,7 +87,7 @@ public class HistoryAdapter extends BaseAdapter {
         ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getDescription());
         ImageView historyIcon = ((ImageView)v.findViewById(R.id.history_icon));
         ImageView historyPreview = ((ImageView)v.findViewById(R.id.history_preview));
-        if (transaction.getContentType().equals(YapaDisplay.IMAGE)) {
+        if (transaction.getContentType().equals(Yapa.TYPE_IMAGE)) {
             new ImageFetchTask().execute(historyPreview, transaction);
         }
         YapaDisplay yl = new YapaDisplay();
@@ -122,46 +118,6 @@ public class HistoryAdapter extends BaseAdapter {
         if (recordCount == null) {
             recordCount = dao.getRecordCount();
         }
-    }
-
-    /**
-     * Return a reference to a properly sized Bitmap for the reward
-     * that says "loading" or something similar until the real
-     * Bitmap is retrieved
-     *
-     * @return default Bitmap
-     */
-    private Bitmap getRewardBitmap() {
-        final int size = getScreenWidth(activity) / 6;
-        if (rewardBitmap == null) {
-            rewardBitmap = TapBitmap.getLoadingBitmapAtSize(size);
-        }
-        else {
-            if (rewardBitmap.getWidth() != size) {
-                rewardBitmap = TapBitmap.getLoadingBitmapAtSize(size);
-            }
-        }
-        return rewardBitmap;
-    }
-
-    /**
-     * Return a reference to a properly sized Bitmap for the user icon
-     * that says "loading" or something until the real bitmap is
-     * retrieved
-     *
-     * @return default bitmap
-     */
-    private Bitmap getIconBitmap() {
-        final int size = getScreenWidth(activity) / 7;
-        if (iconBitmap == null) {
-            iconBitmap = TapBitmap.getLoadingBitmapAtSize(size);
-        }
-        else {
-            if (iconBitmap.getWidth() != size) {
-                iconBitmap = TapBitmap.getLoadingBitmapAtSize(size);
-            }
-        }
-        return iconBitmap;
     }
 
     /**
