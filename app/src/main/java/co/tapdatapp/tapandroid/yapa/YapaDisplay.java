@@ -70,30 +70,4 @@ public class YapaDisplay {
         }
     }
 
-    /**
-     * Get the correct Activity to display the yapa based on the type
-     * for the splash image (shortly displayed immediately after
-     * the transaction is executed)
-     *
-     * @param transaction the transaciton containing the yapa
-     * @return class to instantiate to display the yapa
-     */
-    // @TODO once the Yapa display classes are refactored, this method
-    // will be identical to getDisplayClass() and should be removed
-    @Deprecated()
-    public Class getSplashClass(Transaction transaction) {
-        switch (transaction.getContentType()) {
-            case IMAGE :
-                return YapaImage.class;
-            case URL :
-                return YapaUrlSplash.class;
-            case TEXT :
-                return YapaTextSplash.class;
-            default :
-                throw new AssertionError(
-                        "Invalid Yapa Type: " + transaction.getContentType()
-                );
-        }
-    }
-
 }

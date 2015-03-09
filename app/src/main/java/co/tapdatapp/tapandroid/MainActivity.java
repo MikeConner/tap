@@ -518,7 +518,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
          */
         Intent openYapa = new Intent(
             this,
-            new YapaDisplay().getSplashClass(t)
+            new YapaDisplay().getDisplayClass(t)
         );
         openYapa.putExtra(YapaDisplay.TRANSACTION_ID, t.getSlug());
         openYapa.putExtra(YapaDisplay.DELAY_TIME, 5);
