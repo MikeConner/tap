@@ -177,6 +177,8 @@ implements View.OnTouchListener {
     private void setUpScreen() {
         if (getView() != null) {
             setAmount(account.getArmedAmount());
+            curIndex = 0;
+            cvp.setPagingEnabled(false);
             if (account.getActiveCurrency() == CurrencyDAO.CURRENCY_BITCOIN) {
                 // Bitcoin configurations are handled specially
                 updateBitcoinDenominations();
@@ -278,14 +280,13 @@ implements View.OnTouchListener {
         //noinspection ConstantConditions
         ViewFlipper layout = (ViewFlipper)getView().findViewById(R.id.currency_items);
         layout.removeAllViews();
-        maxIndex = 0;
+        maxIndex = d.length-1;
         for (int i = 0; i < d.length; i++) {
             ImageView iv = new ImageView(getActivity());
             iv.setImageBitmap(scaleDenomination(b[i]));
             commonDenominationSetup(iv);
             iv.setTag(d[i].getAmount());
             layout.addView(iv);
-            maxIndex++;
         }
     }
 
