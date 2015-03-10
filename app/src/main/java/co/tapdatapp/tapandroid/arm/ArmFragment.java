@@ -21,6 +21,7 @@ import android.widget.ViewFlipper;
 
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Denomination;
 import co.tapdatapp.tapandroid.user.Account;
@@ -36,6 +37,7 @@ implements View.OnTouchListener {
     private ViewFlipper vf;
     private TextView prevDem;
     private TextView nextDem;
+    private CustomViewPager cvp;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -46,6 +48,7 @@ implements View.OnTouchListener {
         vf = (ViewFlipper) view.findViewById(R.id.currency_items);
         prevDem = (TextView) view.findViewById(R.id.left_button);
         nextDem = (TextView) view.findViewById(R.id.right_button);
+        cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
         /**
          * Click on the Armed Amount to reset it.
          */
@@ -109,6 +112,7 @@ implements View.OnTouchListener {
                         final int SWIPE_MIN_DISTANCE = 200;
                         final int SWIPE_MAX_OFF_PATH = 250;
                         final int SWIPE_THRESHOLD_VELOCITY = 200;
+                        cvp.setPagingEnabled(false);
                         try {
                             if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
                                 account.setArmedAmount(account.getArmedAmount() + amount);
@@ -118,12 +122,23 @@ implements View.OnTouchListener {
                             }
                             if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
                                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                                //Animation
+                                vf.setInAnimation(getActivity(),R.animator.in_from_right);
+                                vf.setOutAnimation(getActivity(), R.animator.out_to_left);
+
+                                vf.showNext();
                             } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
                                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                                //Animation
+                                vf.setInAnimation(getActivity(),R.animator.in_from_left);
+                                vf.setOutAnimation(getActivity(), R.animator.out_to_right);
+
+                                vf.showPrevious();
                             }
                         } catch (Exception e) {
                             // nothing
                         }
+                        cvp.setPagingEnabled(true);
                         return super.onFling(e1, e2, velocityX, velocityY);
                     }
                 });
