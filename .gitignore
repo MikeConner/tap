@@ -25,6 +25,9 @@ proguard/
 # Log Files
 *.log
 
+#Android Studio files
 .idea/*
-/testServer/TapTestServer/target/
 *.iml
+
+#test server
+/testServer/TapTestServer/target/*
