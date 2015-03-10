@@ -39,6 +39,8 @@ implements View.OnTouchListener {
     private CustomViewPager cvp;
     private LinearLayout swipeLayout;
     private LinearLayout scrollLayout;
+    private int maxIndex;
+    private int curIndex = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -50,7 +52,7 @@ implements View.OnTouchListener {
         cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
         swipeLayout = (LinearLayout) view.findViewById(R.id.clickable_area);
         scrollLayout = (LinearLayout) view.findViewById(R.id.scrollable_area);
-
+        cvp.setPagingEnabled(false);
         /**
          * This re-enables scrolling between pages
          */
@@ -118,18 +120,24 @@ implements View.OnTouchListener {
                             }
                             if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
                                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                                //Animation
-                                vf.setInAnimation(getActivity(),R.animator.in_from_right);
-                                vf.setOutAnimation(getActivity(), R.animator.out_to_left);
+                                if(curIndex < maxIndex) {
+                                    //Animation
+                                    vf.setInAnimation(getActivity(), R.animator.in_from_right);
+                                    vf.setOutAnimation(getActivity(), R.animator.out_to_left);
 
-                                vf.showNext();
+                                    vf.showNext();
+                                    curIndex++;
+                                }
                             } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
                                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                                //Animation
-                                vf.setInAnimation(getActivity(),R.animator.in_from_left);
-                                vf.setOutAnimation(getActivity(), R.animator.out_to_right);
+                                if(curIndex > 0) {
+                                    //Animation
+                                    vf.setInAnimation(getActivity(), R.animator.in_from_left);
+                                    vf.setOutAnimation(getActivity(), R.animator.out_to_right);
 
-                                vf.showPrevious();
+                                    vf.showPrevious();
+                                    curIndex--;
+                                }
                             }
                         } catch (Exception e) {
                             // nothing
@@ -208,6 +216,7 @@ implements View.OnTouchListener {
         TextView viewAmount = (TextView)getView().findViewById(R.id.txtAmount);
         viewAmount.setBackground(getActivity().getResources().getDrawable(R.drawable.bitcoin_icon));
         viewAmount.getBackground().setAlpha(128);
+        maxIndex = 2;
         // This will never be called when getView() is null
         //noinspection ConstantConditions
         ViewFlipper layout = (ViewFlipper)getView().findViewById(R.id.currency_items);
@@ -269,12 +278,14 @@ implements View.OnTouchListener {
         //noinspection ConstantConditions
         ViewFlipper layout = (ViewFlipper)getView().findViewById(R.id.currency_items);
         layout.removeAllViews();
+        maxIndex = 0;
         for (int i = 0; i < d.length; i++) {
             ImageView iv = new ImageView(getActivity());
             iv.setImageBitmap(scaleDenomination(b[i]));
             commonDenominationSetup(iv);
             iv.setTag(d[i].getAmount());
             layout.addView(iv);
+            maxIndex++;
         }
     }
 
