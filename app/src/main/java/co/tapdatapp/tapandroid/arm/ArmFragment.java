@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -38,6 +39,8 @@ implements View.OnTouchListener {
     private TextView prevDem;
     private TextView nextDem;
     private CustomViewPager cvp;
+    private LinearLayout swipeLayout;
+    private LinearLayout scrollLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -49,6 +52,22 @@ implements View.OnTouchListener {
         prevDem = (TextView) view.findViewById(R.id.left_button);
         nextDem = (TextView) view.findViewById(R.id.right_button);
         cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
+        swipeLayout = (LinearLayout) view.findViewById(R.id.clickable_area);
+        scrollLayout = (LinearLayout) view.findViewById(R.id.scrollable_area);
+        swipeLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                cvp.setPagingEnabled(true);
+                return false;
+            }
+        });
+        scrollLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                cvp.setPagingEnabled(false);
+                return false;
+            }
+        });
         /**
          * Click on the Armed Amount to reset it.
          */
@@ -83,7 +102,7 @@ implements View.OnTouchListener {
             @Override
             public void onClick(View v) {
                 //Animation
-                vf.setInAnimation(getActivity(),R.animator.in_from_right);
+                vf.setInAnimation(getActivity(), R.animator.in_from_right);
                 vf.setOutAnimation(getActivity(), R.animator.out_to_left);
 
                 vf.showNext();
@@ -109,10 +128,9 @@ implements View.OnTouchListener {
                     @Override
                     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                                            float velocityY) {
-                        final int SWIPE_MIN_DISTANCE = 200;
+                        final int SWIPE_MIN_DISTANCE = 250;
                         final int SWIPE_MAX_OFF_PATH = 250;
                         final int SWIPE_THRESHOLD_VELOCITY = 200;
-                        cvp.setPagingEnabled(false);
                         try {
                             if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
                                 account.setArmedAmount(account.getArmedAmount() + amount);
@@ -138,7 +156,6 @@ implements View.OnTouchListener {
                         } catch (Exception e) {
                             // nothing
                         }
-                        cvp.setPagingEnabled(true);
                         return super.onFling(e1, e2, velocityX, velocityY);
                     }
                 });
@@ -292,8 +309,8 @@ implements View.OnTouchListener {
      */
     @Override
     public boolean onTouch(View view, MotionEvent event){
-        amount = (Integer)view.getTag();
-        return gesture.onTouchEvent(event);
+            amount = (Integer) view.getTag();
+            return gesture.onTouchEvent(event);
     }
 
     /**
