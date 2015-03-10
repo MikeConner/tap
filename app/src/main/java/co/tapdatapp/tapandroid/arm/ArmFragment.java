@@ -36,8 +36,6 @@ implements View.OnTouchListener {
     private int amount;
     private GestureDetector gesture;
     private ViewFlipper vf;
-    private TextView prevDem;
-    private TextView nextDem;
     private CustomViewPager cvp;
     private LinearLayout swipeLayout;
     private LinearLayout scrollLayout;
@@ -49,11 +47,13 @@ implements View.OnTouchListener {
         View view = inflater.inflate(R.layout.fragment_arm, container, false);
         bankView = (TextView) view.findViewById(R.id.txtAmount);
         vf = (ViewFlipper) view.findViewById(R.id.currency_items);
-        prevDem = (TextView) view.findViewById(R.id.left_button);
-        nextDem = (TextView) view.findViewById(R.id.right_button);
         cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
         swipeLayout = (LinearLayout) view.findViewById(R.id.clickable_area);
         scrollLayout = (LinearLayout) view.findViewById(R.id.scrollable_area);
+
+        /**
+         * This re-enables scrolling between pages
+         */
         swipeLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -61,6 +61,10 @@ implements View.OnTouchListener {
                 return false;
             }
         });
+
+        /**
+         * This disables scrolling between pages while changing denominations
+         */
         scrollLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -68,6 +72,7 @@ implements View.OnTouchListener {
                 return false;
             }
         });
+
         /**
          * Click on the Armed Amount to reset it.
          */
@@ -81,36 +86,9 @@ implements View.OnTouchListener {
         });
 
         /**
-         * Button to show previous denomination
-         */
-        prevDem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Animation
-                vf.setInAnimation(getActivity(),R.animator.in_from_left);
-                vf.setOutAnimation(getActivity(), R.animator.out_to_right);
-
-                vf.showPrevious();
-
-            }
-        });
-
-        /**
-         * Button to show next denomination
-         */
-        nextDem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Animation
-                vf.setInAnimation(getActivity(), R.animator.in_from_right);
-                vf.setOutAnimation(getActivity(), R.animator.out_to_left);
-
-                vf.showNext();
-            }
-        });
-
-        /**
          * This is the fling event for adding money to the bank
+         *
+         * To change denominations, you need to initiate a touch event in the denomination area.
          */
         gesture = new GestureDetector(getActivity(),
                 new GestureDetector.SimpleOnGestureListener() {
