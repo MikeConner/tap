@@ -1,3 +1,10 @@
+.idea/workspace.xml
+.idea/libraries
+.DS_Store
+.idea/
+app/app.iml
+*.iml
+
 # Built application files
 *.apk
 *.ap_
@@ -25,9 +32,5 @@ proguard/
 # Log Files
 *.log
 
-#Android Studio files
-.idea/*
-*.iml
-
-#test server
+# test server
 /testServer/TapTestServer/target/*
