@@ -25,9 +25,6 @@ proguard/
 # Log Files
 *.log
 
-.idea/workspace.xml
-.idea*
+.idea/*
 /testServer/TapTestServer/target/
-app/app.iml
-
-tap.iml
+*.iml
