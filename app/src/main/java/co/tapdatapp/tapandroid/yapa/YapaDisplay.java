@@ -60,6 +60,12 @@ public class YapaDisplay {
                 return YapaUrl.class;
             case Yapa.TYPE_TEXT :
                 return YapaText.class;
+            case Yapa.TYPE_COUPON :
+                return  YapaCoupon.class;
+            case Yapa.TYPE_AUDIO :
+                return YapaAudio.class;
+            case Yapa.TYPE_VIDEO :
+                return YapaVideo.class;
             default :
                 throw new AssertionError(
                     "Invalid Yapa Type: " + transaction.getContentType()

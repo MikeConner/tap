@@ -49,6 +49,9 @@
         <activity android:name=".yapa.YapaImage"/>
         <activity android:name=".yapa.YapaUrl"/>
         <activity android:name=".yapa.YapaText"/>
+        <activity android:name=".yapa.YapaCoupon"/>
+        <activity android:name=".yapa.YapaAudio"/>
+        <activity android:name=".yapa.YapaVideo"/>
         <activity android:name=".QRCode"/>
         <activity android:name=".tags.ManageTagActivity"/>
         <activity android:name=".tags.SelectTagTypeActivity"/>
