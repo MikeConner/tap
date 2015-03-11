@@ -82,6 +82,7 @@ implements View.OnTouchListener {
             @Override
             public void onClick(View v) {
                 bankView.performHapticFeedback(0);
+                bankView.setTextSize(140);
                 account.setArmedAmount(0);
                 setAmount(account.getArmedAmount());
             }
