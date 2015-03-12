@@ -7,73 +7,67 @@
     tools:context=".profile_main"
     tools:ignore="MergeRootFrame"
     android:background="@color/account_background">
-    <LinearLayout
+    <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
-
+        android:layout_height="100dp"
+        android:layout_weight="1.71">
+        <TextView
+            android:layout_width="230dp"
+            android:layout_height="250dp"
+            android:background="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/profile_picture_backsplash"
+            android:layout_marginTop="5dp" />
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:id="@+id/profile_picture"
             android:src="@drawable/brienne"
-            android:scaleType="fitCenter"/>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+            android:scaleType="fitCenter"
+            android:layout_alignTop="@+id/profile_picture_backsplash"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp" />
                 <TextView
-                    android:textSize="28sp"
+                    android:textSize="26sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="angry helicopter"
                     android:id="@+id/etNickName"
-                    android:layout_marginStart="10dp"
                     android:layout_gravity="start"
-                    tools:ignore="HardcodedText"/>
-                <Space
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent" />
+                    tools:ignore="HardcodedText"
+                    android:layout_below="@+id/profile_picture"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp" />
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/edit_nickname"
-                    android:src="@drawable/edit_icon"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                    android:src="@drawable/edit_icon"
+                    android:layout_alignEnd="@+id/profile_picture_backsplash"
+                    android:layout_alignBottom="@+id/etNickName"
+                    android:layout_marginBottom="8dp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:text="random@random.com"
                     android:id="@+id/etEmail"
-                    android:layout_marginStart="10dp"
                     android:layout_gravity="start"
-                    tools:ignore="HardcodedText"/>
-                <Space
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent" />
+                    tools:ignore="HardcodedText"
+                    android:layout_marginBottom="15dp"
+                    android:layout_below="@+id/etNickName"
+                    android:layout_centerHorizontal="true" />
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/edit_email"
-                    android:src="@drawable/edit_icon"/>
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <Space
-        android:layout_height="30dp"
-        android:layout_width="match_parent"/>
+                    android:src="@drawable/edit_icon"
+                    android:layout_alignBottom="@+id/etEmail"
+                    android:layout_alignEnd="@+id/profile_picture_backsplash"
+                    android:layout_marginBottom="2dp" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -86,18 +80,20 @@
             android:layout_margin="5dp"
             android:text="@string/button_load_code"
             android:layout_width="145dp"
-            android:layout_height="67dp"
+            android:layout_height="40dp"
             android:id="@+id/btn_Load_Code"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:textSize="18sp" />
 
         <Button
             style="@style/AppTheme.Button"
             android:layout_margin="5dp"
             android:text="@string/button_load_bitcoin"
             android:layout_width="145dp"
-            android:layout_height="67dp"
+            android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
-            android:id="@+id/btn_bitcoin_load"/>
+            android:id="@+id/btn_bitcoin_load"
+            android:textSize="18sp" />
 
     </LinearLayout>
 

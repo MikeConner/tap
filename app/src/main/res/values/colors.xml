@@ -1,7 +1,7 @@
 <resources>
 
     <color name="button_background">#1795a4</color>
-    <color name="button_background_pressed">#1795a4</color>
+    <color name="button_background_pressed">#fcfcfc</color>
     <color name="button_background_disabled">#bdbcbc</color>
     <color name="withdraw_button_background">#bdbcbc</color>
     <color name="withdraw_button_pressed">#bfc833</color>
