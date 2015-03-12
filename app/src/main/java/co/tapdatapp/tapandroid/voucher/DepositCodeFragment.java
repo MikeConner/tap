@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 
 public class DepositCodeFragment
 extends DialogFragment
@@ -67,9 +68,21 @@ implements RedeemVoucherTask.Callback, View.OnClickListener {
         dismiss();
     }
 
+    /**
+     * I'm pretty sure this is the right way to do this.
+     * @param error
+     */
     @Override
     public void onFailure(Throwable error){
-        TapApplication.unknownFailure(error);
+        try{
+            throw error;
+        }
+        catch(UserFriendlyError ufe){
+            TapApplication.errorToUser(ufe);
+        }
+        catch(Throwable catchall) {
+            TapApplication.unknownFailure(error);
+        }
     }
 
 }
