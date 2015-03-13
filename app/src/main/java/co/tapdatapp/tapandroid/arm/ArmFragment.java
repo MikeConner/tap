@@ -300,8 +300,9 @@ implements View.OnTouchListener {
      */
     @Override
     public boolean onTouch(View view, MotionEvent event){
-            amount = (Integer) view.getTag();
-            return gesture.onTouchEvent(event);
+        amount = (Integer) view.getTag();
+        cvp.setPagingEnabled(false);
+        return gesture.onTouchEvent(event);
     }
 
     /**
