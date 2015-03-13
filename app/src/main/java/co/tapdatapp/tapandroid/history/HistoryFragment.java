@@ -18,6 +18,7 @@ import android.widget.GridView;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
@@ -57,6 +58,8 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
     @Override
     public void onResume() {
         super.onResume();
+        CustomViewPager cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
+        cvp.setPagingEnabled(true);
         progressBar =
             (ProgressBar)parentActivity.findViewById(R.id.history_grid_progress_bar);
         gridView =

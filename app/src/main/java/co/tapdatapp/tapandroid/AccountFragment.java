@@ -23,6 +23,7 @@ import android.widget.Toast;
 import co.tapdatapp.tapandroid.currency.BalanceList;
 import co.tapdatapp.tapandroid.currency.BalanceListAdapter;
 import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;
+import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.user.Account;
 import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
@@ -60,6 +61,8 @@ implements View.OnClickListener,
 
         View view = getView();
 
+        CustomViewPager cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
+        cvp.setPagingEnabled(true);
         nickname = (TextView)view.findViewById(R.id.etNickName);
         profilePic = (ImageView) view.findViewById(R.id.profile_picture);
         email = (TextView) view.findViewById(R.id.etEmail);
@@ -78,6 +81,8 @@ implements View.OnClickListener,
         view.findViewById(R.id.btn_bitcoin_load).setOnClickListener(this);
         view.findViewById(R.id.edit_email).setOnClickListener(this);
         view.findViewById(R.id.edit_nickname).setOnClickListener(this);
+        nickname.setOnClickListener(this);
+        email.setOnClickListener(this);
 
         balanceList = (ListView)view.findViewById(R.id.balances_list);
         balanceList.setOnItemClickListener(this);
@@ -155,6 +160,12 @@ implements View.OnClickListener,
                 changeNickname();
                 break;
             case R.id.edit_email:
+                changeEmail();
+                break;
+            case R.id.etNickName:
+                changeNickname();
+                break;
+            case R.id.etEmail:
                 changeEmail();
                 break;
             default :

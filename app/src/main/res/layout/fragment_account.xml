@@ -41,10 +41,10 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp" />
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:id="@+id/edit_nickname"
-                    android:src="@drawable/edit_icon"
+                    android:src="@drawable/edit_account_icon"
                     android:layout_alignEnd="@+id/profile_picture_backsplash"
                     android:layout_alignBottom="@+id/etNickName"
                     android:layout_marginBottom="8dp" />
@@ -60,10 +60,10 @@
                     android:layout_below="@+id/etNickName"
                     android:layout_centerHorizontal="true" />
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:id="@+id/edit_email"
-                    android:src="@drawable/edit_icon"
+                    android:src="@drawable/edit_account_icon"
                     android:layout_alignBottom="@+id/etEmail"
                     android:layout_alignEnd="@+id/profile_picture_backsplash"
                     android:layout_marginBottom="2dp" />
