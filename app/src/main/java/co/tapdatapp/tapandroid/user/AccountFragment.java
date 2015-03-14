@@ -1,4 +1,4 @@
-package co.tapdatapp.tapandroid;
+package co.tapdatapp.tapandroid.user;
 
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -20,6 +20,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import co.tapdatapp.tapandroid.QRCode;
+import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.currency.BalanceList;
 import co.tapdatapp.tapandroid.currency.BalanceListAdapter;
 import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;

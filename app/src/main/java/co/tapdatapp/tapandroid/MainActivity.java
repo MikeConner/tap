@@ -55,6 +55,7 @@ import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.tags.TagsFragment;
 import co.tapdatapp.tapandroid.user.Account;
+import co.tapdatapp.tapandroid.user.AccountFragment;
 import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
 public class MainActivity
