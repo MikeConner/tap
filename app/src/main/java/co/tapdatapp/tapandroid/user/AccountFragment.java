@@ -1,5 +1,6 @@
 package co.tapdatapp.tapandroid.user;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
@@ -28,7 +29,6 @@ import co.tapdatapp.tapandroid.currency.BalanceListAdapter;
 import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
-import co.tapdatapp.tapandroid.user.Account;
 import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
 
 public class AccountFragment
@@ -41,8 +41,6 @@ implements View.OnClickListener,
     private static final int SELECT_PICTURE = 1;
     private ListView balanceList;
     private Account account = new Account();
-    private String selectedImagePath;
-    private String filemanagerstring;
     private ImageView profilePic;
     private TextView email;
     private TextView nickname;
@@ -51,10 +49,7 @@ implements View.OnClickListener,
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_account, container, false);
-
-
-        return view;
+        return inflater.inflate(R.layout.fragment_account, container, false);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -233,8 +228,6 @@ implements View.OnClickListener,
 
     /**
      * Opens a dialog to change the e-mail
-     *
-     * TODO make sure it's a valid e-mail
      */
     public void changeEmail(){
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
@@ -300,29 +293,25 @@ implements View.OnClickListener,
     }
 
     /**
-     * This is needed to set a profile picture
+     * Receives results from any startActivityForResult() calls, so
+     * far only receives results for the user selecting a profile pic.
      *
      * This actually only works if you select from the gallery.
-     * @param requestCode
-     * @param resultCode
-     * @param data
      */
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == getActivity().RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
+                String selectedImagePath = getPath(selectedImageUri);
 
-                filemanagerstring = selectedImageUri.getPath();
-
-                selectedImagePath = getPath(selectedImageUri);
-
-                if(selectedImagePath!=null) {
+                if (selectedImagePath != null) {
                     account.setProfilePicThumbUrl(selectedImagePath);
                     //This seems kind of redundant
                     profilePic.setImageBitmap(BitmapFactory.decodeFile(account.getProfilePicThumbUrl()));
                 }
-                else{
-                    //@TODO set an error message if the file path is null;
+                else {
+                    TapApplication.errorToUser("No image was selected");
                 }
             }
         }
@@ -330,21 +319,28 @@ implements View.OnClickListener,
 
     /**
      * This helps get the path for an image
-     * @param uri
-     * @return
+     * @param uri URI returned from an appropriate image selector
+     * @return The actual path that the URI resolves to
      */
     public String getPath(Uri uri) {
         String[] projection = { MediaStore.Images.Media.DATA };
         Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
-        if(cursor!=null)
-        {
-            //HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
-            //THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
-            int column_index = cursor
+        try {
+            if (cursor != null) {
+                //HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
+                //THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
+                int column_index = cursor
                     .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
+                cursor.moveToFirst();
+                return cursor.getString(column_index);
+            } else {
+                return null;
+            }
         }
-        else return null;
+        finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 }
