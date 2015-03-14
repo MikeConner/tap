@@ -15,7 +15,6 @@ import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.WebResponse;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
-import co.tapdatapp.tapandroid.user.Account;
 
 public class TapUser {
 
@@ -91,38 +90,6 @@ public class TapUser {
             TapApplication.unknownFailure(e);
             throw new WebServiceError(e);
         }
-    }
-
-
-    public void UpdateUser(String auth_token) throws JSONException {
-        //TODO: This needs to move in to class instantiation, and we need to clean it up upon destroy
-        mTapCloud = new TapCloud();
-        //END
-
-        mAuthToken = auth_token;
-
-        JSONObject user = new JSONObject();
-        JSONObject json = new JSONObject();
-        JSONObject output;
-        Account account = new Account();
-        if (account.getEmail().isEmpty()){
-//                user.put("email", "your@email.addy");
-        } else {
-            user.put("email", account.getEmail());
-        }
-
-        user.put("name", new Account().getNickname());
-        user.put("outbound_btc_address", mOutboundBTCaddress);
-        user.put("mobile_profile_image_url", mProfilePicFull);
-        user.put("mobile_profile_thumb_url", new Account().getProfilePicThumbUrl());
-
-
-        json.put("user", user);
-        //TODO: Assuming success, but if it fails, we need to capture that and show an error or Try again?
-        output = mTapCloud.httpPut(httpHelper.getFullUrl(R.string.ENDPOINT_USER_API), json);
-//            mAuthToken = output.getJSONObject("response").getString("auth_token");
-//            mNickName = output.getJSONObject("response").getString("nickname");
-
     }
 
     public void setProfilePicFull(String new_value){

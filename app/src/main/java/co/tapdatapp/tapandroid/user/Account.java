@@ -72,7 +72,7 @@ public class Account {
         );
         try {
             setPhoneSecret(phoneSecret);
-            setNickname(codec.getNickname(response));
+            _setNickname(codec.getNickname(response));
             setAuthToken(codec.getAuthToken(response));
             setCurrencyOnNewUser();
         }
@@ -101,7 +101,7 @@ public class Account {
     private void deleteAccount() {
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -197,7 +197,7 @@ public class Account {
     }
 
     /**
-     * Set the user's nickname
+     * Set the user's bitcoin QR code URL
      *
      * @param to user's nickname
      */
@@ -209,7 +209,7 @@ public class Account {
     }
 
     /**
-     * @return the user's nickname
+     * @return the user's bitcoin QR code URL
      */
     public String getBitcoinQrUrl() {
         throwIfNoAccount();
@@ -223,6 +223,7 @@ public class Account {
      */
     public void setEmail(String to) {
         set(EMAIL, to);
+        new UpdateUserInfoTask().execute();
     }
 
     /**
@@ -238,6 +239,7 @@ public class Account {
      */
     public void setProfilePicThumbUrl(String to) {
         set(PROFILE_PIC_THUMB_URL, to);
+        new UpdateUserInfoTask().execute();
     }
 
     /**
@@ -299,11 +301,21 @@ public class Account {
     }
 
     /**
-     * Set the user's nickname
+     * Set the user's nickname _and_ save it to the server
+     *
+     * @param to New nickname
+     */
+    public void setNickname(String to) {
+        _setNickname(to);
+        new UpdateUserInfoTask().execute();
+    }
+
+    /**
+     * Set the user's nickname without saving it back to the server
      *
      * @param to user's nickname
      */
-    public void setNickname(String to) {
+    private void _setNickname(String to) {
         if (to == null) {
             throw new AssertionError("setting nickname to null");
         }
