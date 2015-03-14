@@ -11,7 +11,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_weight="1.71">
+        android:layout_weight="1.20">
         <TextView
             android:layout_width="230dp"
             android:layout_height="250dp"
@@ -96,10 +96,6 @@
             android:textSize="18sp" />
 
     </LinearLayout>
-
-    <Space
-        android:layout_height="30dp"
-        android:layout_width="match_parent"/>
 
     <ProgressBar
         android:layout_gravity="center"
