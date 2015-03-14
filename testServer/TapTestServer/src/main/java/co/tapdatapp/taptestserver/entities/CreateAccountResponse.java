@@ -12,6 +12,8 @@ public class CreateAccountResponse {
   public class Response {
     public String auth_token;
     public String nickname;
+    public String email;
+    public String profile_thumb;
   }
   
 }

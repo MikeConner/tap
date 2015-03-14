@@ -18,6 +18,7 @@ import co.tapdatapp.taptestserver.entities.ResponseResponse;
 import co.tapdatapp.taptestserver.entities.TagResponse;
 import co.tapdatapp.taptestserver.entities.TransactionCreatedResponse;
 import co.tapdatapp.taptestserver.entities.TransactionResponse;
+import co.tapdatapp.taptestserver.entities.UpdateAccountRequest;
 import java.text.ParseException;
 import java.util.Date;
 import javax.ws.rs.Consumes;
@@ -30,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.codehaus.jettison.json.JSONException;
 
 @Path("/1")
 public class ServiceEndpoint {
@@ -66,10 +68,22 @@ public class ServiceEndpoint {
   
   @GET
   @Path("/users/me.json")
+  @Produces({ MediaType.APPLICATION_JSON })
   public Response getUserDetails(@QueryParam(AUTH_TOKEN) String authId) {
     Monitor.trace("User details for " + authId);
     Object details = accounts.userDetails(authId);
     return Response.ok(new ResponseResponse(details)).build();
+  }
+  
+  @PUT
+  @Path("/users/me.json")
+  @Consumes({ MediaType.APPLICATION_JSON })
+  public Response updateUserDetails(
+    String request,
+    @QueryParam(AUTH_TOKEN) String authId
+  ) throws JSONException {
+    Monitor.trace("update account info for " + authId);
+    return Response.ok(accounts.update(authId, new UpdateAccountRequest(request))).build();
   }
   
   @GET

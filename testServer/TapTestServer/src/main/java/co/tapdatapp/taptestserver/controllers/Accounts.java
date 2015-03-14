@@ -3,6 +3,7 @@
  */
 package co.tapdatapp.taptestserver.controllers;
 
+import co.tapdatapp.taptestserver.dev.Monitor;
 import co.tapdatapp.taptestserver.entities.BalanceResponse;
 import co.tapdatapp.taptestserver.entities.CreateAccountResponse;
 import co.tapdatapp.taptestserver.entities.GetBalancesResponse;
@@ -10,6 +11,7 @@ import co.tapdatapp.taptestserver.entities.PayloadCreateRequest;
 import co.tapdatapp.taptestserver.entities.PayloadObject;
 import co.tapdatapp.taptestserver.entities.ResponseResponse;
 import co.tapdatapp.taptestserver.entities.TagResponse;
+import co.tapdatapp.taptestserver.entities.UpdateAccountRequest;
 import co.tapdatapp.taptestserver.entities.UserDetailsResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,5 +124,30 @@ public class Accounts {
       rv.inbound_btc_address = "ABC123abc456xyz123XYZ4561029384alhglash";
     }
     return rv;
+  }
+
+  public Object update(String authId, UpdateAccountRequest request) {
+    CreateAccountResponse account = accounts.get(authId);
+    if (account != null) {
+      if (request.user.name != null && !request.user.name.isEmpty()) {
+        account.response.nickname = request.user.name;
+        Monitor.trace("Set nickname to " + request.user.name);
+      }
+      if (request.user.email != null && !request.user.email.isEmpty()) {
+        account.response.email = request.user.email;
+        Monitor.trace("Set email to " + request.user.email);
+      }
+      if (request.user.mobile_profile_thumb_url != null
+          && !request.user.mobile_profile_thumb_url.isEmpty()
+      ) {
+        account.response.profile_thumb = request.user.mobile_profile_thumb_url;
+        Monitor.trace("Set thumbnail to " + request.user.mobile_profile_thumb_url);
+      }
+      return null;
+    }
+    else {
+      Monitor.trace("No account found to modify: " + authId);
+      throw new AssertionError("No such account");
+    }
   }
 }
