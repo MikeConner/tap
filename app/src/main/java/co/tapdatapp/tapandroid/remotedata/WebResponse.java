@@ -72,7 +72,13 @@ public class WebResponse {
      * @throws JSONException If the body is not valid JSON
      */
     public JSONObject getJSON() throws JSONException {
-        return new JSONObject(new String(getBody()));
+        String body = new String(getBody());
+        if (body.isEmpty()) {
+            return new JSONObject();
+        }
+        else {
+            return new JSONObject(body);
+        }
     }
 
     /**
