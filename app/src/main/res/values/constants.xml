@@ -22,6 +22,10 @@
     <string name="PHONE_SECRET_SIZE">16</string>
     <string name="PHONE_SECRET_ALLOWED_CHARACTERS">0123456789qwertyuiopasdfghjklzxcvbnm</string>
 
+    <string name="AWS_ACCESS_ID">AKIAJOXBJKXXTLB2MXXQ</string>
+    <string name="AWS_SECRET_KEY">F1MNXG8M3cEOfmHxADVSEh1fqRB/SbHveAS2RLmC</string>
+    <string name="AWS_BUCKET">tapyapa</string>
+
     <!-- Feature enabling settings -->
     <!-- User can create fake data (good for testing) -->
     <string name="CREATE_FAKE_DATA_ON_SERVER">false</string>

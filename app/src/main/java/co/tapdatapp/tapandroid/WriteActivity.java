@@ -194,6 +194,10 @@ public class WriteActivity extends Activity {
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        throw new AssertionError("This should never be called");
+        // @TODO this shouldn't be used any more, and this code should
+        // be completely removed once the new write methods are in place.
+        /*
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             if (mFromCamera) {
                 //TODO: This only gets a thumbnail... to get full image this has to be rewritten!
@@ -345,6 +349,7 @@ public class WriteActivity extends Activity {
                 setPic(mImageID);
             }
         }
+        */
     }
     private void setPic(int i) {
         ImageView mImageView;
