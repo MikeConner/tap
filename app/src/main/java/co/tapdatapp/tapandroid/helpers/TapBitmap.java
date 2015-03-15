@@ -98,13 +98,7 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
         AndroidCache cache = new AndroidCache();
         byte[] data;
         try {
-            data = cache.get(url);
-            rv = BitmapFactory.decodeByteArray(data, 0, data.length);
-            if (rv == null) {
-                throw new NullPointerException(
-                        "Null Bitmap from cache for " + url + " " + data.length
-                );
-            }
+            rv = fetchFromCache(url, cache);
         }
         catch (NoSuchElementException nsee) {
             HttpHelper helper = new HttpHelper();
@@ -128,6 +122,19 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
             else {
                 throw new Exception("Failure to fetch image: " + wr.getError());
             }
+        }
+        return rv;
+    }
+
+    private static Bitmap fetchFromCache(String url, AndroidCache cache) {
+        Bitmap rv;
+        byte[] data;
+        data = cache.get(url);
+        rv = BitmapFactory.decodeByteArray(data, 0, data.length);
+        if (rv == null) {
+            throw new NullPointerException(
+                "Null Bitmap from cache for " + url + " " + data.length
+            );
         }
         return rv;
     }

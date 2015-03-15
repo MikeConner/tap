@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,6 +31,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.Files;
 
 public class AndroidCache extends BaseDAO implements SingleTable, Cache {
 
@@ -124,24 +124,11 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
     }
 
     @Override
-    @SuppressWarnings("ThrowFromFinallyBlock")
     public byte[] get(String name) {
         String filename = getFullFilespec(getFilename(name));
-        File f = new File(filename);
-        long size = f.length();
-        if (size > Integer.MAX_VALUE) {
-            throw new AssertionError("File " + name + " too large");
-        }
-        byte[] data = new byte[(int)size];
-        FileInputStream is = null;
+        byte[] data;
         try {
-            is = new FileInputStream(filename);
-            int read = is.read(data);
-            if (read != size) {
-                throw new AssertionError(
-                    "Read " + read + " of file " + name + " size " + size
-                );
-            }
+            data = Files.readAllBytes(filename);
         }
         catch (FileNotFoundException fnfe) {
             // Since Android is allowed to remove files from the cache
@@ -151,16 +138,6 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
         }
         catch (IOException ioe) {
             throw new RuntimeException(ioe);
-        }
-        finally {
-            if (is != null) {
-                try {
-                    is.close();
-                }
-                catch (IOException ioe) {
-                    throw new RuntimeException(ioe);
-                }
-            }
         }
         updateLastModified(name);
         return data;

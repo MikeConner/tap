@@ -155,16 +155,6 @@ public class Account {
     }
 
     /**
-     * Phone secret is actually the key used to identify the account
-     *
-     * @return phone secret
-     */
-    public String getPhoneSecret() {
-        throwIfNoAccount();
-        return preferences.getString(PHONE_SECRET, null);
-    }
-
-    /**
      * Set the phone secret
      *
      * @param to new phone secret
@@ -247,7 +237,7 @@ public class Account {
      */
     public String getProfilePicThumbUrl() {
         throwIfNoAccount();
-        return preferences.getString(PROFILE_PIC_THUMB_URL, "");
+        return preferences.getString(PROFILE_PIC_THUMB_URL, null);
     }
 
     /**

@@ -5,12 +5,10 @@ import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +19,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import co.tapdatapp.tapandroid.QRCode;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
@@ -28,6 +29,7 @@ import co.tapdatapp.tapandroid.currency.BalanceList;
 import co.tapdatapp.tapandroid.currency.BalanceListAdapter;
 import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
+import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
 
@@ -36,7 +38,8 @@ extends Fragment
 implements View.OnClickListener,
            AdapterView.OnItemClickListener,
            GetAllBalancesTask.Callback,
-           DepositCodeFragment.Callback {
+           DepositCodeFragment.Callback,
+           SaveProfilePicTask.Callback {
 
     private static final int SELECT_PICTURE = 1;
     private ListView balanceList;
@@ -66,7 +69,7 @@ implements View.OnClickListener,
         email = (TextView) view.findViewById(R.id.etEmail);
         nickname.setText(account.getNickname());
         profilePic.setOnClickListener(this);
-        profilePic.setImageBitmap(BitmapFactory.decodeFile(account.getProfilePicThumbUrl()));
+        new SetProfilePicTask().execute();
 
         String mEmailAddy = account.getEmail();
         if (mEmailAddy.isEmpty()) {
@@ -302,44 +305,77 @@ implements View.OnClickListener,
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
-                Uri selectedImageUri = data.getData();
-                String selectedImagePath = getPath(selectedImageUri);
-
-                if (selectedImagePath != null) {
-                    account.setProfilePicThumbUrl(selectedImagePath);
-                    //This seems kind of redundant
-                    profilePic.setImageBitmap(BitmapFactory.decodeFile(account.getProfilePicThumbUrl()));
+                InputStream imageStream;
+                try {
+                    imageStream = getActivity().getContentResolver().openInputStream(data.getData());
                 }
-                else {
-                    TapApplication.errorToUser("No image was selected");
+                catch (FileNotFoundException fnfe) {
+                    TapApplication.errorToUser("The selected file is unavailable");
+                    return;
                 }
+                new SaveProfilePicTask().execute(this, imageStream);
             }
+            else {
+                throw new AssertionError("Unkown request code: " + requestCode);
+            }
+        }
+        else {
+            throw new AssertionError("Unknown activity result code: " + resultCode);
         }
     }
 
     /**
-     * This helps get the path for an image
-     * @param uri URI returned from an appropriate image selector
-     * @return The actual path that the URI resolves to
+     * Called when the profile picture has been successfully saved
+     *
+     * @param id The ID/URL of the profile picture
      */
-    public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
-        try {
-            if (cursor != null) {
-                //HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
-                //THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
-                int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                cursor.moveToFirst();
-                return cursor.getString(column_index);
-            } else {
+    @Override
+    public void onProfilePicSaved(String id) {
+        new SetProfilePicTask().execute();
+    }
+
+    /**
+     * Called if unable to save the profile picture
+     *
+     * @param t The exception that caused the failure
+     */
+    @Override
+    public void onProfilePicSaveFailed(Throwable t) {
+        TapApplication.unknownFailure(t);
+    }
+
+    /**
+     * Load the profile image onto the view, fetching from the web if
+     * necessary.
+     */
+    private class SetProfilePicTask
+    extends AsyncTask<Void, Void, Exception> {
+
+        private Bitmap thumbnail;
+
+        @Override
+        protected Exception doInBackground(Void... params) {
+            try {
+                Account a = new Account();
+                if (a.getProfilePicThumbUrl() != null) {
+                    thumbnail = TapBitmap.fetchFromCacheOrWeb(
+                        new Account().getProfilePicThumbUrl()
+                    );
+                }
                 return null;
             }
+            catch (Exception e) {
+                return e;
+            }
         }
-        finally {
-            if (cursor != null) {
-                cursor.close();
+
+        @Override
+        protected void onPostExecute(Exception e) {
+            if (e != null) {
+                TapApplication.unknownFailure(e);
+            }
+            else {
+                profilePic.setImageBitmap(thumbnail);
             }
         }
     }

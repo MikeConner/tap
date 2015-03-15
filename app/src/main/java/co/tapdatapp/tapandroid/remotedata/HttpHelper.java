@@ -14,6 +14,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
@@ -250,11 +251,9 @@ public class HttpHelper {
         return new WebResponse(response);
     }
 
-
-
     public WebResponse HttpPut(String url,
-                                Bundle headers,
-                                String payload
+                               Bundle headers,
+                               String payload
     ) throws IOException {
         HttpClient webClient = new DefaultHttpClient();
         HttpPut put = new HttpPut(url);
@@ -267,6 +266,20 @@ public class HttpHelper {
         return new WebResponse(response);
     }
 
+    public WebResponse HttpPut(String url,
+                               Bundle headers,
+                               byte[] payload
+    ) throws IOException {
+        HttpClient webClient = new DefaultHttpClient();
+        HttpPut put = new HttpPut(url);
+        Set<String> keys = headers.keySet();
+        for (String key : keys) {
+            put.setHeader(key, headers.getString(key));
+        }
+        put.setEntity(new ByteArrayEntity(payload));
+        HttpResponse response = webClient.execute(put);
+        return new WebResponse(response);
+    }
 
     /**
      * Tests for network access
