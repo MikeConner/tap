@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import co.tapdatapp.tapandroid.helpers.Files;
-import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.remotedata.RemoteStorage;
 import co.tapdatapp.tapandroid.remotedata.RemoteStorageDriver;
 
