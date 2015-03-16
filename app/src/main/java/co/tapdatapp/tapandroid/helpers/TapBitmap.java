@@ -167,6 +167,4 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
     public static Bitmap getLoadingBitmapAtSize(int size) {
         return scaleBitmap(R.drawable.loading_square, size);
     }
-
-
 }

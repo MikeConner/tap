@@ -15,7 +15,9 @@ public class GetAllBalancesTask
 extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
 
     public interface Callback {
+        //this is called when the load is successful
         void onBalancesLoaded(BalanceList list);
+        //this is called when there is an error
         void onBalanceLoadFailure(Throwable t);
     }
 
