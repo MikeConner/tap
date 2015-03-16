@@ -2,5 +2,6 @@
 <resources>
     <string name="SERVER">http://test.tapdatapp.co/</string>
     <string name="CREATE_FAKE_DATA_ON_SERVER">true</string>
+    <string name="USE_AWS">true</string>
     <string name="CRASH_ON_FAILURE">true</string>
 </resources>
