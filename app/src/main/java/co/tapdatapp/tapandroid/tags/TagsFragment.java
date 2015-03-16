@@ -28,6 +28,7 @@ implements View.OnClickListener,
                              ViewGroup container,
                              Bundle savedInstanceState
     ) {
+        new GetMyCurrenciesTask().execute();
         return inflater.inflate(R.layout.fragment_tags, container, false);
     }
 

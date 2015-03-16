@@ -5,26 +5,31 @@
 
 package co.tapdatapp.tapandroid.currency;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
+import co.tapdatapp.tapandroid.localdata.UserBalance;
 
 public class BalanceListAdapter extends BaseAdapter {
 
-    private final CurrencyDAO userBalance;
     private final BalanceList balanceList;
+    private CurrencyDAO[] listOfCurrencies;
     private Bitmap loadingImage;
     private Activity activity;
     private int imageSize;
@@ -33,9 +38,32 @@ public class BalanceListAdapter extends BaseAdapter {
                               CurrencyDAO dao,
                               BalanceList list
     ) {
-        activity = a;
         balanceList = list;
-        userBalance = dao;
+        activity = a;
+        fillInListOfBalances((UserBalance)dao, list);
+    }
+
+    /**
+     * The database might have additional currencies (if the user has
+     * currencies that they own but does not have a balance on them)
+     * This resolves those two lists into a correct list of currencies
+     * with balances.
+     *
+     * @param dao CurrencyDAO
+     * @param bl BalanceList
+     */
+    private void fillInListOfBalances(UserBalance dao, BalanceList bl) {
+        ArrayList<CurrencyDAO> list = new ArrayList<>();
+        CurrencyDAO[] currencies = dao.getAllByNameOrder();
+        for (CurrencyDAO current : currencies) {
+            if (bl.get(current.getCurrencyId()) != null) {
+                list.add(current);
+            }
+        }
+        listOfCurrencies = new CurrencyDAO[list.size()];
+        for (int i = 0; i < listOfCurrencies.length; i++) {
+            listOfCurrencies[i] = list.get(i);
+        }
     }
 
     @Override
@@ -50,17 +78,17 @@ public class BalanceListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return balanceList.size();
+        return listOfCurrencies.length;
     }
 
     @Override
     public CurrencyDAO getItem(int i) {
-        return userBalance.getByNameOrder(i);
+        return listOfCurrencies[i];
     }
 
     @Override
     public long getItemId(int i) {
-        return userBalance.getByNameOrder(i).getCurrencyId();
+        return listOfCurrencies[i].getCurrencyId();
     }
 
     @Override
@@ -68,6 +96,7 @@ public class BalanceListAdapter extends BaseAdapter {
         return false;
     }
 
+    @SuppressLint("ViewHolder")
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         // Note that recycling Views confuses things and causes images
@@ -81,7 +110,8 @@ public class BalanceListAdapter extends BaseAdapter {
             viewGroup,
             false
         );
-        CurrencyDAO currency = userBalance.getByNameOrder(i);
+        CurrencyDAO currency = listOfCurrencies[i];
+        Log.d("CURRENCY", Integer.toString(currency.getCurrencyId()));
         ((TextView)view.findViewById(R.id.balance_line_item_balance)).setText(
             currency.getSymbol() +
                 balanceList.get(currency.getCurrencyId()).toString() +

@@ -98,7 +98,7 @@ public interface CurrencyDAO {
      *
      * @param currencyId Currency ID to operate on
      */
-    void ensureLocalCurrencyDetails(int currencyId);
+    void ensureLocalCurrencyDetails(int currencyId) throws WebServiceError;
 
     /**
      * Return all the denominations (in ascending order) for the

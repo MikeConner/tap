@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,6 +22,7 @@ import java.util.NoSuchElementException;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.helpers.DateTime;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.remotedata.CurrencyCodec;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
@@ -36,19 +38,27 @@ implements SingleTable, CurrencyDAO {
     public final static String ICON = "icon";
     public final static String SYMBOL = "symbol";
     public final static String MAX_TAP = "max_tap";
+    public final static String OWNED = "owned";
+    public final static String LAST_UPDATE = "last_update";
 
     private final static String BITCOIN_NAME = "Bitcoin";
     private final static String BITCOIN_ICON = "http://example.com/nope";
     private final static String BITCOIN_SYMBOL = "S";
     private final static int BITCOIN_MAX_TAP = 500;
 
+    /**
+     * Time at which currency details must be refreshed from the server
+     * (24 hours)
+     */
+    private final static long EXPIRATION = 60 * 60 * 24;
+
     private int currencyId;
     private String name;
     private String icon;
     private String symbol;
     private int maxTap;
+    private long lastUpdate;
 
-    // @TODO currency needs to expire after 1 week, store last update time
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
@@ -57,7 +67,9 @@ implements SingleTable, CurrencyDAO {
                 NAME + " TEXT NOT NULL, " +
                 ICON + " TEXT NOT NULL, " +
                 SYMBOL + " TEXT NOT NULL, " +
-                MAX_TAP + " INT NOT NULL" +
+                MAX_TAP + " INT NOT NULL," +
+                OWNED + " INT NOT NULL DEFAULT 0," +
+                LAST_UPDATE + " BIGINT NOT NULL" +
                 ")"
         );
     }
@@ -78,12 +90,15 @@ implements SingleTable, CurrencyDAO {
      * @param name Currency name
      * @param icon URL of the icon
      * @param symbol String of the symbol (such as "$")
+     * @param maxTap Maximum amount of a single transaction
+     * @param ownedByMe true if this user owns this currency
      */
     public void createOrUpdate(int id,
                                String name,
                                String icon,
                                String symbol,
-                               int maxTap
+                               int maxTap,
+                               boolean ownedByMe
     ) {
         SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
         ContentValues v = new ContentValues();
@@ -92,6 +107,8 @@ implements SingleTable, CurrencyDAO {
         v.put(ICON, icon);
         v.put(SYMBOL, symbol);
         v.put(MAX_TAP, maxTap);
+        v.put(OWNED, ownedByMe ? 1 : 0);
+        v.put(LAST_UPDATE, DateTime.currentEpochTime());
         db.insertWithOnConflict(
             TABLE,
             null,
@@ -139,9 +156,10 @@ implements SingleTable, CurrencyDAO {
                                   String icon,
                                   String symbol,
                                   int maxTap,
+                                  boolean ownedByMe,
                                   Denomination[] denominations
     ) {
-        createOrUpdate(id, name, icon, symbol, maxTap);
+        createOrUpdate(id, name, icon, symbol, maxTap, ownedByMe);
         updateAllDenominations(id, denominations);
     }
 
@@ -158,7 +176,7 @@ implements SingleTable, CurrencyDAO {
         try {
             c = getCursor(
                 TABLE,
-                new String[]{NAME, ICON, SYMBOL, MAX_TAP},
+                new String[]{NAME, ICON, SYMBOL, MAX_TAP, OWNED, LAST_UPDATE},
                 ID + " = ?",
                 new String[]{Integer.toString(id)}
             );
@@ -173,6 +191,42 @@ implements SingleTable, CurrencyDAO {
             icon = c.getString(1);
             symbol = c.getString(2);
             maxTap = c.getInt(3);
+            lastUpdate = c.getLong(5);
+        }
+        finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+    }
+
+    public CurrencyDAO[] getAllByNameOrder() {
+        Cursor c = null;
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+        try {
+            c = db.query(
+                TABLE,
+                new String[] { ID, NAME, ICON, SYMBOL, MAX_TAP, OWNED, LAST_UPDATE },
+                null, null,
+                null, null,
+                NAME + " ASC",
+                null
+            );
+            CurrencyDAO rv[] = new CurrencyDAO[c.getCount()];
+            for (int i = 0; i < rv.length; i++) {
+                UserBalance ob = new UserBalance();
+                if (!c.moveToPosition(i)) {
+                    throw new AssertionError("position " + i + " not valid");
+                }
+                ob.currencyId = c.getInt(0);
+                ob.name = c.getString(1);
+                ob.icon = c.getString(2);
+                ob.symbol = c.getString(3);
+                ob.maxTap = c.getInt(4);
+                ob.lastUpdate = c.getLong(6);
+                rv[i] = ob;
+            }
+            return rv;
         }
         finally {
             if (c != null) {
@@ -188,7 +242,7 @@ implements SingleTable, CurrencyDAO {
         try {
             c = db.query(
                 TABLE,
-                new String[] { ID, NAME, ICON, SYMBOL, MAX_TAP },
+                new String[] { ID, NAME, ICON, SYMBOL, MAX_TAP, OWNED, LAST_UPDATE },
                 null, null,
                 null, null,
                 NAME + " ASC",
@@ -206,6 +260,7 @@ implements SingleTable, CurrencyDAO {
             rv.icon = c.getString(2);
             rv.symbol = c.getString(3);
             rv.maxTap = c.getInt(4);
+            rv.lastUpdate = c.getLong(6);
             return rv;
         }
         finally {
@@ -279,14 +334,57 @@ implements SingleTable, CurrencyDAO {
             new Bundle()
         );
         CurrencyCodec cc = new CurrencyCodec();
-        BalanceList rv = null;
         try {
-            rv = cc.parseBalances(response);
+            return cc.parseBalances(response);
         }
         catch (JSONException je) {
-            TapApplication.unknownFailure(je);
+            throw new WebServiceError(je);
         }
-        return rv;
+    }
+
+    /**
+     * Retrieve the list of currencies owned by this user, and ensure
+     * the details are on the phone.
+     *
+     * @throws WebServiceError
+     */
+    public void updateAllOwnedCurrencies() throws WebServiceError {
+        HttpHelper http = new HttpHelper();
+        JSONObject response = http.HttpGetJSON(
+            http.getFullUrl(R.string.ENDPOINT_GET_CURRENCY),
+            new Bundle()
+        );
+        int[] rv;
+        try {
+            JSONArray values = response.getJSONArray("response");
+            rv = new int[values.length()];
+            for (int i = 0; i < values.length(); i++) {
+                rv[i] = values.getInt(i);
+            }
+        }
+        catch (JSONException je) {
+            throw new WebServiceError(je);
+        }
+        for (int item : rv) {
+            ensureLocalCurrencyDetails(item);
+            setCurrencyOwned(item, true);
+        }
+    }
+
+    /**
+     * Flag the specified currency as either owned or not owned by
+     * this user.
+     */
+    private void setCurrencyOwned(int currencyId, boolean owned) {
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put(OWNED, owned ? 1 : 0);
+        db.update(
+            TABLE,
+            v,
+            ID + " = ?",
+            new String[] { Integer.toString(currencyId) }
+        );
     }
 
     /**
@@ -295,15 +393,17 @@ implements SingleTable, CurrencyDAO {
      *
      * @param list list of Currencies to update
      */
-    public void ensureLocalCurrencyDetails(BalanceList list) {
+    public void
+    ensureLocalCurrencyDetails(BalanceList list) throws WebServiceError {
         for (int currencyId : list.keySet()) {
             ensureLocalCurrencyDetails(currencyId);
         }
     }
 
-    // @TODO needs an expiration time on the currency to refresh
     @Override
-    public void ensureLocalCurrencyDetails(int currencyId) {
+    public void
+    ensureLocalCurrencyDetails(int currencyId)
+    throws WebServiceError {
         if (currencyId == CURRENCY_BITCOIN) {
             createOrUpdateAll(
                 CURRENCY_BITCOIN,
@@ -311,24 +411,21 @@ implements SingleTable, CurrencyDAO {
                 BITCOIN_ICON,
                 BITCOIN_SYMBOL,
                 BITCOIN_MAX_TAP,
+                true,
                 null
             );
             return;
         }
         try {
             moveTo(currencyId);
-            // If this succeeds, the currency is already local,
-            // nothing else needs to be done
+            if (lastUpdate > (DateTime.currentEpochTime() + EXPIRATION)) {
+                syncCurrencyWithServer(currencyId);
+            }
         }
         catch (NoSuchElementException nsee) {
             // Exception indicates that the currency isn't stored
             // locally, must fetch it remotely.
-            try {
-                syncCurrencyWithServer(currencyId);
-            }
-            catch (Exception wse) {
-                TapApplication.unknownFailure(wse);
-            }
+            syncCurrencyWithServer(currencyId);
         }
     }
 
@@ -340,20 +437,26 @@ implements SingleTable, CurrencyDAO {
 
     private void
     syncCurrencyWithServer(int currencyId)
-    throws WebServiceError, JSONException {
+    throws WebServiceError {
         HttpHelper http = new HttpHelper();
         CurrencyCodec cc = new CurrencyCodec();
         JSONObject response = http.HttpGetJSON(
             getCurrencyURL(http, currencyId),
             new Bundle()
         );
-        cc.parse(currencyId, response);
+        try {
+            cc.parse(currencyId, response);
+        }
+        catch (JSONException je) {
+            throw new WebServiceError(je);
+        }
         createOrUpdateAll(
             cc.getId(),
             cc.getName(),
             cc.getIcon(),
             cc.getSymbol(),
             cc.getMaxTap(),
+            false,
             cc.getDenominations()
         );
     }

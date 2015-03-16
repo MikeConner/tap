@@ -36,8 +36,8 @@ public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
         armFragment = params[0];
         CurrencyDAO currency = new UserBalance();
         Account account = new Account();
-        currency.ensureLocalCurrencyDetails(account.getActiveCurrency());
         try {
+            currency.ensureLocalCurrencyDetails(account.getActiveCurrency());
             icon = TapBitmap.fetchFromCacheOrWeb(currency.getIconUrl());
         }
         catch (Exception e) {
