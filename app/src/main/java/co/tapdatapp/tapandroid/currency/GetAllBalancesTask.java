@@ -9,10 +9,7 @@ package co.tapdatapp.tapandroid.currency;
 
 import android.os.AsyncTask;
 
-import co.tapdatapp.tapandroid.TapApplication;
-import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
-import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
 public class GetAllBalancesTask
 extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {

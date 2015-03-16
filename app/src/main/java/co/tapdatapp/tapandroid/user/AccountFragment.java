@@ -140,7 +140,7 @@ implements View.OnClickListener,
 
     /**
      * Called when there's an error loading balances
-     * @param t
+     * @param t has the information for the error.
      */
     @Override
     public void onBalanceLoadFailure(Throwable t) {
