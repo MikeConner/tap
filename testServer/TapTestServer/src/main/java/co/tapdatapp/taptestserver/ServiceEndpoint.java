@@ -21,6 +21,7 @@ import co.tapdatapp.taptestserver.entities.TransactionResponse;
 import co.tapdatapp.taptestserver.entities.UpdateAccountRequest;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -87,6 +88,15 @@ public class ServiceEndpoint {
   }
   
   @GET
+  @Path("/currencies/")
+  public Response getOwnedCurrencies(@QueryParam(AUTH_TOKEN) String authId) {
+    Monitor.trace("Looking for owned currencies");
+    int[] values = currencies.getOwnedCurrencies(authId);
+    Monitor.trace("Returned " + values.length + " owned currencies");
+    return Response.ok(new ResponseResponse(values)).build();
+  }
+  
+  @GET
   @Path("/currencies/{id}.json")
   public Response getCurrency(@PathParam("id") int id) {
     Monitor.trace("getCurrency on ID " + id);
@@ -96,11 +106,15 @@ public class ServiceEndpoint {
   @GET
   @Path("/users/balance_inquiry")
   public Response getBalances(@QueryParam(AUTH_TOKEN) String authId) {
-    Monitor.trace("balance inquiry on auth_id " + authId);
     if (authId == null || authId.isEmpty()) {
       return Response.status(401).build();
     }
-    return Response.ok(accounts.getBalances(authId)).build();
+    ResponseResponse response = accounts.getBalances(authId);
+    Monitor.trace(
+      "balance inquiry on auth_id " + authId + " returns " +
+      response.response.toString()
+    );
+    return Response.ok(response).build();
   }
   
   /**

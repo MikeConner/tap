@@ -35,11 +35,10 @@ public class Balances {
     Monitor.trace("Created default balances for " + authId);
     balances.put(authId, b);
     Monitor.trace("Now have " + balances.size() + " users with balances");
+    currencies.createUserCurrency(authId);
   }
 
   public HashMap<Integer, Integer> getBalance(String authId) {
-    Monitor.trace("Getting balances for " + authId);
-    Monitor.trace(balances.size() + " users with balances to choose from");
     return balances.get(authId);
   }
 
