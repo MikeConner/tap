@@ -30,6 +30,7 @@ import co.tapdatapp.tapandroid.currency.BalanceListAdapter;
 import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
 
@@ -135,6 +136,23 @@ implements View.OnClickListener,
         //noinspection ConstantConditions
         getView().findViewById(R.id.balances_progress_bar).setVisibility(View.GONE);
         balanceList.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Called when there's an error loading balances
+     * @param t
+     */
+    @Override
+    public void onBalanceLoadFailure(Throwable t) {
+        try {
+            throw t;
+        }
+        catch (UserFriendlyError ufe) {
+            TapApplication.errorToUser(ufe);
+        }
+        catch (Throwable catchall) {
+            TapApplication.unknownFailure(t);
+        }
     }
 
     /**

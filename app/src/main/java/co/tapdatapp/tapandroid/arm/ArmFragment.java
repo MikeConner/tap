@@ -36,8 +36,7 @@ implements View.OnTouchListener {
     private GestureDetector gesture;
     private ViewFlipper vf;
     private CustomViewPager cvp;
-    private LinearLayout swipeLayout;
-    private LinearLayout scrollLayout;
+
     private int maxIndex;
     private int curIndex = 0;
 
@@ -49,8 +48,8 @@ implements View.OnTouchListener {
         bankView = (TextView) view.findViewById(R.id.txtAmount);
         vf = (ViewFlipper) view.findViewById(R.id.currency_items);
         cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
-        swipeLayout = (LinearLayout) view.findViewById(R.id.clickable_area);
-        scrollLayout = (LinearLayout) view.findViewById(R.id.scrollable_area);
+        LinearLayout swipeLayout = (LinearLayout) view.findViewById(R.id.clickable_area);
+        LinearLayout scrollLayout = (LinearLayout) view.findViewById(R.id.scrollable_area);
         cvp.setPagingEnabled(false);
         /**
          * This re-enables scrolling between pages
@@ -97,8 +96,8 @@ implements View.OnTouchListener {
                     /**
                      * This is basically a constructor. If it doesn't return true, the gesture detector will exit,
                      * but it shouldn't do anything.
-                     * @param e
-                     * @return
+                     * @param e is the variable for the motion event.
+                     * @return boolean values that tell whether or not an event happened.
                      */
                     @Override
                     public boolean onDown(MotionEvent e) {
@@ -115,8 +114,6 @@ implements View.OnTouchListener {
                             if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
                                 account.setArmedAmount(account.getArmedAmount() + amount);
                                 setAmount(account.getArmedAmount());
-                            }
-                            else if (Math.abs(e2.getY() - e1.getY()) > SWIPE_MAX_OFF_PATH){
                             }
                             if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
                                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
@@ -140,7 +137,9 @@ implements View.OnTouchListener {
                                 }
                             }
                         } catch (Exception e) {
-                            // nothing
+
+                            //  I don't think anything needs to go in here. If the event fails, it's not a fatal error.
+
                         }
                         return super.onFling(e1, e2, velocityX, velocityY);
                     }
@@ -293,9 +292,9 @@ implements View.OnTouchListener {
     /**
      * This starts the event that causes up-swipes to deposit denominations into the bank.
      *
-     * @param view
-     * @param event
-     * @return
+     * @param view this is the view of the current denomination
+     * @param event the motion event
+     * @return returns whether there was a motion event detected.
      */
     @Override
     public boolean onTouch(View view, MotionEvent event){

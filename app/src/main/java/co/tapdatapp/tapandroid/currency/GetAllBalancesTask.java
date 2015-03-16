@@ -10,6 +10,7 @@ package co.tapdatapp.tapandroid.currency;
 import android.os.AsyncTask;
 
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
@@ -18,10 +19,12 @@ extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
 
     public interface Callback {
         void onBalancesLoaded(BalanceList list);
+        void onBalanceLoadFailure(Throwable t);
     }
 
     private Callback callback;
     private BalanceList balanceList;
+    private Throwable error;
 
     @Override
     protected Void
@@ -35,14 +38,19 @@ extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
             balanceList = userBalance.getAllBalances();
             userBalance.ensureLocalCurrencyDetails(balanceList);
         }
-        catch (WebServiceError wse) {
-            TapApplication.unknownFailure(wse);
+        catch (Throwable t){
+            error = t;
         }
         return null;
     }
 
     @Override
     protected void onPostExecute(Void x) {
-        callback.onBalancesLoaded(balanceList);
+        if(error == null){
+            callback.onBalancesLoaded(balanceList);
+        }
+        else{
+            callback.onBalanceLoadFailure(error);
+        }
     }
 }
