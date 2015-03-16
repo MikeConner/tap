@@ -7,14 +7,14 @@ package co.tapdatapp.tapandroid.tags;
 import android.os.AsyncTask;
 
 import co.tapdatapp.tapandroid.TapApplication;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
 public class GetMyCurrenciesTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        UserBalance currency = new UserBalance();
+        CurrencyDAO currency = new CurrencyDAO();
         try {
             currency.updateAllOwnedCurrencies();
         }

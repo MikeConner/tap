@@ -24,7 +24,6 @@ import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
 
 public class BalanceListAdapter extends BaseAdapter {
 
@@ -40,7 +39,7 @@ public class BalanceListAdapter extends BaseAdapter {
     ) {
         balanceList = list;
         activity = a;
-        fillInListOfBalances((UserBalance)dao, list);
+        fillInListOfBalances((CurrencyDAO)dao, list);
     }
 
     /**
@@ -52,7 +51,7 @@ public class BalanceListAdapter extends BaseAdapter {
      * @param dao CurrencyDAO
      * @param bl BalanceList
      */
-    private void fillInListOfBalances(UserBalance dao, BalanceList bl) {
+    private void fillInListOfBalances(CurrencyDAO dao, BalanceList bl) {
         ArrayList<CurrencyDAO> list = new ArrayList<>();
         CurrencyDAO[] currencies = dao.getAllByNameOrder();
         for (CurrencyDAO current : currencies) {

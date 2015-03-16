@@ -20,7 +20,6 @@ import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.user.Account;
 
 
@@ -79,7 +78,7 @@ public class ArmedFragment extends DialogFragment implements View.OnClickListene
         // This will never be called with a null View
         //noinspection ConstantConditions
         TextView tvAmount = (TextView)getView().findViewById(R.id.txtArmedAmount);
-        CurrencyDAO currency = new UserBalance();
+        CurrencyDAO currency = new CurrencyDAO();
         Account account = new Account();
         currency.moveTo(account.getActiveCurrency());
         tvAmount.setText(currency.getSymbol() + String.format("%d", account.getArmedAmount()));

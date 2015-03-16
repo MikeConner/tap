@@ -10,7 +10,7 @@ package co.tapdatapp.tapandroid.currency;
 import android.os.AsyncTask;
 
 import co.tapdatapp.tapandroid.TapApplication;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
 public class GetAllBalancesTask
@@ -30,7 +30,7 @@ extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
             throw new AssertionError("Must provide 1 callback class");
         }
         callback = balancesActivities[0];
-        UserBalance userBalance = new UserBalance();
+        CurrencyDAO userBalance = new CurrencyDAO();
         try {
             balanceList = userBalance.getAllBalances();
             userBalance.ensureLocalCurrencyDetails(balanceList);

@@ -1,6 +1,5 @@
 package co.tapdatapp.tapandroid;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -10,25 +9,18 @@ import java.util.UUID;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -36,10 +28,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import org.json.JSONException;
 
 import co.tapdatapp.tapandroid.arm.ArmFragment;
 import co.tapdatapp.tapandroid.arm.ArmedFragment;
@@ -48,7 +37,6 @@ import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Transaction;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.remotedata.TapTxnTask;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapUser;
@@ -183,7 +171,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     @Override
     public void onResume(){
         super.onResume();
-        currency = new UserBalance();
+        currency = new CurrencyDAO();
         if (mNfcAdapter != null) {
             mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
                     mNdefExchangeFilters, null);

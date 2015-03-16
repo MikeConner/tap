@@ -17,7 +17,6 @@ import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.currency.BalanceList;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.UserAccountCodec;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
@@ -112,7 +111,7 @@ public class Account {
      * automatically becomes the default
      */
     private void setCurrencyOnNewUser() throws WebServiceError {
-        UserBalance balance = new UserBalance();
+        CurrencyDAO balance = new CurrencyDAO();
         BalanceList balances = balance.getAllBalances();
         // Bitcoin is a special case
         balance.ensureLocalCurrencyDetails(CurrencyDAO.CURRENCY_BITCOIN);
@@ -248,11 +247,11 @@ public class Account {
             return Integer.parseInt(
                 preferences.getString(
                     DEFAULT_CURRENCY,
-                    Integer.toString(UserBalance.CURRENCY_BITCOIN)
+                    Integer.toString(CurrencyDAO.CURRENCY_BITCOIN)
                 )
             );
         }
-        return UserBalance.CURRENCY_BITCOIN;
+        return CurrencyDAO.CURRENCY_BITCOIN;
     }
 
     /**

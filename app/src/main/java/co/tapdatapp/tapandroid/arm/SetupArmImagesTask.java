@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Denomination;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
@@ -34,7 +33,7 @@ public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
             throw new AssertionError("Must provide the Fragment");
         }
         armFragment = params[0];
-        CurrencyDAO currency = new UserBalance();
+        CurrencyDAO currency = new CurrencyDAO();
         Account account = new Account();
         try {
             currency.ensureLocalCurrencyDetails(account.getActiveCurrency());

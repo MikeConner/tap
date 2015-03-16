@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.VoucherCodec;
 
@@ -49,7 +49,7 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
             // Post redeeming the voucher, simply ensure that the
             // currency details are local. The balance is fetched
             // when needed, os no need to do it now.
-            UserBalance balance = new UserBalance();
+            CurrencyDAO balance = new CurrencyDAO();
             balance.ensureLocalCurrencyDetails(response.getCurrencyId());
             success = true;
         }

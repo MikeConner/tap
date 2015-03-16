@@ -30,7 +30,7 @@ import co.tapdatapp.tapandroid.currency.BalanceListAdapter;
 import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
 
 public class AccountFragment
@@ -127,7 +127,7 @@ implements View.OnClickListener,
     public void onBalancesLoaded(BalanceList list) {
         BalanceListAdapter adapter = new BalanceListAdapter(
             getActivity(),
-            new UserBalance(),
+            new CurrencyDAO(),
             list
         );
         balanceList.setAdapter(adapter);
@@ -275,7 +275,7 @@ implements View.OnClickListener,
             throw new AssertionError("Currency ID exceeds int size");
         }
         account.setActiveCurrency((int) id);
-        UserBalance currency = new UserBalance();
+        CurrencyDAO currency = new CurrencyDAO();
         currency.moveTo((int)id);
         Toast toast = Toast.makeText(
             getActivity(),
