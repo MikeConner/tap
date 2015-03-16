@@ -22,8 +22,8 @@
     <string name="PHONE_SECRET_SIZE">16</string>
     <string name="PHONE_SECRET_ALLOWED_CHARACTERS">0123456789qwertyuiopasdfghjklzxcvbnm</string>
 
-    <string name="AWS_ACCESS_ID">AKIAJOXBJKXXTLB2MXXQ</string>
-    <string name="AWS_SECRET_KEY">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</string>
+    <string name="AWS_ACCESS_ID">AKIAJDYYGNMV5YIX74PQ</string>
+    <string name="AWS_SECRET_KEY">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</string>
     <string name="AWS_BUCKET">tapyapa</string>
 
     <!-- Feature enabling settings -->

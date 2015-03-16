@@ -4,8 +4,16 @@
  */
 package co.tapdatapp.tapandroid.user;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,6 +31,7 @@ public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
     private Callback callback;
     private Throwable error;
     private String id;
+    private Context context;
 
     /**
      * Store the picture on AWS or the dev server, update the
@@ -37,11 +46,20 @@ public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
             throw new AssertionError("Must provide callback and InputStream");
         }
         callback = (Callback)params[0];
+
+        Bitmap bmp;
         InputStream is = (InputStream)params[1];
+
+
         try {
-            byte[] data = Files.readAllBytes(is);
+            bmp = BitmapFactory.decodeStream(is);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            bmp = ThumbnailUtils.extractThumbnail(bmp, 512, 512);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            byte[] byteArray = outputStream.toByteArray();
+//            byte[] data = Files.readAllBytes(is);
             RemoteStorageDriver driver = RemoteStorage.getDriver();
-            id = driver.store(data);
+            id = driver.store(byteArray);
             new Account().setProfilePicThumbUrl(id);
             new UpdateUserInfoTask().updateUser();
         }
