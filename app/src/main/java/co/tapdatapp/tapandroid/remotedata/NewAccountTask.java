@@ -10,12 +10,13 @@ import co.tapdatapp.tapandroid.AccountStartActivity;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.user.Account;
 
-public class NewAccountTask extends AsyncTask<AccountStartActivity, Void, Void> {
+public class NewAccountTask
+extends AsyncTask<AccountStartActivity, Void, Throwable> {
 
     private AccountStartActivity callback;
 
     @Override
-    protected Void doInBackground(AccountStartActivity... callbacks) {
+    protected Throwable doInBackground(AccountStartActivity... callbacks) {
         if (callbacks.length != 1) {
             throw new AssertionError("Must provide 1 callback class");
         }
@@ -23,15 +24,19 @@ public class NewAccountTask extends AsyncTask<AccountStartActivity, Void, Void> 
         try {
             new Account().createNew();
         }
-        catch (Exception e) {
-            // @TODO tie in to better UI handling for errors
-            TapApplication.unknownFailure(e);
+        catch (Throwable e) {
+            return e;
         }
         return null;
     }
 
     @Override
-    protected void onPostExecute(Void x) {
-        callback.newAccountComplete();
+    protected void onPostExecute(Throwable t) {
+        if (t != null) {
+            TapApplication.unknownFailure(t);
+        }
+        else {
+            callback.newAccountComplete();
+        }
     }
 }
