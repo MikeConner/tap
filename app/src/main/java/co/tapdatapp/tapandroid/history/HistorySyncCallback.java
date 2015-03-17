@@ -7,6 +7,4 @@ package co.tapdatapp.tapandroid.history;
 public interface HistorySyncCallback {
 
     public void postSyncDisplay();
-
-    public void syncFailure(Throwable cause);
 }

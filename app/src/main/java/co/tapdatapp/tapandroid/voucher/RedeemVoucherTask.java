@@ -19,7 +19,6 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
 
     public interface Callback {
         void onComplete(VoucherRedeemResponse response);
-        void onFailure(Throwable cause);
     }
 
     private boolean success;
@@ -66,7 +65,7 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
             callback.onComplete(response);
         }
         else {
-            callback.onFailure(exception);
+            TapApplication.handleFailures(exception);
         }
     }
 

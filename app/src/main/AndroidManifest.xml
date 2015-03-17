@@ -52,7 +52,7 @@
         <activity android:name=".yapa.YapaCoupon"/>
         <activity android:name=".yapa.YapaAudio"/>
         <activity android:name=".yapa.YapaVideo"/>
-        <activity android:name=".QRCode"/>
+        <activity android:name=".user.QRCode"/>
         <activity android:name=".tags.ManageTagActivity"/>
         <activity android:name=".tags.SelectTagTypeActivity"/>
     </application>

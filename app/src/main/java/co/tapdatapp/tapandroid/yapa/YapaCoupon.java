@@ -14,9 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
-import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
-import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
 /**
@@ -83,19 +81,6 @@ public class YapaCoupon extends Activity implements TapBitmap.Callback {
     @Override
     public void onImageRetrieved(Bitmap image) {
         imageView.setImageBitmap(image);
-    }
-
-    @Override
-    public void onImageRetrievalError(Throwable t) {
-        try {
-            throw t;
-        }
-        catch (UserFriendlyError ufe) {
-            TapApplication.errorToUser(ufe);
-        }
-        catch (Throwable t1) {
-            TapApplication.unknownFailure(t1);
-        }
     }
 
     /**

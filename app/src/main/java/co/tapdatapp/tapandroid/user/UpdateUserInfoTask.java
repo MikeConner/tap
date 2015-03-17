@@ -36,7 +36,7 @@ public class UpdateUserInfoTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void x) {
         if (error != null) {
-            TapApplication.unknownFailure(error);
+            TapApplication.handleFailures(error);
         }
     }
 

@@ -356,25 +356,6 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         startActivity(openYapa);
     }
 
-    /**
-     * Called if an error occurs sending a transaction to the webservice
-     *
-     * @param t Throwable object containing failure details
-     */
-    @Override
-    public void onTapNetFailure(Throwable t) {
-        outgoingTransaction = null;
-        try {
-            throw t;
-        }
-        catch (UserFriendlyError ufe) {
-            TapApplication.errorToUser(ufe);
-        }
-        catch (Throwable catchall) {
-            TapApplication.unknownFailure(t);
-        }
-    }
-
     public void showWithdraw(View view){
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("withdraw");

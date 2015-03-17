@@ -3,7 +3,7 @@
  * send money to this account.
  */
 
-package co.tapdatapp.tapandroid;
+package co.tapdatapp.tapandroid.user;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -11,8 +11,8 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
-import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class QRCode extends Activity implements TapBitmap.Callback {
@@ -32,22 +32,5 @@ public class QRCode extends Activity implements TapBitmap.Callback {
     @Override
     public void onImageRetrieved(Bitmap image) {
         ((ImageView)findViewById(R.id.bitQR)).setImageBitmap(image);
-    }
-
-    /**
-     * Now gets called when there's an error retrieving the image
-     * @param t The error
-     */
-    @Override
-    public void onImageRetrievalError(Throwable t) {
-        try{
-            throw t;
-        }
-        catch (UserFriendlyError ufe){
-            TapApplication.errorToUser(ufe);
-        }
-        catch (Throwable catchall) {
-            TapApplication.unknownFailure(t);
-        }
     }
 }

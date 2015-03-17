@@ -20,24 +20,8 @@ public class GetMyCurrenciesTask extends AsyncTask<Void, Void, Void> {
             currency.updateAllOwnedCurrencies();
         }
         catch (WebServiceError wse) {
-            currencyFailure(wse);
+            TapApplication.handleFailures(wse);
         }
         return null;
-    }
-
-    /**
-     * Gets called when there's an error getting the currencies
-     * @param t has the error data
-     */
-    protected void currencyFailure(Throwable t){
-        try{
-            throw t;
-        }
-        catch(UserFriendlyError ufe){
-            TapApplication.errorToUser(ufe);
-        }
-        catch(Throwable catchall){
-            TapApplication.unknownFailure(t);
-        }
     }
 }

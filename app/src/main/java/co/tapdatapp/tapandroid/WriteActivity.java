@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.service.TapCloud;
 import co.tapdatapp.tapandroid.service.TapTag;
 import co.tapdatapp.tapandroid.service.TapYapa;
@@ -87,7 +86,7 @@ public class WriteActivity extends Activity {
 //                    Toast.makeText(WriteActivity.this, "lost it", Toast.LENGTH_LONG);
                     }
                     catch (JSONException je) {
-                        imageFailures(je);
+                        TapApplication.handleFailures(je);
                     }
                 }
             }
@@ -113,7 +112,7 @@ public class WriteActivity extends Activity {
                             mTapTag.myYappas().get(0).updateYapa(mAuthToken, mTapTag.getTagID());
                         }
                         catch (JSONException je) {
-                            imageFailures(je);
+                            TapApplication.handleFailures(je);
                         }
                     }
 
@@ -232,7 +231,7 @@ public class WriteActivity extends Activity {
                             myYappas.get(0).updateYapa(mAuthToken, mTapTag.getTagID());
                         }
                         catch (JSONException je) {
-                            imageFailures(je);
+                            TapApplication.handleFailures(je);
                         }
                     }
                     else {
@@ -255,7 +254,7 @@ public class WriteActivity extends Activity {
                                 myYappas.get(1).updateYapa(mAuthToken, mTapTag.getTagID());
                             }
                             catch (JSONException je) {
-                                imageFailures(je);
+                                TapApplication.handles(je);
                             }
                         }
                     }
@@ -490,22 +489,6 @@ public class WriteActivity extends Activity {
             }
         } catch (Exception e) {
             return false;
-        }
-    }
-
-    /**
-     * Called if there's an image-related error
-     * @param t contains information about the error
-     */
-    public void imageFailures(Throwable t){
-        try{
-            throw t;
-        }
-        catch(UserFriendlyError ufe){
-            TapApplication.errorToUser(ufe);
-        }
-        catch(Throwable catchall){
-            TapApplication.unknownFailure(t);
         }
     }
 }

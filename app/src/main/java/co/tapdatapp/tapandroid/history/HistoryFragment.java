@@ -17,9 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.GridView;
 
 import co.tapdatapp.tapandroid.R;
-import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
-import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
@@ -143,20 +141,4 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
         gridView.setAdapter(adapter);
         loaded = true;
     }
-
-    /**
-     * Called when the background sync job fails to do its work.
-     */
-    public void syncFailure(Throwable cause) {
-        try {
-            throw cause;
-        }
-        catch (UserFriendlyError ufe){
-            TapApplication.errorToUser(ufe);
-        }
-        catch(Throwable catchall) {
-            TapApplication.unknownFailure(cause);
-        }
-    }
-
 }

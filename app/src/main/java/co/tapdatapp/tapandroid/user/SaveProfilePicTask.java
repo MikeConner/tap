@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.Files;
 import co.tapdatapp.tapandroid.remotedata.RemoteStorage;
 import co.tapdatapp.tapandroid.remotedata.RemoteStorageDriver;
@@ -25,7 +26,6 @@ public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
 
     public interface Callback {
         void onProfilePicSaved(String id);
-        void onProfilePicSaveFailed(Throwable t);
     }
 
     private Callback callback;
@@ -83,7 +83,7 @@ public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
             callback.onProfilePicSaved(id);
         }
         else {
-            callback.onProfilePicSaveFailed(error);
+            TapApplication.handleFailures(error);
         }
     }
 

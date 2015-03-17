@@ -11,7 +11,6 @@ import android.widget.ImageView;
 
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
-import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 
 public class SetBalanceImageTask extends AsyncTask<Object, Void, Void> {
 
@@ -37,7 +36,7 @@ public class SetBalanceImageTask extends AsyncTask<Object, Void, Void> {
             );
         }
         catch (Throwable t) {
-            onSetBalanceImageFailure(t);
+            TapApplication.handleFailures(t);
         }
         return null;
     }
@@ -45,22 +44,6 @@ public class SetBalanceImageTask extends AsyncTask<Object, Void, Void> {
     protected void onPostExecute(Void v) {
         if (image != null) {
             view.setImageBitmap(image);
-        }
-    }
-
-    /**
-     * Called whenn the SetBalanceImageTask fails
-     * @param t has the error information
-     */
-    public void onSetBalanceImageFailure(Throwable t){
-        try {
-            throw t;
-        }
-        catch (UserFriendlyError ufe){
-            TapApplication.errorToUser(ufe);
-        }
-        catch (Throwable catchall){
-            TapApplication.unknownFailure(t);
         }
     }
 

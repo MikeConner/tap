@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 
 public class NewTagTask extends AsyncTask<NewTagTask.Callback, Void, Void> {
 
@@ -20,13 +21,6 @@ public class NewTagTask extends AsyncTask<NewTagTask.Callback, Void, Void> {
          * @param tag The created tag
          */
         void newTagReturned(TagCodec tag);
-
-        /**
-         * Called if any errors occur
-         *
-         * @param t Exception containing error details
-         */
-        void createTagFailure(Throwable t);
     }
 
     private boolean success;
@@ -57,7 +51,7 @@ public class NewTagTask extends AsyncTask<NewTagTask.Callback, Void, Void> {
             callback.newTagReturned(tag);
         }
         else {
-            callback.createTagFailure(error);
+            TapApplication.handleFailures(error);
         }
     }
 

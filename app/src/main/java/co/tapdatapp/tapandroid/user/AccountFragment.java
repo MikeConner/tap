@@ -22,7 +22,6 @@ import android.widget.Toast;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import co.tapdatapp.tapandroid.QRCode;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.currency.BalanceList;
@@ -30,7 +29,6 @@ import co.tapdatapp.tapandroid.currency.BalanceListAdapter;
 import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
-import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
 
@@ -136,23 +134,6 @@ implements View.OnClickListener,
         //noinspection ConstantConditions
         getView().findViewById(R.id.balances_progress_bar).setVisibility(View.GONE);
         balanceList.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Called when there's an error loading balances
-     * @param t has the information for the error.
-     */
-    @Override
-    public void onBalanceLoadFailure(Throwable t) {
-        try {
-            throw t;
-        }
-        catch (UserFriendlyError ufe) {
-            TapApplication.errorToUser(ufe);
-        }
-        catch (Throwable catchall) {
-            TapApplication.unknownFailure(t);
-        }
     }
 
     /**
@@ -353,16 +334,6 @@ implements View.OnClickListener,
     }
 
     /**
-     * Called if unable to save the profile picture
-     *
-     * @param t The exception that caused the failure
-     */
-    @Override
-    public void onProfilePicSaveFailed(Throwable t) {
-        TapApplication.unknownFailure(t);
-    }
-
-    /**
      * Load the profile image onto the view, fetching from the web if
      * necessary.
      */
@@ -390,7 +361,7 @@ implements View.OnClickListener,
         @Override
         protected void onPostExecute(Exception e) {
             if (e != null) {
-                TapApplication.unknownFailure(e);
+                TapApplication.handleFailures(e);
             }
             else {
                 profilePic.setImageBitmap(thumbnail);

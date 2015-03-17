@@ -73,19 +73,6 @@ public class YapaAudio extends Activity{
     public void onImageRetrieved(Bitmap image) {
         imageView.setImageBitmap(image);
     }
-
-    @Override
-    public void onImageRetrievalError(Throwable t) {
-        try {
-            throw t;
-        }
-        catch (UserFriendlyError ufe) {
-            TapApplication.errorToUser(ufe);
-        }
-        catch (Throwable t1) {
-            TapApplication.unknownFailure(t1);
-        }
-    }
     **/
 
     /**

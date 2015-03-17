@@ -7,7 +7,6 @@ package co.tapdatapp.tapandroid.history;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.ISO8601Format;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
@@ -52,7 +52,7 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
             historyFragment.postSyncDisplay();
         }
         else {
-            historyFragment.syncFailure(exception);
+            TapApplication.handleFailures(exception);
         }
     }
 

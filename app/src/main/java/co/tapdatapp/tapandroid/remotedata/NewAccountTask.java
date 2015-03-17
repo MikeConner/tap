@@ -33,7 +33,7 @@ extends AsyncTask<AccountStartActivity, Void, Throwable> {
     @Override
     protected void onPostExecute(Throwable t) {
         if (t != null) {
-            TapApplication.unknownFailure(t);
+            TapApplication.handleFailures(t);
         }
         else {
             callback.newAccountComplete();

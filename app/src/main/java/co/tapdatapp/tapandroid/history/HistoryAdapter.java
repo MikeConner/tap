@@ -20,7 +20,6 @@ import android.widget.TextView;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
-import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.localdata.TransactionDAO;
@@ -145,7 +144,7 @@ public class HistoryAdapter extends BaseAdapter {
                 imageBitmap = TapBitmap.fetchFromCacheOrWeb(transaction.getYapa_url());
             }
             catch (Exception e) {
-                imageFetchFailure(e);
+                TapApplication.handleFailures(e);
             }
             return null;
         }
@@ -161,22 +160,6 @@ public class HistoryAdapter extends BaseAdapter {
             }
             else {
                 // @TODO provide some sort of message to the user that the image can't be displayed
-            }
-        }
-
-        /**
-         * This will get called if the Image Fetch fails
-         * @param t contains information on the error
-         */
-        protected void imageFetchFailure(Throwable t){
-            try {
-                throw t;
-            }
-            catch(UserFriendlyError ufe){
-                TapApplication.errorToUser(ufe);
-            }
-            catch(Throwable catchall){
-                TapApplication.unknownFailure(t);
             }
         }
     }

@@ -11,7 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import co.tapdatapp.tapandroid.R;
-import co.tapdatapp.tapandroid.TapApplication;
 
 public class TagsFragment
 extends Fragment
@@ -60,15 +59,6 @@ implements View.OnClickListener,
         TagListAdapter adapter = new TagListAdapter();
         ListView tagList = (ListView)getView().findViewById(R.id.listViewTags);
         tagList.setAdapter(adapter);
-    }
-
-    /**
-     * Called when the tag sync fails
-     * @param t The cause of the failure
-     */
-    @Override
-    public void onTagSyncFailed(Throwable t) {
-        TapApplication.handleFailures(t);
     }
 
     /**

@@ -9,16 +9,14 @@ package co.tapdatapp.tapandroid.currency;
 
 import android.os.AsyncTask;
 
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 
 public class GetAllBalancesTask
 extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
 
     public interface Callback {
-        //this is called when the load is successful
         void onBalancesLoaded(BalanceList list);
-        //this is called when there is an error
-        void onBalanceLoadFailure(Throwable t);
     }
 
     private Callback callback;
@@ -49,7 +47,7 @@ extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
             callback.onBalancesLoaded(balanceList);
         }
         else{
-            callback.onBalanceLoadFailure(error);
+            TapApplication.handleFailures(error);
         }
     }
 }

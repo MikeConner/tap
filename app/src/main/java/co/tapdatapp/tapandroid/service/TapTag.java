@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
-import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
@@ -57,7 +56,7 @@ public class TapTag {
                 mYapa.setYapaID(output.getString("response"));
             }
             catch (Exception e) {
-                addYapaErrors(e);
+                TapApplication.handleFailures(e);
             }
         }
         else
@@ -67,7 +66,7 @@ public class TapTag {
                 //load yappa from web
             }
             catch (JSONException je) {
-                addYapaErrors(je);
+                TapApplication.handleFailures(je);
             }
         }
         mTapYapas.add(mYapa);
@@ -157,22 +156,6 @@ public class TapTag {
         addYapa(mAuthToken, new_yapa);
 
         return mTagID;
-    }
-
-    /**
-     * This is to handle any common errors if adding a yapa fails
-     * @param t contains data on the error
-     */
-    public void addYapaErrors(Throwable t){
-        try{
-            throw t;
-        }
-        catch (UserFriendlyError ufe){
-            TapApplication.errorToUser(ufe);
-        }
-        catch(Throwable catchall){
-            TapApplication.unknownFailure(t);
-        }
     }
 
     public void setTagID(String new_value){
