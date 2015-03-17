@@ -119,8 +119,8 @@ implements View.OnTouchListener {
                                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                                 if(curIndex < maxIndex) {
                                     //Animation
-                                    vf.setInAnimation(getActivity(), R.animator.in_from_right);
-                                    vf.setOutAnimation(getActivity(), R.animator.out_to_left);
+                                    vf.setInAnimation(getActivity(), R.anim.in_from_right);
+                                    vf.setOutAnimation(getActivity(), R.anim.out_to_left);
 
                                     vf.showNext();
                                     curIndex++;
@@ -129,8 +129,8 @@ implements View.OnTouchListener {
                                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                                 if(curIndex > 0) {
                                     //Animation
-                                    vf.setInAnimation(getActivity(), R.animator.in_from_left);
-                                    vf.setOutAnimation(getActivity(), R.animator.out_to_right);
+                                    vf.setInAnimation(getActivity(), R.anim.in_from_left);
+                                    vf.setOutAnimation(getActivity(), R.anim.out_to_right);
 
                                     vf.showPrevious();
                                     curIndex--;
