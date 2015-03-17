@@ -8,17 +8,23 @@ package co.tapdatapp.tapandroid.tags;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Tag;
 import co.tapdatapp.tapandroid.localdata.Yapa;
 
 public class SelectTagTypeActivity extends Activity {
 
+    private int[] currencyDropdownMap;
     private int selectedType = -1;
 
     @Override
@@ -69,9 +75,24 @@ public class SelectTagTypeActivity extends Activity {
      * enable it if the list is longer than 1
      */
     private void fillInCurrencies() {
-        Spinner s = (Spinner)findViewById(R.id.spinnerSelectCurrency);
-        MyCurrencyAdapter a = new MyCurrencyAdapter(this);
-        s.setAdapter(a);
+        CurrencyDAO dao = new CurrencyDAO();
+        LinkedHashMap<Integer, String> currencyList = dao.getAllOwnedCurrencies();
+        currencyDropdownMap = new int[currencyList.size()];
+        String[] currencyArray = new String[currencyList.size()];
+        int i = 0;
+        for (Integer id : currencyList.keySet()) {
+            currencyDropdownMap[i] = id;
+            currencyArray[i] = currencyList.get(id);
+            i++;
+        }
+        Log.d("WTF", Arrays.toString(currencyArray));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+            this,
+            android.R.layout.simple_spinner_item,
+            currencyArray
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ((Spinner)findViewById(R.id.spinnerSelectCurrency)).setAdapter(adapter);
     }
 
     /**
