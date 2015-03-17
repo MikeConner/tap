@@ -96,6 +96,14 @@ public class SelectTagTypeActivity extends Activity {
     }
 
     /**
+     * Convert the index in the currency spinner to a currency ID
+     */
+    private int getSelectedCurrencyId() {
+        int itemNumber = (int)((Spinner)findViewById(R.id.spinnerSelectCurrency)).getSelectedItemId();
+        return currencyDropdownMap[itemNumber];
+    }
+
+    /**
      * When the "CREATE NEW TAG" button is clicked, create a local
      * copy of the tag and proceed to the management view.
      *
@@ -109,9 +117,14 @@ public class SelectTagTypeActivity extends Activity {
         yapa.setThreshold(1);
         yapa.setSlug(UUID.randomUUID());
         yapa.setType(getTypeStringFromId());
-        tag.create(ManageTagActivity.NEW_TAG, "New Tag", new Yapa[]{yapa});
+        tag.create(
+            ManageTagActivity.NEW_TAG,
+            "New Tag",
+            getSelectedCurrencyId(),
+            new Yapa[]{yapa}
+        );
         Intent i = new Intent(this, ManageTagActivity.class);
-        i.putExtra(ManageTagActivity.MODE, ManageTagActivity.MODE_MODIFY);
+        i.putExtra(ManageTagActivity.MODE, ManageTagActivity.MODE_NEW);
         i.putExtra(ManageTagActivity.TAG_ID, ManageTagActivity.NEW_TAG);
         startActivity(i);
         finish();

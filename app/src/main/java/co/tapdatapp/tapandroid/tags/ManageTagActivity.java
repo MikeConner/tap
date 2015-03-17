@@ -40,17 +40,13 @@ implements YapaAdapter.OnChangeListener,
         setContentView(R.layout.activity_manage_tag);
         Intent intent = getIntent();
         int mode = intent.getIntExtra(MODE, 0);
+        if (mode == 0) {
+            throw new AssertionError("must provide a mode");
+        }
         needsSaved = mode == MODE_NEW;
         tag = new Tag();
-        if (mode == MODE_NEW) {
-            tag.remove(NEW_TAG);
-            tag.create(NEW_TAG, "New Tag", new Yapa[0]);
-            tag.moveTo(NEW_TAG);
-        }
-        else {
-            String tagId = intent.getStringExtra(TAG_ID);
-            tag.moveTo(tagId);
-        }
+        String tagId = intent.getStringExtra(TAG_ID);
+        tag.moveTo(tagId);
     }
 
     @Override
