@@ -7,6 +7,7 @@ package co.tapdatapp.tapandroid.tags;
 import android.os.AsyncTask;
 
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
@@ -19,8 +20,24 @@ public class GetMyCurrenciesTask extends AsyncTask<Void, Void, Void> {
             currency.updateAllOwnedCurrencies();
         }
         catch (WebServiceError wse) {
-            TapApplication.unknownFailure(wse);
+            currencyFailure(wse);
         }
         return null;
+    }
+
+    /**
+     * Gets called when there's an error getting the currencies
+     * @param t has the error data
+     */
+    protected void currencyFailure(Throwable t){
+        try{
+            throw t;
+        }
+        catch(UserFriendlyError ufe){
+            TapApplication.errorToUser(ufe);
+        }
+        catch(Throwable catchall){
+            TapApplication.unknownFailure(t);
+        }
     }
 }

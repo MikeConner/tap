@@ -12,6 +12,7 @@ import java.util.Map;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.WebResponse;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
@@ -72,7 +73,7 @@ public class TapUser {
                     return mtagMap;
                 }
                 else {
-                    TapApplication.unknownFailure(je);
+                    mappingErrors(je);
                 }
             }
             int length = jsonTags.length();
@@ -87,7 +88,7 @@ public class TapUser {
             throw new WebServiceError(je);
         }
         catch (Exception e) {
-            TapApplication.unknownFailure(e);
+            mappingErrors(e);
             throw new WebServiceError(e);
         }
     }
@@ -95,6 +96,22 @@ public class TapUser {
     public void setProfilePicFull(String new_value){
         mProfilePicFull  = new_value;
 
+    }
+
+    /**
+     * This gets called if something in the Map method fails
+     * @param t contains error data.
+     */
+    public void mappingErrors(Throwable t){
+        try{
+            throw t;
+        }
+        catch(UserFriendlyError ufe){
+            TapApplication.errorToUser(ufe);
+        }
+        catch(Throwable catchall){
+            TapApplication.unknownFailure(t);
+        }
     }
 
     public String getQR() {

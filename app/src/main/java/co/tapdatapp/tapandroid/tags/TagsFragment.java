@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.Tag;
 import co.tapdatapp.tapandroid.localdata.Yapa;
 
@@ -87,9 +88,21 @@ implements View.OnClickListener,
         tagList.setAdapter(adapter);
     }
 
+    /**
+     * Called when the tag sync fails
+     * @param t The cause of the failure
+     */
     @Override
     public void onTagSyncFailed(Throwable t) {
-        TapApplication.unknownFailure(t);
+        try{
+            throw t;
+        }
+        catch(UserFriendlyError ufe){
+            TapApplication.errorToUser(ufe);
+        }
+        catch(Throwable catchall) {
+            TapApplication.unknownFailure(t);
+        }
     }
 
     /**
