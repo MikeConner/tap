@@ -86,6 +86,10 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
                     transaction.getSlug()
                 );
                 startActivity(openYapa);
+                /**
+                 * Commented out until I find what I need, but this is the basic framework for transition animations
+                 * parentActivity.overridePendingTransition(*enter and exit transitions*);
+                 **/
             }
 
         });
