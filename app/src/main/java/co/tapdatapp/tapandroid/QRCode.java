@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class QRCode extends Activity implements TapBitmap.Callback {
@@ -33,9 +34,20 @@ public class QRCode extends Activity implements TapBitmap.Callback {
         ((ImageView)findViewById(R.id.bitQR)).setImageBitmap(image);
     }
 
-    // @TODO real error message
+    /**
+     * Now gets called when there's an error retrieving the image
+     * @param t The error
+     */
     @Override
     public void onImageRetrievalError(Throwable t) {
-        TapApplication.unknownFailure(t);
+        try{
+            throw t;
+        }
+        catch (UserFriendlyError ufe){
+            TapApplication.errorToUser(ufe);
+        }
+        catch (Throwable catchall) {
+            TapApplication.unknownFailure(t);
+        }
     }
 }

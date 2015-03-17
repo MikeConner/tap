@@ -13,6 +13,10 @@ import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
+/**
+ * I think I'm just going to completely re-do this class tomorrow. It doesn't work anyway.
+ */
+
 public class FullScreenImage extends Activity
 {
 
