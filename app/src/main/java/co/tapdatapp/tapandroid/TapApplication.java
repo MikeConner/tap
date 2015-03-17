@@ -79,6 +79,22 @@ public class TapApplication extends Application {
     }
 
     /**
+     * For typical failure handling cases. Does the most logical
+     * thing possible based on the failure class.
+     */
+    public static void handleFailures(Throwable t) {
+        try{
+            throw t;
+        }
+        catch(UserFriendlyError ufe){
+            TapApplication.errorToUser(ufe);
+        }
+        catch(Throwable catchall) {
+            TapApplication.unknownFailure(t);
+        }
+    }
+
+    /**
      * Call this method when a completely unexpected error (such as an
      * OOM or NPE) happens.
      *

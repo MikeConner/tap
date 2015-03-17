@@ -10,13 +10,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.UUID;
-
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
-import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
-import co.tapdatapp.tapandroid.localdata.Tag;
-import co.tapdatapp.tapandroid.localdata.Yapa;
 
 public class TagsFragment
 extends Fragment
@@ -39,28 +34,7 @@ implements View.OnClickListener,
         super.onResume();
         getView().findViewById(R.id.btnNewTag).setOnClickListener(this);
         ((ListView)getView().findViewById(R.id.listViewTags)).setOnItemClickListener(this);
-        // @TODO this is generating test data, replace with real data
-        generateTestTags();
-        //new SyncTagsTask().execute(this);
-    }
-
-    /**
-     * Generate dummy data for testing ... replace this as soon as the
-     * network stuff is sorted out
-     */
-    // @TODO remove this code when the rest is finished
-    private void generateTestTags() {
-        Tag t = new Tag();
-        t.removeAll();
-        for (int i = 0; i < 10; i++) {
-            Yapa yapa = new Yapa();
-            yapa.setTagId(ManageTagActivity.NEW_TAG);
-            yapa.setThreshold(1);
-            yapa.setSlug(UUID.randomUUID());
-            yapa.setType(Yapa.TYPE_TEXT);
-            t.create("ABC-DEF-000" + i, "Tag #" + i, new Yapa[]{yapa});
-        }
-        onTagsSynced();
+        new SyncTagsTask().execute(this);
     }
 
     /**
@@ -94,15 +68,7 @@ implements View.OnClickListener,
      */
     @Override
     public void onTagSyncFailed(Throwable t) {
-        try{
-            throw t;
-        }
-        catch(UserFriendlyError ufe){
-            TapApplication.errorToUser(ufe);
-        }
-        catch(Throwable catchall) {
-            TapApplication.unknownFailure(t);
-        }
+        TapApplication.handleFailures(t);
     }
 
     /**
