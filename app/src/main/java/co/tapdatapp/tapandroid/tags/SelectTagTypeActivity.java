@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Spinner;
 
 import java.util.UUID;
 
@@ -29,6 +30,7 @@ public class SelectTagTypeActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+        fillInCurrencies();
         setButtonStatus();
     }
 
@@ -53,13 +55,23 @@ public class SelectTagTypeActivity extends Activity {
     }
 
     /**
-     * enable/disable the create button based on whether all the
+     * Enable/disable the create button based on whether all the
      * information is provided
      */
     private void setButtonStatus() {
         findViewById(R.id.btnCreateTag).setEnabled(
             selectedType != -1
         );
+    }
+
+    /**
+     * Fill in the spinner with the list of available currencies and
+     * enable it if the list is longer than 1
+     */
+    private void fillInCurrencies() {
+        Spinner s = (Spinner)findViewById(R.id.spinnerSelectCurrency);
+        MyCurrencyAdapter a = new MyCurrencyAdapter(this);
+        s.setAdapter(a);
     }
 
     /**

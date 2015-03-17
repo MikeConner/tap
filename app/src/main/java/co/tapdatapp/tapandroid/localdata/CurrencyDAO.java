@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 
 import co.tapdatapp.tapandroid.R;
@@ -58,8 +59,10 @@ implements SingleTable {
     private String name;
     private String icon;
     private String symbol;
+    // @TODO make something check this to ensure it's not exceeded
     private int maxTap;
     private long lastUpdate;
+    private boolean owned;
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -191,6 +194,7 @@ implements SingleTable {
             icon = c.getString(1);
             symbol = c.getString(2);
             maxTap = c.getInt(3);
+            owned = c.getInt(4) == 1;
             lastUpdate = c.getLong(5);
         }
         finally {
@@ -223,6 +227,7 @@ implements SingleTable {
                 ob.icon = c.getString(2);
                 ob.symbol = c.getString(3);
                 ob.maxTap = c.getInt(4);
+                ob.owned = c.getInt(5) == 1;
                 ob.lastUpdate = c.getLong(6);
                 rv[i] = ob;
             }
@@ -425,4 +430,20 @@ implements SingleTable {
         return sb.toString();
     }
 
+    /**
+     * Return all currencies owned by this user (always includes
+     * bitcoin, see ensureLocalCurrencyDetails())
+     *
+     * Uses LinkedHashMap to ensure that the order is consistent
+     */
+    public LinkedHashMap<Integer, String> getAllOwnedCurrencies() {
+        LinkedHashMap<Integer, String> rv = new LinkedHashMap<>();
+        CurrencyDAO[] fullList = getAllByNameOrder();
+        for (CurrencyDAO one : fullList) {
+            if (one.owned) {
+                rv.put(one.currencyId, one.name);
+            }
+        }
+        return rv;
+    }
 }
