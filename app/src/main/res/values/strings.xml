@@ -55,5 +55,7 @@
     <string name="select_yapa_audio">Select Audio Yapa</string>
     <string name="select_yapa_coupon">Select Coupon Yapa</string>
     <string name="yapa_image_hint">Click to add an image</string>
+    <string name="file_access_problem">Could not access the selected data</string>
+    <string name="no_image_selected">No image was selected</string>
 
 </resources>

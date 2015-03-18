@@ -307,7 +307,7 @@ implements View.OnClickListener,
                     imageStream = getActivity().getContentResolver().openInputStream(data.getData());
                 }
                 catch (FileNotFoundException fnfe) {
-                    TapApplication.errorToUser("The selected file is unavailable");
+                    TapApplication.errorToUser(TapApplication.string(R.string.file_access_problem));
                     return;
                 }
                 new SaveProfilePicTask().execute(this, imageStream);
@@ -317,7 +317,7 @@ implements View.OnClickListener,
             }
         }
         else {
-            throw new AssertionError("Unknown activity result code: " + resultCode);
+            TapApplication.errorToUser(TapApplication.string(R.string.no_image_selected));
         }
     }
 
