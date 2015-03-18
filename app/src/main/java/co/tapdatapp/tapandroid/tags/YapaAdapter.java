@@ -18,14 +18,16 @@ import co.tapdatapp.tapandroid.localdata.Yapa;
 public class YapaAdapter extends BaseAdapter {
 
     private Yapa[] yapa;
+    private ManageTagActivity activity;
 
     /**
      * Constructor establishes adapter parameters
      *
-     * @param _tag Initialize with Yapa for this tag
+     * @param tag Initialize with Yapa for this tag
      */
-    public YapaAdapter(Tag _tag) {
-        yapa = _tag.getYapa();
+    public YapaAdapter(ManageTagActivity a, Tag tag) {
+        activity = a;
+        yapa = tag.getYapa();
     }
 
     @Override
@@ -67,7 +69,7 @@ public class YapaAdapter extends BaseAdapter {
                 );
             int viewType = getItemViewType(position);
             v = inflater.inflate(viewType, parent, false);
-            YapaLineItem.setTypeSpecificViewHolder(v, viewType);
+            YapaLineItem.setTypeSpecificViewHolder(activity, v, viewType);
         }
         ((YapaLineItem)v.getTag()).setValues(yapa[position]);
         return v;

@@ -14,17 +14,22 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.Files;
+import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.localdata.Tag;
 import co.tapdatapp.tapandroid.localdata.Yapa;
 
 public class ManageTagActivity
 extends Activity
 implements TextWatcher,
-           SaveTagToServerTask.Callback{
+           SaveTagToServerTask.Callback {
 
     public final static String MODE = "mode";
     public final static String TAG_ID = "tagId";
@@ -33,6 +38,7 @@ implements TextWatcher,
 
     private boolean needsSaved;
     private Tag tag = null;
+    private ImageYapaLineItem imageSelectedCallback;
 
     @Override
     public void onCreate(Bundle state) {
@@ -70,7 +76,7 @@ implements TextWatcher,
         if (tag.getTagId() != null) {
             tagName.setText(tag.getName());
             ListView yapaList = (ListView)findViewById(R.id.listYapa);
-            YapaAdapter adapter = new YapaAdapter(tag);
+            YapaAdapter adapter = new YapaAdapter(this, tag);
             yapaList.setAdapter(adapter);
         }
         tagName.addTextChangedListener(this);
@@ -173,4 +179,89 @@ implements TextWatcher,
     public void onTagSaveFailed(Throwable t) {
         TapApplication.handleFailures(t);
     }
+
+
+    /**
+     * When an external Activity is used to create or select a file
+     * (such as an image or a video) this gets the result, has to
+     * figure out how to handle it, and call the appropriate callback
+     * to the line item that started the whole thing.
+     *
+     * @param requestCode constants in YapaLineItem
+     * @param resultCode RESULT_OK or RESULT_CANCELLED per spec
+     * @param data data based on the Activity that was called
+     */
+    // @TODO I'm concerned that this is going to cause trouble running
+    // on the UI thread, as it's likely to be time-consuming, but it
+    // might be worth avoiding making it more complicated until it's
+    // proven to be necessary.
+    @SuppressWarnings("ThrowFromFinallyBlock")
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case YapaLineItem.SELECT_PICTURE :
+                if (resultCode == RESULT_OK) {
+                    InputStream imageStream;
+                    try {
+                        imageStream = getContentResolver().openInputStream(data.getData());
+                    }
+                    catch (FileNotFoundException fnfe) {
+                        TapApplication.errorToUser(TapApplication.string(R.string.file_access_problem));
+                        return;
+                    }
+                    String imageId = UUID.randomUUID().toString();
+                    AndroidCache cache = new AndroidCache();
+                    try {
+                        cache.put(imageId, "", Files.readAllBytes(imageStream));
+                    }
+                    catch (IOException ioe) {
+                        TapApplication.errorToUser(TapApplication.string(R.string.file_access_problem));
+                        return;
+                    }
+                    finally {
+                        if (imageStream != null) {
+                            try {
+                                imageStream.close();
+                            }
+                            catch (IOException ioe) {
+                                // An exception trying to close a file
+                                // opened read-only? Phone is probably
+                                // broken
+                                throw new AssertionError(ioe);
+                            }
+                        }
+                    }
+                    imageSelectedCallback.onImageSet(imageId, cache);
+                }
+                else {
+                    TapApplication.errorToUser(TapApplication.string(R.string.no_image_selected));
+                }
+                break;
+            default :
+                throw new AssertionError("Unknown request code " + requestCode);
+        }
+    }
+
+    /**
+     * This feels clunky to me, but I can't come up with a cleaner
+     * way to do it. When an image button is tapped to add a new image
+     * to an image yapa, the ImageYapaLineItem object calls this,
+     * passing itself. The reference to the passed object is saved as
+     * imageSelectedCallback. Then, when onActivityResult is called,
+     * it can send the Bitmap to the correct ImageYapaLineItem object
+     * to to be displayed.
+     *
+     * @param i the ImageYapaLineItem associated with the clicked button
+     */
+    public void setYapaImageSelectedCallback(ImageYapaLineItem i) {
+        imageSelectedCallback = i;
+        Intent newImage = new Intent();
+        newImage.setType("image/*");
+        newImage.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(
+            Intent.createChooser(newImage, "Select Image"),
+            YapaLineItem.SELECT_PICTURE
+        );
+    }
+
 }

@@ -119,7 +119,7 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
         return rv;
     }
 
-    private static Bitmap fetchFromCache(String url, AndroidCache cache) {
+    public static Bitmap fetchFromCache(String url, AndroidCache cache) {
         Bitmap rv;
         byte[] data;
         data = cache.get(url);

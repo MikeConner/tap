@@ -15,8 +15,8 @@ public class TextYapaLineItem extends YapaLineItem {
 
     private EditText etYapaContent;
 
-    protected TextYapaLineItem(View v) {
-        super(v);
+    protected TextYapaLineItem(ManageTagActivity a, View v) {
+        super(a, v);
         etYapaContent = (EditText)v.findViewById(R.id.etYapaContent);
         etYapaContent.addTextChangedListener(this);
     }

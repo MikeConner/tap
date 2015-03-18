@@ -16,12 +16,16 @@ import co.tapdatapp.tapandroid.localdata.Yapa;
 
 abstract public class YapaLineItem
 implements SeekBar.OnSeekBarChangeListener, TextWatcher {
+
+    public static final int SELECT_PICTURE = 1;
+
     // Fields that apply to all Yapa types
     private final EditText etYapaDescription;
     private final TextView tvYapaThreshold;
     private final SeekBar seekYapaThreshold;
 
     protected Yapa yapa;
+    protected ManageTagActivity activity;
 
     /**
      * Instantiate and return the appropriate class to match the type
@@ -29,19 +33,22 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
      *
      * @param v The view that will display the Yapa
      * @param viewLayout The ID of the layout
-     * @return A descendent of YapaLineItem appropriate to the yapa type
+     * @return A descendant of YapaLineItem appropriate to the yapa type
      */
     public static YapaLineItem
-    setTypeSpecificViewHolder(View v, int viewLayout) {
+    setTypeSpecificViewHolder(ManageTagActivity a, View v, int viewLayout) {
         switch (viewLayout) {
             case R.layout.line_item_yapa_text :
-                return new TextYapaLineItem(v);
+                return new TextYapaLineItem(a, v);
+            case R.layout.line_item_yapa_image :
+                return new ImageYapaLineItem(a, v);
             default :
                 throw new AssertionError("Unknown Yapa view type " + v.getId());
         }
     }
 
-    protected YapaLineItem(View v) {
+    protected YapaLineItem(ManageTagActivity a, View v) {
+        activity = a;
         etYapaDescription = (EditText)v.findViewById(R.id.etYapaText);
         etYapaDescription.addTextChangedListener(this);
         tvYapaThreshold = (TextView)v.findViewById(R.id.tvYapaThreshold);
