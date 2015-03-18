@@ -50,7 +50,7 @@ public class BaseDAO {
                          String where,
                          String[] whereArgs
     ) {
-        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(column, newValue);
         return db.update(table, values, where, whereArgs);
