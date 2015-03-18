@@ -19,18 +19,22 @@ public class Yapa extends BaseDAO implements SingleTable {
     private final static String TAG_ID = "tag_id";
     private final static String THRESHOLD = "threshold";
     private final static String CONTENT = "content";
+    private final static String DESCRIPTION = "description";
     private final static String IMAGE = "image";
     private final static String THUMB = "thumb";
     private final static String SLUG = "slug";
     private final static String TYPE = "type";
+    private final static String URI = "uri";
 
     private String tagId;
     private String content;
+    private String description;
     private int threshold;
     private String thumb;
     private String image;
     private UUID slug;
     private String type;
+    private String uri;
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -38,11 +42,13 @@ public class Yapa extends BaseDAO implements SingleTable {
             "CREATE TABLE " + TABLE + " ( " +
                 TAG_ID + " VARCHAR(255) NOT NULL, " +
                 THRESHOLD + " INT NOT NULL, " +
-                CONTENT + " VARCHAR(255), " +
+                CONTENT + " TEXT, " +
+                DESCRIPTION + " VARCHAR(255), " +
                 IMAGE + " VARCHAR(255), " +
                 THUMB + " VARCHAR(255), " +
                 SLUG + " VARCHAR(36) NOT NULL UNIQUE, " +
                 TYPE + " VARCHAR(50) NOT NULL," +
+                URI + " VARCHAR(255), " +
                 "PRIMARY KEY(" + TAG_ID + "," + THRESHOLD + ") " +
                 ")"
         );
@@ -65,16 +71,45 @@ public class Yapa extends BaseDAO implements SingleTable {
         if (slug == null) {
             throw new NullPointerException("Attempt to create with null slug");
         }
+        if (type == null || type.isEmpty()) {
+            throw new NullPointerException("Attempt to create with no type");
+        }
         SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(TAG_ID, tagId);
         values.put(THRESHOLD, threshold);
         values.put(CONTENT, content);
+        values.put(DESCRIPTION, description);
         values.put(IMAGE, image);
         values.put(THUMB, thumb);
         values.put(SLUG, slug.toString());
         values.put(TYPE, type);
+        values.put(URI, uri);
         db.insert(TABLE, null, values);
+    }
+
+    /**
+     * Update the database with the information in this object
+     */
+    public void update() {
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(THRESHOLD, threshold);
+        values.put(CONTENT, content);
+        values.put(DESCRIPTION, description);
+        values.put(IMAGE, image);
+        values.put(THUMB, thumb);
+        values.put(TYPE, type);
+        values.put(URI, uri);
+        int updated = db.update(
+            TABLE,
+            values,
+            SLUG + " = ?",
+            new String[] { slug.toString() }
+        );
+        if (updated != 1) {
+            throw new AssertionError("Updated " + updated + " rows");
+        }
     }
 
     /**
@@ -126,7 +161,10 @@ public class Yapa extends BaseDAO implements SingleTable {
             SQLiteDatabase db = getDatabaseHelper().getReadableDatabase();
             c = db.query(
                 TABLE,
-                new String[]{THRESHOLD, CONTENT, IMAGE, THUMB, SLUG, TYPE},
+                new String[] {
+                    THRESHOLD, CONTENT, IMAGE, THUMB, SLUG, TYPE, URI,
+                    DESCRIPTION
+                },
                 TAG_ID + " = ?",
                 new String[]{id},
                 null, null,
@@ -143,6 +181,8 @@ public class Yapa extends BaseDAO implements SingleTable {
                 y.setSlug(UUID.fromString(c.getString(4)));
                 y.setTagId(id);
                 y.setType(c.getString(5));
+                y.uri = c.getString(6);
+                y.description = c.getString(7);
                 rv[r] = y;
             }
             return rv;
@@ -151,10 +191,6 @@ public class Yapa extends BaseDAO implements SingleTable {
                 c.close();
             }
         }
-    }
-
-    public String getTagId() {
-        return tagId;
     }
 
     public void setTagId(String tagId) {
@@ -193,22 +229,41 @@ public class Yapa extends BaseDAO implements SingleTable {
         this.image = image;
     }
 
+    public void setUri(String to) {
+        uri = to;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    /**
+     * Generate a new, random UUID/slug
+     */
+    public void generateSlug() {
+        slug = UUID.randomUUID();
+    }
+
     public void setSlug(UUID slug) {
         this.slug = slug;
     }
 
-    public UUID getSlug() {
-        if (slug == null) {
-            throw new NullPointerException("null slug");
-        }
-        return slug;
-    }
-
     public String getType() {
+        if (type == null || type.isEmpty()) {
+            throw new AssertionError("Invalid emtpy Yapa type");
+        }
         return type;
     }
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String to) {
+        description = to;
     }
 }

@@ -8,7 +8,6 @@ package co.tapdatapp.tapandroid.tags;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -85,7 +84,6 @@ public class SelectTagTypeActivity extends Activity {
             currencyArray[i] = currencyList.get(id);
             i++;
         }
-        Log.d("WTF", Arrays.toString(currencyArray));
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
             this,
             android.R.layout.simple_spinner_item,
@@ -111,21 +109,21 @@ public class SelectTagTypeActivity extends Activity {
      */
     public void clickCreateTag(View v) {
         Tag tag = new Tag();
-        tag.remove(ManageTagActivity.NEW_TAG);
+        tag.remove(Tag.NEW_TAG_ID);
         Yapa yapa = new Yapa();
-        yapa.setTagId(ManageTagActivity.NEW_TAG);
+        yapa.setTagId(Tag.NEW_TAG_ID);
         yapa.setThreshold(1);
         yapa.setSlug(UUID.randomUUID());
         yapa.setType(getTypeStringFromId());
         tag.create(
-            ManageTagActivity.NEW_TAG,
+            Tag.NEW_TAG_ID,
             "New Tag",
             getSelectedCurrencyId(),
             new Yapa[]{yapa}
         );
         Intent i = new Intent(this, ManageTagActivity.class);
         i.putExtra(ManageTagActivity.MODE, ManageTagActivity.MODE_NEW);
-        i.putExtra(ManageTagActivity.TAG_ID, ManageTagActivity.NEW_TAG);
+        i.putExtra(ManageTagActivity.TAG_ID, Tag.NEW_TAG_ID);
         startActivity(i);
         finish();
     }

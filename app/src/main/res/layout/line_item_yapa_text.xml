@@ -11,7 +11,7 @@
 
         <EditText
             android:id="@+id/etYapaContent"
-            android:hint="@string/hint_yapa_text"
+            android:hint="@string/hint_yapa_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

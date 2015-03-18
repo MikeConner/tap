@@ -17,19 +17,19 @@ import android.widget.ListView;
 import java.util.UUID;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.Tag;
 import co.tapdatapp.tapandroid.localdata.Yapa;
 
 public class ManageTagActivity
 extends Activity
-implements YapaAdapter.OnChangeListener,
-           TextWatcher {
+implements TextWatcher,
+           SaveTagToServerTask.Callback{
 
     public final static String MODE = "mode";
     public final static String TAG_ID = "tagId";
     public final static int MODE_NEW = 1;
     public final static int MODE_MODIFY = 2;
-    public final static String NEW_TAG = "=NEW=TAG=";
 
     private boolean needsSaved;
     private Tag tag = null;
@@ -59,7 +59,7 @@ implements YapaAdapter.OnChangeListener,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        tag.remove(NEW_TAG);
+        tag.remove(Tag.NEW_TAG_ID);
     }
 
     /**
@@ -70,7 +70,7 @@ implements YapaAdapter.OnChangeListener,
         if (tag.getTagId() != null) {
             tagName.setText(tag.getName());
             ListView yapaList = (ListView)findViewById(R.id.listYapa);
-            YapaAdapter adapter = new YapaAdapter(this, tag.getTagId());
+            YapaAdapter adapter = new YapaAdapter(tag);
             yapaList.setAdapter(adapter);
         }
         tagName.addTextChangedListener(this);
@@ -88,7 +88,6 @@ implements YapaAdapter.OnChangeListener,
      * modified flag to true and updates any interface widgets as
      * needed.
      */
-    @Override
     public void onChange() {
         needsSaved = true;
         setActionButtonState();
@@ -139,5 +138,39 @@ implements YapaAdapter.OnChangeListener,
         y.setSlug(UUID.randomUUID());
         y.create();
         fillIn();
+    }
+
+    /**
+     * Called when the SAVE button is tapped to save to the server
+     */
+    public void onClickSave(View view) {
+        saveUI();
+        new SaveTagToServerTask().execute(this, tag.getTagId());
+    }
+
+    /**
+     * Take what's in the UI and save it to SQLite
+     */
+    private void saveUI() {
+        tag.setName(((EditText)findViewById(R.id.etTagName)).getText().toString());
+        tag.update();
+    }
+
+    /**
+     * Callback when updating the tag on the server is complete
+     *
+     * @param TagId Tag ID of what was saved, will be different if a new tag was created
+     */
+    @Override
+    public void onTagSaved(String TagId) {
+        // @TODO ... um ... what do do here?
+    }
+
+    /**
+     * Called if saving the tag to the server fails
+     */
+    @Override
+    public void onTagSaveFailed(Throwable t) {
+        TapApplication.handleFailures(t);
     }
 }

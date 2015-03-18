@@ -1,3 +1,7 @@
+/**
+ * Create a new tag on the server
+ */
+
 package co.tapdatapp.tapandroid.remotedata;
 
 import android.os.AsyncTask;
@@ -72,7 +76,7 @@ public class NewTagTask extends AsyncTask<NewTagTask.Callback, Void, Void> {
             new JSONObject()
         );
         TagCodec rv = new TagCodec();
-        rv.parse(response);
+        rv.parseGetTagResponse(response);
         return rv;
     }
 

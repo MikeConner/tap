@@ -4,10 +4,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import co.tapdatapp.tapandroid.remotedata.TagCodec;
-import co.tapdatapp.tapandroid.remotedata.YapaCodec;
-
 public class Tag  extends BaseDAO implements SingleTable {
+
+    public final static String NEW_TAG_ID = "=NEW=TAG=";
 
     private final static String TABLE = "tags";
     private final static String TAG_ID = "tag_id";
@@ -117,24 +116,23 @@ public class Tag  extends BaseDAO implements SingleTable {
     }
 
     /**
-     * Returns a new Tag object
-     *
-     * @param id The tag ID of the object to return
-     * @return A Tag object pointing to id
+     * Update the SQL with the data in this object. Does NOT update
+     * or otherwise modify dependent Yapa.
      */
-    public Tag getTag(String id) {
-        Tag tag = new Tag();
-        tag.moveTo(id);
-        return tag;
-    }
-
-    /**
-     * Create a tag in the database from the data in the provided codec
-     *
-     * @param codec TagCodec object with parse() having been called
-     */
-    public void create(TagCodec codec, YapaCodec yapa) {
-        //create(codec.getId(), codec.getName(), yapa.getYapaList());
+    public void update() {
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(CURRENCY, currencyId);
+        values.put(NAME, name);
+        int updated = db.update(
+            TABLE,
+            values,
+            TAG_ID + " = ?",
+            new String[] { tagId }
+        );
+        if (updated != 1) {
+            throw new AssertionError("Updated " + updated + " rows");
+        }
     }
 
     /**
@@ -143,18 +141,18 @@ public class Tag  extends BaseDAO implements SingleTable {
      * @param id Tag ID
      * @param name Name of the tag
      * @param currency Currency ID of the tag
-     * @param yapa List of Yapa associated with this tag
+     * @param y List of Yapa associated with this tag
      */
     public void
-    create(String id, String name, int currency, Yapa[] yapa) {
+    create(String id, String name, int currency, Yapa[] y) {
         SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(TAG_ID, id);
         values.put(NAME, name);
         values.put(CURRENCY, currency);
         db.insert(TABLE, null, values);
-        for (Yapa y : yapa) {
-            y.create(id);
+        for (Yapa oneYapa : y) {
+            oneYapa.create(id);
         }
     }
 
@@ -162,8 +160,8 @@ public class Tag  extends BaseDAO implements SingleTable {
      * Remove all records
      */
     public void removeAll() {
-        Yapa yapa = new Yapa();
-        yapa.removeAll();
+        Yapa y = new Yapa();
+        y.removeAll();
         SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
         db.delete(TABLE, null, null);
     }
@@ -172,8 +170,8 @@ public class Tag  extends BaseDAO implements SingleTable {
      * Remove all records associated with the passed ID
      */
     public void remove(String tagId) {
-        Yapa yapa = new Yapa();
-        yapa.remove(tagId);
+        Yapa y = new Yapa();
+        y.remove(tagId);
         SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
         db.delete(TABLE, TAG_ID + " = ?", new String[] {tagId});
     }
@@ -201,6 +199,10 @@ public class Tag  extends BaseDAO implements SingleTable {
         this.name = name;
     }
 
+    public int getCurrencyId() {
+        return currencyId;
+    }
+
     /**
      * Lazy load yapa objects for this tag
      *
@@ -211,5 +213,9 @@ public class Tag  extends BaseDAO implements SingleTable {
             yapa = new Yapa().getAllForTag(tagId);
         }
         return yapa;
+    }
+
+    public void setYapa(Yapa[] y) {
+        yapa = y;
     }
 }

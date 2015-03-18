@@ -6,20 +6,17 @@ package co.tapdatapp.tapandroid.tags;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.Tag;
+import co.tapdatapp.tapandroid.localdata.Yapa;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.TagCodec;
-import co.tapdatapp.tapandroid.remotedata.WebResponse;
 import co.tapdatapp.tapandroid.remotedata.YapaCodec;
 
 public class SyncTagsTask extends AsyncTask<SyncTagsTask.Callback, Void, Void> {
@@ -61,11 +58,10 @@ public class SyncTagsTask extends AsyncTask<SyncTagsTask.Callback, Void, Void> {
 
     public void syncAllTags() throws Exception {
         HttpHelper httpHelper = new HttpHelper();
-        WebResponse wr = httpHelper.HttpGet(
+        JSONObject output = httpHelper.HttpGetJSON(
             httpHelper.getFullUrl(R.string.ENDPOINT_TAGS),
             new Bundle()
         );
-        JSONObject output = wr.getJSON();
         JSONArray tags;
         try {
             tags = output.getJSONArray("response");
@@ -85,19 +81,15 @@ public class SyncTagsTask extends AsyncTask<SyncTagsTask.Callback, Void, Void> {
         Tag tag = new Tag();
         tag.removeAll();
         for (int i = 0; i < length; i++) {
-            tagCodec.parse(tags.getJSONObject(i));
-            HashMap<String, String> idMap = new HashMap<>();
-            idMap.put("tag_id", tagCodec.getId());
-            JSONObject response = httpHelper.HttpGetJSON(
-                httpHelper.getFullUrl(
-                    R.string.ENDPOINT_YAPA,
-                    "",
-                    idMap),
-                new Bundle()
-            );
-            Log.d("YAPA_JSON", response.toString());
-            yapaCodec.parse(response);
-            tag.create(tagCodec, yapaCodec);
+            JSONObject tagJSON = tags.getJSONObject(i);
+            tag = tagCodec.parseGetTagResponse(tagJSON);
+            JSONArray yapas = tagJSON.getJSONArray("payloads");
+            Yapa[] yapaList = new Yapa[yapas.length()];
+            for (int y = 0; y < yapas.length(); y++) {
+                yapaList[y] = yapaCodec.parse(tag.getTagId(), yapas.getJSONObject(y));
+                yapaList[y].generateSlug();
+            }
+            tag.create(tag.getTagId(), tag.getName(), tag.getCurrencyId(), yapaList);
         }
     }
 

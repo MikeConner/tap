@@ -34,7 +34,7 @@
     <string name="redeem_entry">Enter a redemption code here</string>
     <string name="successful_redeem">Redeemed for</string>
     <string name="currency_changed">Active currency set to</string>
-    <string name="tap_encouragement">Getting Ready to TAP TAP TAP</string>
+    <string name="tap_encouragement">Getting Ready to TAP</string>
     <string name="armed_graphic">Armed</string>
     <string name="amount">Amount</string>
     <string name="tag_icon_description">Tag Icon</string>
@@ -43,7 +43,8 @@
     <string name="update">UPDATE</string>
     <string name="write">WRITE</string>
     <string name="add_yapa">ADD NEW YAPA</string>
-    <string name="hint_yapa_text">Enter some text to show your thanks</string>
+    <string name="hint_yapa_text">Say something show your thanks</string>
+    <string name="hint_yapa_content">Enter a written reward</string>
     <string name="unknown_error">An unknown error has occurred.</string>
     <string name="select_yapa_type">Select Yapa Type:</string>
     <string name="select_currency">Select Currency:</string>
