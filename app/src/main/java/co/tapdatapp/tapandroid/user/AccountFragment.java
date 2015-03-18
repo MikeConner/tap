@@ -297,8 +297,6 @@ implements View.OnClickListener,
     /**
      * Receives results from any startActivityForResult() calls, so
      * far only receives results for the user selecting a profile pic.
-     *
-     * This actually only works if you select from the gallery.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
