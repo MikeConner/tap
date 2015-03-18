@@ -67,7 +67,7 @@ public class Transactions {
           t.payload_content_type = "image";
           t.amount = oneT.amount;
           t.dollar_amount = 0;
-          t.comment = oneT.payload.text;
+          t.comment = oneT.payload.description;
           t.other_user_thumb = ImageBuilder.getURL(100, 100, "otherUserThumb");
           t.other_user_nickname = "Other User Nickname";
           rv.add(t);

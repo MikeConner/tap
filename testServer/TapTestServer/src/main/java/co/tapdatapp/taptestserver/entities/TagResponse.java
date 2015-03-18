@@ -1,27 +1,19 @@
 
 package co.tapdatapp.taptestserver.entities;
 
-import java.util.Random;
-import java.util.UUID;
+import co.tapdatapp.taptestserver.controllers.NfcTag;
 
 public class TagResponse {
-  public final String tag_id;
-  public final int id;
+  public int system_id;
+  public String id;
   public String name;
+  public final PayloadObject[] payloads;
   
-  private final String authId;
-  
-  /**
-   * Creates a random one
-   */
-  public TagResponse(String auth) {
-    authId = auth;
-    tag_id = UUID.randomUUID().toString().replace("-", "").substring(5, 10);
-    name = "Test tag";
-    id = new Random().nextInt(999999);
+  public TagResponse(NfcTag t) {
+    payloads = t.payloads;
+    system_id = 0;
+    id = t.friendlyId();
+    name = t.name;
   }
   
-  public boolean belongsTo(String auth) {
-    return authId.equals(auth);
-  }
 }

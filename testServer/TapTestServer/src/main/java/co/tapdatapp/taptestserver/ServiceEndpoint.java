@@ -11,17 +11,15 @@ import co.tapdatapp.taptestserver.controllers.Transactions;
 import co.tapdatapp.taptestserver.entities.CreateAccountRequest;
 import co.tapdatapp.taptestserver.dev.Monitor;
 import co.tapdatapp.taptestserver.entities.NewTransactionRequest;
-import co.tapdatapp.taptestserver.entities.PayloadCreateRequest;
-import co.tapdatapp.taptestserver.entities.PayloadObject;
 import co.tapdatapp.taptestserver.entities.RedeemVoucherResponse;
 import co.tapdatapp.taptestserver.entities.ResponseResponse;
+import co.tapdatapp.taptestserver.entities.TagDataRequest;
 import co.tapdatapp.taptestserver.entities.TagResponse;
 import co.tapdatapp.taptestserver.entities.TransactionCreatedResponse;
 import co.tapdatapp.taptestserver.entities.TransactionResponse;
 import co.tapdatapp.taptestserver.entities.UpdateAccountRequest;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -110,53 +108,31 @@ public class ServiceEndpoint {
       return Response.status(401).build();
     }
     ResponseResponse response = accounts.getBalances(authId);
-    Monitor.trace(
-      "balance inquiry on auth_id " + authId + " returns " +
-      response.response.toString()
-    );
+    Monitor.trace("balance inquiry on auth_id " + authId);
     return Response.ok(response).build();
   }
   
-  /**
-   * Return list of all tags owned by this user
-   * 
-   * @param authId authentication token
-   * @return Array of tag objects
-   */
+  private final static String TAGS_PATH = "nfc_tags.json";
+  
   @GET
-  @Path("nfc_tags.json")
+  @Path(TAGS_PATH)
   @Produces({ MediaType.APPLICATION_JSON })
   public Response getUserTags(@QueryParam(AUTH_TOKEN) String authId) {
     TagResponse[] response = accounts.getUserTags(authId);
     Monitor.trace("Got " + response.length + " tags for " + authId);
     return Response.ok(new ResponseResponse(response)).build();
   }
-  
-  /**
-   * Create a new tag
-   * 
-   * @param authId
-   * @return 
-   */
+
   @POST
-  @Path("nfc_tags.json")
+  @Path(TAGS_PATH)
+  @Consumes({ MediaType.APPLICATION_JSON })
   @Produces({ MediaType.APPLICATION_JSON })
-  public Response createTag(@QueryParam(AUTH_TOKEN) String authId) {
-    TagResponse tag = accounts.newTag(authId);
-    Monitor.trace(authId + " created new tag " + tag.tag_id);
-    return Response.ok(new ResponseResponse(tag)).build();
-  }
-  
-  @POST
-  @Path("payloads.json")
-  @Produces({ MediaType.APPLICATION_JSON })
-  public Response createPayload(
-    PayloadCreateRequest payload,
+  public Response createNewTag(
+    TagDataRequest request,
     @QueryParam(AUTH_TOKEN) String authId
   ) {
-    PayloadObject createdPayload = accounts.newPayload(authId, payload);
-    Monitor.trace(authId + " created payload " + createdPayload.getSlug());
-    return Response.ok(new ResponseResponse(createdPayload.getSlug())).build();
+    Monitor.trace("Saving new tag " + request.tag.name);
+    return Response.ok(new ResponseResponse(accounts.newTag(authId, request))).build();
   }
   
   @POST
