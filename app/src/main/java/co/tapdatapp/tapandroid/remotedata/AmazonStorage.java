@@ -4,8 +4,6 @@
 
 package co.tapdatapp.tapandroid.remotedata;
 
-import android.util.Log;
-
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -22,8 +20,6 @@ public class AmazonStorage implements RemoteStorageDriver {
     private static AmazonS3Client s3Client;
 
     static {
-        Log.d("AWS", TapApplication.string(R.string.AWS_ACCESS_ID));
-        Log.d("AWS", TapApplication.string(R.string.AWS_SECRET_KEY));
         s3Client = new AmazonS3Client(
             new BasicAWSCredentials(
                 TapApplication.string(R.string.AWS_ACCESS_ID),
