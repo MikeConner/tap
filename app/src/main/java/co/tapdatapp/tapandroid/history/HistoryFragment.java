@@ -84,7 +84,7 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
                     transaction.getSlug()
                 );
                 startActivity(openYapa);
-                //parentActivity.overridePendingTransition(R.anim.zoom_in, R.anim.fade_out);
+                parentActivity.overridePendingTransition(R.anim.zoom_in, R.anim.fade_out);
             }
 
         });
