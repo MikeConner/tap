@@ -1,11 +1,5 @@
 /**
  * Effectively a "viewholder" class, but with embellishments.
- *
- * Because yapa can be of many types and different types require
- * different behaviors, this class will function to abstract away
- * those differences and allow other code to make assumptions about
- * the Yapa that will simplify it, while allowing this class to do
- * any sanity checking necessary to keep things together.
  */
 
 package co.tapdatapp.tapandroid.tags;
@@ -20,14 +14,34 @@ import android.widget.TextView;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.localdata.Yapa;
 
-public class YapaLineItem
+abstract public class YapaLineItem
 implements SeekBar.OnSeekBarChangeListener, TextWatcher {
-    private EditText etYapaDescription;
-    private TextView tvYapaThreshold;
-    private SeekBar seekYapaThreshold;
-    private Yapa yapa;
+    // Fields that apply to all Yapa types
+    private final EditText etYapaDescription;
+    private final TextView tvYapaThreshold;
+    private final SeekBar seekYapaThreshold;
 
-    public YapaLineItem(View v) {
+    protected Yapa yapa;
+
+    /**
+     * Instantiate and return the appropriate class to match the type
+     * of layout/type of yapa being displayed
+     *
+     * @param v The view that will display the Yapa
+     * @param viewLayout The ID of the layout
+     * @return A descendent of YapaLineItem appropriate to the yapa type
+     */
+    public static YapaLineItem
+    setTypeSpecificViewHolder(View v, int viewLayout) {
+        switch (viewLayout) {
+            case R.layout.line_item_yapa_text :
+                return new TextYapaLineItem(v);
+            default :
+                throw new AssertionError("Unknown Yapa view type " + v.getId());
+        }
+    }
+
+    protected YapaLineItem(View v) {
         etYapaDescription = (EditText)v.findViewById(R.id.etYapaText);
         etYapaDescription.addTextChangedListener(this);
         tvYapaThreshold = (TextView)v.findViewById(R.id.tvYapaThreshold);
@@ -49,16 +63,16 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
         setThreshold(y.getThreshold());
     }
 
-    public void setDescription(String to) {
+    private void setDescription(String to) {
         etYapaDescription.setText(to);
     }
 
-    public void setThreshold(int to) {
+    private void setThreshold(int to) {
         seekYapaThreshold.setProgress(to);
         tvYapaThreshold.setText(Integer.toString(to));
     }
 
-    public int getThreshold() {
+    private int getThreshold() {
         String value = tvYapaThreshold.getText().toString();
         if (value == null || value.isEmpty()) {
             return 0;
@@ -108,7 +122,7 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
     /**
      * Update the SQL Yapa record with the data from the view
      */
-    private void updateYapaRecord() {
+    protected void updateYapaRecord() {
         yapa.setThreshold(getThreshold());
         yapa.setDescription(etYapaDescription.getText().toString());
         yapa.update();

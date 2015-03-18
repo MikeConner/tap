@@ -65,16 +65,11 @@ public class YapaAdapter extends BaseAdapter {
                 (LayoutInflater) TapApplication.get().getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE
                 );
-            v = inflater.inflate(
-                getItemViewType(position),
-                parent,
-                false
-            );
-            new YapaLineItem(v);
+            int viewType = getItemViewType(position);
+            v = inflater.inflate(viewType, parent, false);
+            YapaLineItem.setTypeSpecificViewHolder(v, viewType);
         }
-        Yapa y = yapa[position];
-        YapaLineItem vh = (YapaLineItem)v.getTag();
-        vh.setValues(y);
+        ((YapaLineItem)v.getTag()).setValues(yapa[position]);
         return v;
     }
 
