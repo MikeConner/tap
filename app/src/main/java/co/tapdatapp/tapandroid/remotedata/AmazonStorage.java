@@ -43,4 +43,20 @@ public class AmazonStorage implements RemoteStorageDriver {
         s3Client.putObject(por);
         return s3Client.getResourceUrl(bucket, key);
     }
+
+    @Override
+    public void overWrite(String url, byte[] data) {
+        String[] pieces = url.split("/");
+        String key = pieces[pieces.length - 1];
+        ObjectMetadata metaData = new ObjectMetadata();
+        metaData.setContentLength(data.length);
+        String bucket = TapApplication.string(R.string.AWS_BUCKET);
+        PutObjectRequest por = new PutObjectRequest(
+            bucket,
+            key,
+            new ByteArrayInputStream(data),
+            metaData
+        );
+        s3Client.putObject(por);
+    }
 }

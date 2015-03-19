@@ -12,4 +12,12 @@ public interface RemoteStorageDriver {
      * @return URL to access the data
      */
     String store(byte[] data) throws Exception;
+
+    /**
+     * Overwrite the data with the provided data
+     *
+     * @param url Where the data is stored
+     * @param data The new data
+     */
+    void overWrite(String url, byte[] data) throws Exception;
 }

@@ -45,4 +45,17 @@ public class DevStorage implements RemoteStorageDriver {
             throw new WebServiceError(r);
         }
     }
+
+    @Override
+    public void overWrite(String url, byte[] data)
+    throws IOException, WebServiceError {
+        WebResponse r = httpHelper.HttpPut(
+            putUrl + "/" + url,
+            new Bundle(),
+            data
+        );
+        if (!r.isOK()) {
+            throw new WebServiceError(r);
+        }
+    }
 }

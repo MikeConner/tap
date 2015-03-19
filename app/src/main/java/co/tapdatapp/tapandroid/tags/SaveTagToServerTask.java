@@ -7,16 +7,18 @@ package co.tapdatapp.tapandroid.tags;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.util.UUID;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.localdata.Tag;
+import co.tapdatapp.tapandroid.localdata.Yapa;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+import co.tapdatapp.tapandroid.remotedata.RemoteStorage;
+import co.tapdatapp.tapandroid.remotedata.RemoteStorageDriver;
 import co.tapdatapp.tapandroid.remotedata.TagCodec;
-import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
 public class SaveTagToServerTask
 extends AsyncTask<Object, Void, String> {
@@ -28,6 +30,7 @@ extends AsyncTask<Object, Void, String> {
 
     private Callback callback;
     private Throwable error;
+    private AndroidCache cache;
 
     @Override
     protected String doInBackground(Object... params) {
@@ -60,8 +63,8 @@ extends AsyncTask<Object, Void, String> {
     /**
      * Actually do the heavy lifting of saving the tag
      */
-    public String saveTag(Tag t)
-    throws IOException, JSONException, WebServiceError {
+    public String saveTag(Tag t) throws Exception {
+        saveAllYapaImages(t);
         TagCodec codec = new TagCodec();
         HttpHelper helper = new HttpHelper();
         if (Tag.NEW_TAG_ID.equals(t.getTagId())) {
@@ -84,5 +87,49 @@ extends AsyncTask<Object, Void, String> {
             );
         }
         return t.getTagId();
+    }
+
+    /**
+     * Save all the images in all the Yapa in the passed Tag to
+     * network storage and update the URLs if any of them changed
+     * as a result.
+     */
+    public void saveAllYapaImages(Tag t) throws Exception {
+        Yapa[] list = t.getYapa();
+        cache = new AndroidCache();
+        for (Yapa y : list) {
+            y.setImage(saveImage(y.getImage()));
+            y.setThumb(saveImage(y.getThumb()));
+        }
+    }
+
+    /**
+     * Either create or update the data on remote storage, based on
+     * whether the name is a URL or a UUID.
+     *
+     * @param name UUID for unsaved item, URL for item to be updated
+     * @return The URL of the item as saved
+     */
+    public String saveImage(String name) throws Exception {
+        if (name != null && !name.isEmpty()) {
+            RemoteStorageDriver storage = RemoteStorage.getDriver();
+            byte[] data = cache.get(name);
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                UUID.fromString(name);
+                // If the name is successfully parsed as a UUID, then
+                // it's temporarily stored in the local cache
+                return storage.store(data);
+            }
+            catch (IllegalArgumentException iae) {
+                // If we're unable to parse it as a UUID, then it
+                // must be a URL where the data is already stored
+                storage.overWrite(name, data);
+                return name;
+            }
+        }
+        else {
+            return name;
+        }
     }
 }

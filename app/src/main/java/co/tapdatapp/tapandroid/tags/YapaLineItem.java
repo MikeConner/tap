@@ -47,6 +47,11 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
         }
     }
 
+    /**
+     * Constructor sets pointers to all objects in the view. Should
+     * be overridden by individual yapa types so they can set
+     * pointers to their type-specific fields.
+     */
     protected YapaLineItem(ManageTagActivity a, View v) {
         activity = a;
         etYapaDescription = (EditText)v.findViewById(R.id.etYapaText);
@@ -64,21 +69,29 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
         v.setTag(this);
     }
 
-    public void setValues(Yapa y) {
+    /**
+     * Set the display values from the passed object. This should
+     * be overridden by the classes that implement the individual
+     * Yapa types so they can set additional values as needed.
+     */
+    protected void setValues(Yapa y) {
         yapa = y;
-        setDescription(y.getContent());
+        etYapaDescription.setText(y.getContent());
         setThreshold(y.getThreshold());
     }
 
-    private void setDescription(String to) {
-        etYapaDescription.setText(to);
-    }
-
+    /**
+     * Set the threshold on both the slider than the text
+     */
     private void setThreshold(int to) {
         seekYapaThreshold.setProgress(to);
         tvYapaThreshold.setText(Integer.toString(to));
     }
 
+    /**
+     * Return the threshold (minimum value necessary to earn this
+     * reward) or 0 if there's no threshold
+     */
     private int getThreshold() {
         String value = tvYapaThreshold.getText().toString();
         if (value == null || value.isEmpty()) {
