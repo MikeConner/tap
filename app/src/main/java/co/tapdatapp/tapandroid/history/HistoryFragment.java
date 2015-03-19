@@ -7,9 +7,12 @@ package co.tapdatapp.tapandroid.history;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,6 +31,15 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
     private GridView gridView;
     private boolean loaded = false;
 
+    //Animation variables
+    private float touchX = 0;
+    private float touchY = 0;
+    private float halfY;
+    private float thirtyX;
+    private float sixtyX;
+    private int rowNum;
+    private int columnNum;
+
     public HistoryFragment() {
         // Required empty public constructor
     }
@@ -35,8 +47,18 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history, container, false);
+        View view = inflater.inflate(R.layout.fragment_history, container, false);
+        Display display = parentActivity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
+        halfY = width/2;
+        thirtyX = height/3;
+        sixtyX = thirtyX*2;
+
+        return view;
     }
 
     /**
@@ -64,14 +86,38 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
         gridView =
             (GridView)parentActivity.findViewById(R.id.history_grid_view);
 
+        /**
+         * This is to calculate the location of the grid item that was clicked to determine which
+         * animation to use
+         */
+        gridView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    touchY = event.getY();
+                    touchX = event.getX();
+
+                    if (touchY <= halfY) {
+                        columnNum = 1;
+                    } else {
+                        columnNum = 2;
+                    }
+
+                    if (touchX <= thirtyX) {
+                        rowNum = 1;
+                    } else if (touchX >= sixtyX) {
+                        rowNum = 3;
+                    } else {
+                        rowNum = 2;
+                    }
+                }
+                return false;
+            }
+        });
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /**
-                 * openYapa is currently set to null so that, in the future, different things will
-                 * happen depending on the type of yapa. Also currently operating under the assumption that
-                 * Yapas currently can only be images. More cases will be added later.
-                 */
 
                 Transaction transaction = new Transaction();
                 transaction.moveToByOrder(position);
@@ -80,12 +126,30 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
                     new YapaDisplay().getDisplayClass(transaction)
                 );
                 openYapa.putExtra(
-                    YapaDisplay.TRANSACTION_ID,
-                    transaction.getSlug()
+                        YapaDisplay.TRANSACTION_ID,
+                        transaction.getSlug()
                 );
                 startActivity(openYapa);
-                //Need to change this so that it originates from the correct location.
-                //parentActivity.overridePendingTransition(R.anim.zoom_in, R.anim.fade_out);
+
+                if(rowNum == 1 && columnNum == 1){
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_1x1,R.anim.fade_out);
+                }
+                else if(rowNum == 2 && columnNum ==1){
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_2x1,R.anim.fade_out);
+                }
+                else if(rowNum == 3 && columnNum ==1){
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_3x1,R.anim.fade_out);
+                }
+                else if(rowNum == 1 && columnNum ==2){
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_1x2,R.anim.fade_out);
+                }
+                else if(rowNum == 2 && columnNum ==2){
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_2x2,R.anim.fade_out);
+                }
+                else {
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_3x2,R.anim.fade_out);
+                }
+
             }
 
         });
