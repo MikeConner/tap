@@ -34,9 +34,9 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
     //Animation variables
     private float touchX = 0;
     private float touchY = 0;
-    private float halfY;
-    private float thirtyX;
-    private float sixtyX;
+    private float halfX;
+    private float thirtyY;
+    private float sixtyY;
     private int rowNum;
     private int columnNum;
 
@@ -54,9 +54,9 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
         int width = size.x;
         int height = size.y;
 
-        halfY = width/2;
-        thirtyX = height/3;
-        sixtyX = thirtyX*2;
+        halfX = width/2;
+        thirtyY = height/3;
+        sixtyY = thirtyY*2;
 
         return view;
     }
@@ -97,15 +97,15 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
                     touchY = event.getY();
                     touchX = event.getX();
 
-                    if (touchY <= halfY) {
+                    if (touchX <= halfX) {
                         columnNum = 1;
                     } else {
                         columnNum = 2;
                     }
 
-                    if (touchX <= thirtyX) {
+                    if (touchY <= thirtyY) {
                         rowNum = 1;
-                    } else if (touchX >= sixtyX) {
+                    } else if (touchY >= sixtyY) {
                         rowNum = 3;
                     } else {
                         rowNum = 2;
