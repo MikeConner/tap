@@ -22,6 +22,13 @@ public class Data {
     return rv;
   }
   
+  public StoreResponse update(String id, byte[] in) {
+    StoreResponse rv = new StoreResponse();
+    rv.id = id;
+    data.put(rv.id, in);
+    return rv;
+  }
+  
   public byte[] fetch(String id) {
     return data.get(id);
   }

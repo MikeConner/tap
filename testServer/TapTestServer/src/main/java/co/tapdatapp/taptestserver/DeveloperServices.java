@@ -62,6 +62,13 @@ public class DeveloperServices {
     return Response.ok(data.storeNew(body)).build();
   }
   
+  @PUT
+  @Path("store/{id}")
+  public Response store(byte[] body, @PathParam("id") String id) {
+    Monitor.trace("Updating data");
+    return Response.ok(data.update(id, body)).build();
+  }
+  
   @GET
   @Path("file/{id}")
   @Produces({ MediaType.APPLICATION_OCTET_STREAM })
