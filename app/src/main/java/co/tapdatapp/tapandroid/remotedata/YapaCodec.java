@@ -49,7 +49,7 @@ public class YapaCodec {
             JSONObject y = new JSONObject();
             y.put("threshold", item.getThreshold());
             y.put("content_type", item.getType());
-            y.put("description", item.getDescription());
+            y.put("description", "Desc" + item.getDescription());
             y.put("content", item.getContent());
             y.put("payload_image", item.getImage());
             y.put("payload_thumb", item.getThumb());

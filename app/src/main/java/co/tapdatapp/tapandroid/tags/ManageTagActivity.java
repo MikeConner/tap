@@ -6,13 +6,23 @@
 package co.tapdatapp.tapandroid.tags;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.tech.Ndef;
+import android.nfc.tech.NdefFormatable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -35,6 +45,12 @@ implements TextWatcher,
     public final static String TAG_ID = "tagId";
     public final static int MODE_NEW = 1;
     public final static int MODE_MODIFY = 2;
+
+
+    private NfcAdapter mNfcAdapter;
+    private PendingIntent mNfcPendingIntent;
+    boolean mWriteMode = false;
+
 
     private boolean needsSaved;
     private Tag tag = null;
@@ -262,6 +278,104 @@ implements TextWatcher,
             Intent.createChooser(newImage, "Select Image"),
             YapaLineItem.SELECT_PICTURE
         );
+    }
+
+
+
+
+
+
+
+
+
+
+    //NFC TAG STUFF
+    public void startWrite (View view){
+
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        mNfcPendingIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, ManageTagActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+
+        enableTagWriteMode();
+
+        new AlertDialog.Builder(ManageTagActivity.this).setTitle("Touch tag to write")
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        disableTagWriteMode();
+                    }
+
+                }).create().show();
+
+
+        //  Intent i = new Intent(this, WriteActivity.class);
+        //  startActivity(i);
+
+    }
+    private void enableTagWriteMode() {
+        mWriteMode = true;
+        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+        IntentFilter[] mWriteTagFilters = new IntentFilter[] { tagDetected };
+        mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent, mWriteTagFilters, null);
+    }
+    private void disableTagWriteMode() {
+        mWriteMode = false;
+        mNfcAdapter.disableForegroundDispatch(this);
+    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        // Tag writing mode
+        if (mWriteMode && NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
+            android.nfc.Tag detectedTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            // Get ID from local storage
+            // write ID to tag
+            String strMime = "tapdat/performer";
+            String strID = tag.getTagId();
+            NdefRecord record = NdefRecord.createMime( strMime, strID.getBytes());
+            NdefMessage message = new NdefMessage(new NdefRecord[] { record });
+            if (writeDaTag(message, detectedTag)) {
+                Toast.makeText(this, "Success: Wrote placeid to nfc tag", Toast.LENGTH_LONG)
+                        .show();
+            }
+        }
+    }
+    public boolean writeDaTag(NdefMessage message, android.nfc.Tag tag) {
+        int size = message.toByteArray().length;
+        try {
+            Ndef ndef = Ndef.get(tag);
+            if (ndef != null) {
+                ndef.connect();
+                if (!ndef.isWritable()) {
+                    Toast.makeText(getApplicationContext(),
+                            "Error: tag not writable",
+                            Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                if (ndef.getMaxSize() < size) {
+                    Toast.makeText(getApplicationContext(),
+                            "Error: tag too small",
+                            Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                ndef.writeNdefMessage(message);
+                return true;
+            } else {
+                NdefFormatable format = NdefFormatable.get(tag);
+                if (format != null) {
+                    try {
+                        format.connect();
+                        format.format(message);
+                        return true;
+                    } catch (IOException e) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

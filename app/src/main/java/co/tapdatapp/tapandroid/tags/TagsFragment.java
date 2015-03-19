@@ -57,6 +57,8 @@ implements View.OnClickListener,
     @Override
     public void onTagsSynced() {
         TagListAdapter adapter = new TagListAdapter();
+
+        // This is throwing a null pointer exception... At random times.  Is this object always available?
         ListView tagList = (ListView)getView().findViewById(R.id.listViewTags);
         tagList.setAdapter(adapter);
     }
