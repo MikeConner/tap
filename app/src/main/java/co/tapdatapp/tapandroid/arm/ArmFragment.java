@@ -50,6 +50,7 @@ implements View.OnTouchListener {
         cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
         LinearLayout swipeLayout = (LinearLayout) view.findViewById(R.id.clickable_area);
         LinearLayout scrollLayout = (LinearLayout) view.findViewById(R.id.scrollable_area);
+        //TODO: this is causing a crash - null pointer exception for cvp when going in to history screen
         cvp.setPagingEnabled(false);
         /**
          * This re-enables scrolling between pages

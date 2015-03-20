@@ -95,10 +95,12 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
         IntentFilter tapFilter = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
         try {
-            tapFilter.addDataType("tapdat/performer");    /* Handles all MIME based dispatches.
-                                       You should specify only the ones that you need. */
+            tapFilter.addDataScheme("http");
+            tapFilter.addDataAuthority("tapnology.co",null);
+            //tapFilter.addDataType("tapdat/performer");    /* Handles all MIME based dispatches.
+              //                         You should specify only the ones that you need. */
         }
-        catch (IntentFilter.MalformedMimeTypeException  e) {
+        catch (Exception  e) {
             throw new RuntimeException("fail", e);
         }
         mNdefExchangeFilters = new IntentFilter[] { tapFilter };
@@ -300,6 +302,8 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
                 for (int b = 0; b<payload.length; b++) { // skip SOH
                     result += (char) payload[b];
                 }
+                result = result.replaceAll("tapnology.co/tag/", "");
+                result = result.replaceAll("\u0003", "");
 
                 if (mArmed){
                     outgoingTransaction = new TapTxn();

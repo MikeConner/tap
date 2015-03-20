@@ -329,9 +329,10 @@ implements TextWatcher,
             android.nfc.Tag detectedTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             // Get ID from local storage
             // write ID to tag
-            String strMime = "tapdat/performer";
+            //String strMime = "tapdat/performer";
             String strID = tag.getTagId();
-            NdefRecord record = NdefRecord.createMime( strMime, strID.getBytes());
+            //NdefRecord record = NdefRecord.createMime( strMime, strID.getBytes());
+            NdefRecord record = NdefRecord.createUri("http://tapnology.co/tag/" + strID);
             NdefMessage message = new NdefMessage(new NdefRecord[] { record });
             if (writeDaTag(message, detectedTag)) {
                 Toast.makeText(this, "Success: Wrote placeid to nfc tag", Toast.LENGTH_LONG)
