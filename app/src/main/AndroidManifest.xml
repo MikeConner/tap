@@ -35,7 +35,7 @@
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
                 <data android:scheme="http"
-                    android:host="*tapnology.co"
+                    android:host="tapnology.co"
                 />
 
                 <category android:name="android.intent.category.DEFAULT" />

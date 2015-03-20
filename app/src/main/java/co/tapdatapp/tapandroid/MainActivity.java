@@ -302,7 +302,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
                 for (int b = 0; b<payload.length; b++) { // skip SOH
                     result += (char) payload[b];
                 }
-                result = result.replaceAll("tapnology.co/tag/", "");
+                result = result.replaceAll("tapnology.co/nfc_tags/", "");
                 result = result.replaceAll("\u0003", "");
 
                 if (mArmed){
