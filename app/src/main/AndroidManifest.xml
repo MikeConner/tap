@@ -47,12 +47,18 @@
         </activity>
         <activity android:name=".AccountStartActivity" >
         </activity>
-        <activity android:name=".yapa.YapaImage"/>
-        <activity android:name=".yapa.YapaUrl"/>
-        <activity android:name=".yapa.YapaText"/>
-        <activity android:name=".yapa.YapaCoupon"/>
-        <activity android:name=".yapa.YapaAudio"/>
-        <activity android:name=".yapa.YapaVideo"/>
+        <activity android:name=".yapa.YapaImage"
+                  android:noHistory="true"/>
+        <activity android:name=".yapa.YapaUrl"
+                  android:noHistory="true"/>
+        <activity android:name=".yapa.YapaText"
+                  android:noHistory="true"/>
+        <activity android:name=".yapa.YapaCoupon"
+                  android:noHistory="true"/>
+        <activity android:name=".yapa.YapaAudio"
+                  android:noHistory="true"/>
+        <activity android:name=".yapa.YapaVideo"
+                  android:noHistory="true"/>
         <activity android:name=".user.QRCode"/>
         <activity android:name=".tags.ManageTagActivity"/>
         <activity android:name=".tags.SelectTagTypeActivity"/>

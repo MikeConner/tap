@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import co.tapdatapp.tapandroid.MainActivity;
@@ -22,6 +23,7 @@ public class YapaImage extends Activity implements TapBitmap.Callback {
     private boolean isImageFitToScreen = false;
     private ImageView imageView;
     private boolean forceReturnToArmScreen = false;
+    private ScheduledFuture futureTask;
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -72,7 +74,7 @@ public class YapaImage extends Activity implements TapBitmap.Callback {
                     onBackPressed();
                 }
             };
-            YapaDisplay.delayWorker.schedule(task, showTime, TimeUnit.SECONDS);
+            futureTask = YapaDisplay.delayWorker.schedule(task, showTime, TimeUnit.SECONDS);
         }
     }
 
@@ -92,8 +94,10 @@ public class YapaImage extends Activity implements TapBitmap.Callback {
     @Override
     public void onBackPressed() {
         if (forceReturnToArmScreen) {
+            futureTask.cancel(true);
             Intent startMain = new Intent(this, MainActivity.class);
             startActivity(startMain);
+            finish();
         }
         else {
             finish();

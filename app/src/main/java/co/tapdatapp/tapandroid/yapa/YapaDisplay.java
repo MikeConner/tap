@@ -41,6 +41,12 @@ public class YapaDisplay {
                 return res.getDrawable(R.drawable.yapa_link);
             case Yapa.TYPE_TEXT :
                 return res.getDrawable(R.drawable._yapa_text);
+            case Yapa.TYPE_COUPON :
+                return res.getDrawable(R.drawable._yapa_coupon);
+            case Yapa.TYPE_AUDIO :
+                return res.getDrawable(R.drawable.audio_yapa_icon);
+            case Yapa.TYPE_VIDEO :
+                return res.getDrawable(R.drawable.video_yapa_icon);
             default :
                 throw new AssertionError("Unknown Yapa type " + t.getContentType());
         }
