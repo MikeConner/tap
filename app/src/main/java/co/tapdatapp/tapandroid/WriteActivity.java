@@ -65,8 +65,6 @@ public class WriteActivity extends Activity {
     public void onResume(){
         super.onResume();
         EditText edName = (EditText) findViewById(R.id.edTagName);
-        CustomViewPager cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
-        cvp.setPagingEnabled(true);
         if (mTapTag.getTagName().equals("null")){
             edName.setText("Name Your Tag");
 
