@@ -39,7 +39,7 @@
                     tools:ignore="HardcodedText"
                     android:layout_below="@+id/profile_picture"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="5dp" />
+                    android:layout_marginTop="2dp" />
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
