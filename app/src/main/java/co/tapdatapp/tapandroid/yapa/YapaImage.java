@@ -40,12 +40,13 @@ public class YapaImage extends Activity implements TapBitmap.Callback {
                     isImageFitToScreen=false;
                     imageView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
                     imageView.setAdjustViewBounds(true);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER   );
                     fullButton.setVisibility(View.VISIBLE);
                 }
                 else {
                     isImageFitToScreen=true;
                     imageView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
-                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                     fullButton.setVisibility(View.GONE);
                 }
             }

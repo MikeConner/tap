@@ -132,6 +132,7 @@ implements View.OnClickListener,
         balanceList.setAdapter(adapter);
         // This will never be called with a null view
         //noinspection ConstantConditions
+        //TODO: this is throwing an error if going directly to history
         getView().findViewById(R.id.balances_progress_bar).setVisibility(View.GONE);
         balanceList.setVisibility(View.VISIBLE);
     }
