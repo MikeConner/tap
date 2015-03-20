@@ -115,24 +115,14 @@ implements TextWatcher,
         setActionButtonState();
     }
 
-    private CharSequence tempName;
-
-    /**
-     * Required by TextWatcher
-     */
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        tempName = s;
+        // do nothing
     }
 
-    /**
-     * Required by TextWatcher
-     */
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (!s.equals(tempName)) {
-            onChange();
-        }
+        // Do nothing
     }
 
     /**
@@ -140,9 +130,7 @@ implements TextWatcher,
      */
     @Override
     public void afterTextChanged(Editable s) {
-        if (!s.equals(tempName)) {
-            onChange();
-        }
+        onChange();
     }
 
     /**
@@ -160,12 +148,14 @@ implements TextWatcher,
         y.setSlug(UUID.randomUUID());
         y.create();
         fillIn();
+        onChange();
     }
 
     /**
      * Called when the SAVE button is tapped to save to the server
      */
     public void onClickSave(View view) {
+        findViewById(R.id.btnWriteTag).setEnabled(false);
         saveUI();
         new SaveTagToServerTask().execute(this, tag.getTagId());
     }
@@ -185,7 +175,10 @@ implements TextWatcher,
      */
     @Override
     public void onTagSaved(String TagId) {
-        // @TODO ... um ... what do do here?
+        needsSaved = false;
+        setActionButtonState();
+        Toast t = Toast.makeText(this, R.string.tag_was_saved, Toast.LENGTH_LONG);
+        t.show();
     }
 
     /**

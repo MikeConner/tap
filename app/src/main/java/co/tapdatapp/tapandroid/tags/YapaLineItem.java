@@ -138,7 +138,6 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
         // Do nothing here
     }
 
-
     /**
      * Update the SQL Yapa record with the data from the view
      */
@@ -146,6 +145,7 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
         yapa.setThreshold(getThreshold());
         yapa.setDescription(etYapaDescription.getText().toString());
         yapa.update();
+        activity.onChange();
     }
 
     @Override
