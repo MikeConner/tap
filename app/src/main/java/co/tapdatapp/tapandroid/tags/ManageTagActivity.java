@@ -325,7 +325,7 @@ implements TextWatcher,
             //String strMime = "tapdat/performer";
             String strID = tag.getTagId();
             //NdefRecord record = NdefRecord.createMime( strMime, strID.getBytes());
-            NdefRecord record = NdefRecord.createUri("http://tapnology.co/tag/" + strID);
+            NdefRecord record = NdefRecord.createUri("http://tapnology.co/nfc_tags/" + strID);
             NdefMessage message = new NdefMessage(new NdefRecord[] { record });
             if (writeDaTag(message, detectedTag)) {
                 Toast.makeText(this, "Success: Wrote placeid to nfc tag", Toast.LENGTH_LONG)
