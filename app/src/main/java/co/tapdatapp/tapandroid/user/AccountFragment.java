@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -61,7 +62,7 @@ implements View.OnClickListener,
 
         View view = getView();
 
-        CustomViewPager cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
+        final CustomViewPager cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
         cvp.setPagingEnabled(true);
         nickname = (TextView)view.findViewById(R.id.etNickName);
         profilePic = (ImageView) view.findViewById(R.id.profile_picture);
@@ -83,6 +84,13 @@ implements View.OnClickListener,
         view.findViewById(R.id.edit_nickname).setOnClickListener(this);
         nickname.setOnClickListener(this);
         email.setOnClickListener(this);
+        view.findViewById(R.id.account_layout).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                cvp.setPagingEnabled(true);
+                return false;
+            }
+        });
 
         balanceList = (ListView)view.findViewById(R.id.balances_list);
         balanceList.setOnItemClickListener(this);
