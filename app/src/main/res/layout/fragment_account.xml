@@ -62,6 +62,7 @@
         <Button
             style="@style/AppTheme.Load_Buttons"
             android:text="@string/button_load_code"
+            android:fontFamily="sans-serif-thin"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:id="@+id/btn_Load_Code"
@@ -77,6 +78,7 @@
         <Button
             style="@style/AppTheme.Load_Buttons"
             android:text="@string/button_load_bitcoin"
+            android:fontFamily="sans-serif-thin"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:id="@+id/btn_bitcoin_load"

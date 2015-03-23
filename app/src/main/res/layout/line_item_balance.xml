@@ -3,9 +3,10 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-    <LinearLayout android:orientation="horizontal"
+    <RelativeLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent">
 
@@ -14,16 +15,34 @@
             android:id="@+id/balance_line_item_icon"
             android:contentDescription="@string/currency_icon_description"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_centerVertical="true" />
 
         <TextView
             android:id="@+id/balance_line_item_balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:textSize="28sp"
-            android:textStyle="bold"
-            android:background="@color/white"/>
+            android:fontFamily="sans-serif-thin"
+            android:background="@color/white"
+            android:layout_toEndOf="@+id/balance_line_item_icon"
+            android:layout_centerVertical="true" />
+        
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:textSize="34sp"
+            android:textColor="@color/white"
+            android:id="@+id/withdraw_bitcoin_button"
+            android:background="@color/dark_gray"
+            android:fontFamily="sans-serif-thin"
+            android:text="@string/withdraw_button_text"
+            android:visibility="gone"
+            android:layout_alignTop="@+id/balance_line_item_icon"
+            android:layout_alignParentEnd="true" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </android.support.v7.widget.CardView>

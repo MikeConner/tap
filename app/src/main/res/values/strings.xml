@@ -58,5 +58,6 @@
     <string name="file_access_problem">Could not access the selected data</string>
     <string name="no_image_selected">No image was selected</string>
     <string name="tag_was_saved">Tag and all its Yapa have been saved</string>
+    <string name="withdraw_button_text">W</string>
 
 </resources>
