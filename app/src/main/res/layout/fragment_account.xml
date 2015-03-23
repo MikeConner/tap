@@ -11,90 +11,77 @@
     <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_weight="1.20">
-        <TextView
-            android:layout_width="230dp"
-            android:layout_height="250dp"
-            android:background="@color/white"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/profile_picture_backsplash"
-            android:layout_marginTop="5dp" />
+        android:layout_height="wrap_content">
+
         <ImageView
-            android:layout_width="150dp"
+            android:layout_width="match_parent"
             android:layout_height="150dp"
             android:id="@+id/profile_picture"
-            android:src="@drawable/brienne"
-            android:scaleType="fitCenter"
-            android:layout_alignTop="@+id/profile_picture_backsplash"
+            android:scaleType="centerCrop"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp" />
+            android:background="@color/dark_gray" />
                 <TextView
-                    android:textSize="26sp"
+                    android:textSize="30sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="angry helicopter"
+                    android:textColor="@color/white"
                     android:id="@+id/etNickName"
                     android:layout_gravity="start"
                     tools:ignore="HardcodedText"
-                    android:layout_below="@+id/profile_picture"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="2dp" />
+                    android:layout_above="@+id/etEmail"
+                    android:layout_alignParentStart="true" />
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:id="@+id/edit_nickname"
+                    android:id="@+id/edit_indicator"
                     android:src="@drawable/edit_account_icon"
-                    android:layout_alignEnd="@+id/profile_picture_backsplash"
-                    android:layout_alignBottom="@+id/etNickName"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:text="random@random.com"
+                    android:textColor="@color/white"
                     android:id="@+id/etEmail"
                     android:layout_gravity="start"
                     tools:ignore="HardcodedText"
-                    android:layout_marginBottom="15dp"
-                    android:layout_below="@+id/etNickName"
-                    android:layout_centerHorizontal="true" />
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:id="@+id/edit_email"
-                    android:src="@drawable/edit_account_icon"
-                    android:layout_alignBottom="@+id/etEmail"
-                    android:layout_alignEnd="@+id/profile_picture_backsplash"
-                    android:layout_marginBottom="2dp" />
+                    android:layout_alignBottom="@+id/profile_picture"
+                    android:layout_alignEnd="@+id/etNickName"
+                    android:layout_alignParentLeft="true" />
     </RelativeLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
         android:orientation="horizontal"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:weightSum="1">
 
         <Button
-            style="@style/AppTheme.Button"
-            android:layout_margin="5dp"
+            style="@style/AppTheme.Load_Buttons"
             android:text="@string/button_load_code"
-            android:layout_width="145dp"
-            android:layout_height="40dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:id="@+id/btn_Load_Code"
-            android:layout_gravity="center_horizontal"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:layout_weight=".495" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".01"
+            android:background="@color/dark_gray"/>
 
         <Button
-            style="@style/AppTheme.Button"
-            android:layout_margin="5dp"
+            style="@style/AppTheme.Load_Buttons"
             android:text="@string/button_load_bitcoin"
-            android:layout_width="145dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:id="@+id/btn_bitcoin_load"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:layout_weight=".495" />
 
     </LinearLayout>
 
@@ -105,10 +92,6 @@
         android:layout_height="100dp"
         />
 
-    <Space
-        android:layout_height="10dp"
-        android:layout_width="match_parent"/>
-
     <ListView
         android:id="@+id/balances_list"
         android:visibility="gone"
@@ -117,16 +100,6 @@
         android:layout_weight="1"
         android:scrollbars="none">
     </ListView>
-
-    <Button
-        android:enabled="false"
-        style="@style/AppTheme.Withdraw_Button"
-        android:layout_margin="5dp"
-        android:text="@string/button_withdraw"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
 </LinearLayout>
 

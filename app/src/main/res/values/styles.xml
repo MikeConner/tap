@@ -17,6 +17,14 @@
         <item name="android:textSize">24sp</item>
     </style>
 
+    <style name="AppTheme.Load_Buttons">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/load_button_selector</item>
+        <item name="android:textColor">@color/load_button_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
     <style name="AppTheme.Withdraw_Button">
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/button_selector_withdraw</item>

@@ -80,8 +80,6 @@ implements View.OnClickListener,
         }
         view.findViewById(R.id.btn_Load_Code).setOnClickListener(this);
         view.findViewById(R.id.btn_bitcoin_load).setOnClickListener(this);
-        view.findViewById(R.id.edit_email).setOnClickListener(this);
-        view.findViewById(R.id.edit_nickname).setOnClickListener(this);
         nickname.setOnClickListener(this);
         email.setOnClickListener(this);
         view.findViewById(R.id.account_layout).setOnTouchListener(new View.OnTouchListener() {
@@ -164,12 +162,6 @@ implements View.OnClickListener,
                 newImage.setType("image/*");
                 newImage.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(newImage, "Select Image"), SELECT_PICTURE);
-                break;
-            case R.id.edit_nickname:
-                changeNickname();
-                break;
-            case R.id.edit_email:
-                changeEmail();
                 break;
             case R.id.etNickName:
                 changeNickname();
