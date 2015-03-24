@@ -131,8 +131,9 @@ public class ServiceEndpoint {
     TagDataRequest request,
     @QueryParam(AUTH_TOKEN) String authId
   ) {
-    Monitor.trace("Saving new tag " + request.tag.name);
-    return Response.ok(new ResponseResponse(accounts.newTag(authId, request))).build();
+    TagResponse response = accounts.newTag(authId, request);
+    Monitor.trace("Saving new tag with id " + response.id);
+    return Response.ok(new ResponseResponse(response)).build();
   }
   
   @POST
