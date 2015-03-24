@@ -22,6 +22,15 @@ public class PayloadObject {
     nfc_tag_id = to;
   }
   
+  public String getTagId() {
+    return nfc_tag_id;
+  }
+  
+  public boolean tagIdEquals(String otherId) {
+    otherId = otherId.replace("-", "");
+    return nfc_tag_id.equals(otherId);
+  }
+  
   public boolean slugEquals(String otherId) {
     return slug.equals(otherId);
   }

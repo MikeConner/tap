@@ -105,9 +105,9 @@ public class Accounts {
     return rv.toArray(new TagResponse[rv.size()]);
   }
    
-  public PayloadObject getPayload(String slug) {
+  public PayloadObject getPayload(String tagId) {
     for (PayloadObject p : payloads) {
-      if (p.slugEquals(slug)) {
+      if (p.tagIdEquals(tagId)) {
         return p;
       }
     }
@@ -117,7 +117,7 @@ public class Accounts {
     p.payload_image = ImageBuilder.getURL(300, 300, "Dynamic Yapa");
     p.payload_thumb = ImageBuilder.getURL(100, 100, "Dynamic Yapa");
     p.content = "Dynamic Yapa";
-    p.uri = ImageBuilder.getURL(400, 400, slug);
+    p.uri = ImageBuilder.getURL(400, 400, tagId);
     return p;
   }
 
