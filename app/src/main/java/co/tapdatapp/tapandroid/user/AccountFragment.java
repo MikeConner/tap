@@ -47,6 +47,7 @@ implements View.OnClickListener,
     private ImageView profilePic;
     private TextView email;
     private TextView nickname;
+    private CustomViewPager cvp;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -62,7 +63,7 @@ implements View.OnClickListener,
 
         View view = getView();
 
-        final CustomViewPager cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
+        cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
         cvp.setPagingEnabled(true);
         nickname = (TextView)view.findViewById(R.id.etNickName);
         profilePic = (ImageView) view.findViewById(R.id.profile_picture);
@@ -141,6 +142,7 @@ implements View.OnClickListener,
         //TODO: this is throwing an error if going directly to history
         getView().findViewById(R.id.balances_progress_bar).setVisibility(View.GONE);
         balanceList.setVisibility(View.VISIBLE);
+        cvp.setPagingEnabled(true);
     }
 
     /**
