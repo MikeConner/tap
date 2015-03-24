@@ -101,7 +101,7 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
                 os.write(buffer, 0, len);
                 len = data.read(buffer);
             }
-            updateFileSize(id, size);
+            updateFileSize(name, size);
         } catch (IOException e) {
             remove(name);
             throw new RuntimeException(e);
@@ -334,7 +334,7 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
         );
         if (rows != 1) {
             throw new NoSuchElementException(
-                rows + " objects modified setting last update time"
+                rows + " objects modified setting size"
             );
         }
     }
