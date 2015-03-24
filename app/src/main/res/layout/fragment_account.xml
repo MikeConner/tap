@@ -67,7 +67,9 @@
             android:layout_height="match_parent"
             android:id="@+id/btn_Load_Code"
             android:textSize="18sp"
-            android:layout_weight=".495" />
+            android:layout_weight=".495"
+            android:drawableTop="@drawable/code_load_small"
+            android:paddingTop="10dp"/>
 
         <TextView
             android:layout_width="0dp"
@@ -83,7 +85,9 @@
             android:layout_height="match_parent"
             android:id="@+id/btn_bitcoin_load"
             android:textSize="18sp"
-            android:layout_weight=".495" />
+            android:layout_weight=".495"
+            android:drawableTop="@drawable/bitcoin_load_small"
+            android:paddingTop="10dp"/>
 
     </LinearLayout>
 
