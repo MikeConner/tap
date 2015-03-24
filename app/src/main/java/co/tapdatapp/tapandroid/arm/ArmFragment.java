@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -50,6 +52,7 @@ implements View.OnTouchListener {
         cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
         LinearLayout swipeLayout = (LinearLayout) view.findViewById(R.id.clickable_area);
         LinearLayout scrollLayout = (LinearLayout) view.findViewById(R.id.scrollable_area);
+        //I don't know how to get rid of this warning.
         final Vibrator vibe = (Vibrator) getActivity().getSystemService(getActivity().getApplication().getApplicationContext().VIBRATOR_SERVICE);
         cvp.setPagingEnabled(false);
         /**
@@ -201,8 +204,12 @@ implements View.OnTouchListener {
         if(to>99){
             bankView.setTextSize(100);
         }
+        Animation fadeIn = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.text_fade_in);
+        Animation fadeOut = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.text_fade_out);
 
+        bankView.startAnimation(fadeOut);
         bankView.setText(Integer.toString(to));
+        bankView.startAnimation(fadeIn);
         // This will never be called when getView() is null
         //noinspection ConstantConditions
         getView().findViewById(R.id.btnArm).setEnabled(to != 0);
