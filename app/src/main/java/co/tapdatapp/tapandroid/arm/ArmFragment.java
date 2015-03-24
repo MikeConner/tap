@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Vibrator;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
-
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
@@ -50,7 +50,7 @@ implements View.OnTouchListener {
         cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
         LinearLayout swipeLayout = (LinearLayout) view.findViewById(R.id.clickable_area);
         LinearLayout scrollLayout = (LinearLayout) view.findViewById(R.id.scrollable_area);
-        //TODO: this is causing a crash - null pointer exception for cvp when going in to history screen
+        final Vibrator vibe = (Vibrator) getActivity().getSystemService(getActivity().getApplication().getApplicationContext().VIBRATOR_SERVICE);
         cvp.setPagingEnabled(false);
         /**
          * This re-enables scrolling between pages
@@ -80,7 +80,7 @@ implements View.OnTouchListener {
         bankView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bankView.performHapticFeedback(0);
+                vibe.vibrate(500);
                 bankView.setTextSize(140);
                 account.setArmedAmount(0);
                 setAmount(account.getArmedAmount());
