@@ -6,7 +6,10 @@
 
 package co.tapdatapp.tapandroid;
 
+import android.app.ActivityManager;
 import android.app.Application;
+import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.helpers.DevHelper;
@@ -32,6 +35,9 @@ public class TapApplication extends Application {
     @Override
     public void onCreate() {
         app = this;
+        ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+        Log.d("MEMORY", "Memory class = " + am.getMemoryClass());
+        Log.d("MEMORY", "Large memory class = " + am.getLargeMemoryClass());
         // Would be nice to shut this down cleanly as well, but
         // Android provides no way to know when the application is
         // being stopped.

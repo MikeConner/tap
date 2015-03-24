@@ -4,6 +4,8 @@
 
 package co.tapdatapp.tapandroid.localdata;
 
+import java.io.InputStream;
+
 public interface Cache {
     /**
      * Cache a copy of the provided file.
@@ -13,6 +15,15 @@ public interface Cache {
      * @param data the data of the file
      */
     void put(String name, String mediaType, byte[] data);
+
+    /**
+     * Save the data in an InputStream to the cache
+     *
+     * @param name unique name for the file
+     * @param mediaType mime type
+     * @param data InputStream containing the data
+     */
+    void put(String name, String mediaType, InputStream data);
 
     /**
      * Get the mime type for a file
@@ -29,6 +40,14 @@ public interface Cache {
      * @return file data
      */
     byte[] get(String name);
+
+    /**
+     * Get an InputStream pointing to the file
+     *
+     * @param name file indentifier
+     * @return InputStream connected to the requested file
+     */
+    InputStream getStream(String name);
 
     /**
      * Remove a file from the cache (both the DB record and data)

@@ -24,9 +24,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -61,28 +63,12 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
     @Override
     @SuppressWarnings("ThrowFromFinallyBlock")
     public void put(String name, String mediaType, byte[] data) {
-        String id = UUID.randomUUID().toString();
-        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getWritableDatabase();
-        ContentValues v = new ContentValues();
-        v.put(NAME, name);
-        v.put(FILENAME, id);
-        v.put(SIZE, data.length);
-        v.put(TYPE, mediaType);
-        v.put(LAST_ACCESS, System.currentTimeMillis() / 1000);
-        db.insertOrThrow(TABLE, null, v);
+        String id = storeDBRecord(name, mediaType, data.length);
         String filename = getFullFilespec(id);
         FileOutputStream os = null;
         try {
             os = new FileOutputStream(filename, false);
-            try {
-                os.write(data);
-            }
-            catch (IOException ioe) {
-                // Assumption is that we're out of storage space.
-                os.close();
-                remove(name);
-                throw new RuntimeException(ioe);
-            }
+            os.write(data);
         } catch (IOException e) {
             remove(name);
             throw new RuntimeException(e);
@@ -97,6 +83,61 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
                 }
             }
         }
+    }
+
+    @Override
+    @SuppressWarnings("ThrowFromFinallyBlock")
+    public void put(String name, String mediaType, InputStream data) {
+        String id = storeDBRecord(name, mediaType, 0);
+        String filename = getFullFilespec(id);
+        FileOutputStream os = null;
+        try {
+            os = new FileOutputStream(filename, false);
+            byte[] buffer = new byte[1024];
+            int size = 0;
+            int len = data.read(buffer);
+            while (len != -1) {
+                size += len;
+                os.write(buffer, 0, len);
+                len = data.read(buffer);
+            }
+            updateFileSize(id, size);
+        } catch (IOException e) {
+            remove(name);
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                data.close();
+                if (os != null) {
+                    os.close();
+                }
+            }
+            catch (IOException ioe) {
+                throw new RuntimeException(ioe);
+            }
+        }
+    }
+
+    /**
+     * Create the database record for a file.
+     *
+     * @param name Name of the file
+     * @param mediaType mime type
+     * @param length size in bytes
+     * @return The complete filespec (path + filename)
+     */
+    private String storeDBRecord(String name, String mediaType, int length) {
+        String id = UUID.randomUUID().toString();
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put(NAME, name);
+        v.put(FILENAME, id);
+        v.put(SIZE, length);
+        v.put(TYPE, mediaType);
+        v.put(LAST_ACCESS, System.currentTimeMillis() / 1000);
+        db.insertOrThrow(TABLE, null, v);
+        return id;
     }
 
     @Override
@@ -141,6 +182,23 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
         }
         updateLastModified(name);
         return data;
+    }
+
+    @Override
+    public InputStream getStream(String name) {
+        String filename = getFullFilespec(getFilename(name));
+        FileInputStream is;
+        try {
+            is = new FileInputStream(filename);
+        }
+        catch (FileNotFoundException fnfe) {
+            // Since Android is allowed to remove files from the cache
+            // directory at any time, this is pretty likely to happen.
+            remove(name);
+            throw new NoSuchElementException(name);
+        }
+        updateLastModified(name);
+        return is;
     }
 
     @Override
@@ -250,6 +308,27 @@ public class AndroidCache extends BaseDAO implements SingleTable, Cache {
             TABLE,
             LAST_ACCESS,
             System.currentTimeMillis() / 1000,
+            NAME + " = ?",
+            new String[] {name}
+        );
+        if (rows != 1) {
+            throw new NoSuchElementException(
+                rows + " objects modified setting last update time"
+            );
+        }
+    }
+
+    /**
+     * Update the file size column for a file
+     *
+     * @param name identifier of the file to be updated
+     * @param size size in bytes
+     */
+    private void updateFileSize(String name, int size) {
+        int rows = update(
+            TABLE,
+            SIZE,
+            size,
             NAME + " = ?",
             new String[] {name}
         );

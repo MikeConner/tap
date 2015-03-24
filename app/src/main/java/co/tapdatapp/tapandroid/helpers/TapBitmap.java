@@ -11,6 +11,8 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.NoSuchElementException;
 
 import co.tapdatapp.tapandroid.R;
@@ -85,51 +87,58 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
      * @return Bitmap specified by the URL
      * @throws Exception on any network issue
      */
+    // The assignments to null are to free space on the heap as
+    // otherwise this method can use 3x the size of the bitmap
+    @SuppressWarnings("UnusedAssignment")
     public static
     Bitmap fetchFromCacheOrWeb(String url) throws Exception {
-        Bitmap rv;
         AndroidCache cache = new AndroidCache();
         byte[] data;
         try {
-            rv = fetchFromCache(url, cache);
+            return fetchFromCache(url, cache);
         }
         catch (NoSuchElementException nsee) {
             HttpHelper helper = new HttpHelper();
             WebResponse wr = helper.HttpGet(url, new Bundle());
             if (wr.isOK()) {
                 data = wr.getBody();
+                String mediaType = wr.getMediaType();
+                wr = null;
                 if (data == null) {
                     throw new NullPointerException("Null data from webservice");
                 }
                 if (data.length == 0) {
                     throw new NullPointerException("0 length data from webservice");
                 }
-                rv = BitmapFactory.decodeByteArray(data, 0, data.length);
-                if (rv == null) {
-                    throw new NullPointerException(
-                        "Null bitmap from webservice for " + url
-                    );
-                }
-                cache.put(url, wr.getMediaType(), data);
+                cache.put(url, mediaType, data);
+                data = null;
+                return fetchFromCache(url, cache);
             }
             else {
                 throw new Exception("Failure to fetch image: " + wr.getError());
             }
         }
-        return rv;
     }
 
+    @SuppressWarnings("ThrowFromFinallyBlock")
     public static Bitmap fetchFromCache(String url, AndroidCache cache) {
-        Bitmap rv;
-        byte[] data;
-        data = cache.get(url);
-        rv = BitmapFactory.decodeByteArray(data, 0, data.length);
-        if (rv == null) {
-            throw new NullPointerException(
-                "Null Bitmap from cache for " + url + " " + data.length
-            );
+        InputStream is = null;
+        try {
+            is = cache.getStream(url);
+            return BitmapFactory.decodeStream(is);
         }
-        return rv;
+        finally {
+            if (is != null) {
+                try {
+                    is.close();
+                }
+                catch (IOException ioe) {
+                    // If we get an IOException closing a read-only
+                    // stream, the phone is broken
+                    throw new AssertionError(ioe);
+                }
+            }
+        }
     }
 
     /**
