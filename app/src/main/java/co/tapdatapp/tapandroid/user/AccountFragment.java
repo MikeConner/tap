@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -56,18 +57,19 @@ implements View.OnClickListener,
         return inflater.inflate(R.layout.fragment_account, container, false);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onResume(){
         super.onResume();
-
         View view = getView();
-
+        if (view == null) {
+            Log.e("IGNORED", "onResume() getView() returned null", new Exception());
+            return;
+        }
         cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
         cvp.setPagingEnabled(true);
         nickname = (TextView)view.findViewById(R.id.etNickName);
-        profilePic = (ImageView) view.findViewById(R.id.profile_picture);
-        email = (TextView) view.findViewById(R.id.etEmail);
+        profilePic = (ImageView)view.findViewById(R.id.profile_picture);
+        email = (TextView)view.findViewById(R.id.etEmail);
         nickname.setText(account.getNickname());
         profilePic.setOnClickListener(this);
         new SetProfilePicTask().execute();
@@ -75,8 +77,7 @@ implements View.OnClickListener,
         String mEmailAddy = account.getEmail();
         if (mEmailAddy.isEmpty()) {
             email.setText("no@email.addy");
-        }
-        else {
+        } else {
             email.setText(mEmailAddy);
         }
         view.findViewById(R.id.btn_Load_Code).setOnClickListener(this);
@@ -91,7 +92,7 @@ implements View.OnClickListener,
             }
         });
 
-        balanceList = (ListView)view.findViewById(R.id.balances_list);
+        balanceList = (ListView) view.findViewById(R.id.balances_list);
         balanceList.setOnItemClickListener(this);
         fillInList();
     }
@@ -116,11 +117,18 @@ implements View.OnClickListener,
      * Fill in the list with balances
      */
     private void fillInList() {
-        // This will never be called with a null view
-        //noinspection ConstantConditions
-        getView().findViewById(R.id.balances_progress_bar).setVisibility(View.VISIBLE);
-        balanceList.setVisibility(View.GONE);
-        new GetAllBalancesTask().execute(this);
+        try {
+            //noinspection ConstantConditions
+            getView().findViewById(R.id.balances_progress_bar).setVisibility(View.VISIBLE);
+            balanceList.setVisibility(View.GONE);
+            new GetAllBalancesTask().execute(this);
+        }
+        catch (NullPointerException npe) {
+            // This can happen if the user navigates away from the
+            // Activity faster than the background task can finish,
+            // and can be ignored
+            Log.e("IGNORED", "NPE in callback", npe);
+        }
     }
 
     /**
@@ -131,18 +139,24 @@ implements View.OnClickListener,
      */
     @Override
     public void onBalancesLoaded(BalanceList list) {
-        BalanceListAdapter adapter = new BalanceListAdapter(
-            getActivity(),
-            new CurrencyDAO(),
-            list
-        );
-        balanceList.setAdapter(adapter);
-        // This will never be called with a null view
-        //noinspection ConstantConditions
-        //TODO: this is throwing an error if going directly to history
-        getView().findViewById(R.id.balances_progress_bar).setVisibility(View.GONE);
-        balanceList.setVisibility(View.VISIBLE);
-        cvp.setPagingEnabled(true);
+        try {
+            BalanceListAdapter adapter = new BalanceListAdapter(
+                getActivity(),
+                new CurrencyDAO(),
+                list
+            );
+            balanceList.setAdapter(adapter);
+            //noinspection ConstantConditions
+            getView().findViewById(R.id.balances_progress_bar).setVisibility(View.GONE);
+            balanceList.setVisibility(View.VISIBLE);
+            cvp.setPagingEnabled(true);
+        }
+        catch (NullPointerException npe) {
+            // This can happen if the user navigates away from the
+            // Activity faster than the background task can finish,
+            // and can be ignored
+            Log.e("IGNORED", "NPE in callback", npe);
+        }
     }
 
     /**

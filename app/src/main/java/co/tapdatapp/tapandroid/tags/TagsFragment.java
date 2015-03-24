@@ -3,6 +3,7 @@ package co.tapdatapp.tapandroid.tags;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,12 +28,16 @@ implements View.OnClickListener,
         return inflater.inflate(R.layout.fragment_tags, container, false);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onResume() {
         super.onResume();
-        getView().findViewById(R.id.btnNewTag).setOnClickListener(this);
-        ((ListView)getView().findViewById(R.id.listViewTags)).setOnItemClickListener(this);
+        View v = getView();
+        if (v == null) {
+            Log.e("IGNORED", "onResume() getView() returned null", new Exception());
+            return;
+        }
+        v.findViewById(R.id.btnNewTag).setOnClickListener(this);
+        ((ListView)v.findViewById(R.id.listViewTags)).setOnItemClickListener(this);
         new SyncTagsTask().execute(this);
     }
 
@@ -53,14 +58,20 @@ implements View.OnClickListener,
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onTagsSynced() {
-        TagListAdapter adapter = new TagListAdapter();
-
-        // TODO: This is throwing a null pointer exception... At random times.  Is this object always available?
-        ListView tagList = (ListView)getView().findViewById(R.id.listViewTags);
-        tagList.setAdapter(adapter);
+        try {
+            TagListAdapter adapter = new TagListAdapter();
+            @SuppressWarnings("ConstantConditions")
+            ListView tagList = (ListView) getView().findViewById(R.id.listViewTags);
+            tagList.setAdapter(adapter);
+        }
+        catch (NullPointerException npe) {
+            // This can happen if the user navigates away from the
+            // Activity faster than the background task can finish,
+            // and can be ignored
+            Log.e("IGNORED", "NPE in callback", npe);
+        }
     }
 
     /**
