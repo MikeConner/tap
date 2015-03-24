@@ -117,7 +117,16 @@ implements View.OnTouchListener {
                         try {
                             if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
                                 account.setArmedAmount(account.getArmedAmount() + amount);
+
+                                /**
+                                 * This adds an animation when money is added to the bank.
+                                 */
+                                Animation fadeIn = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.text_fade_in);
+                                Animation fadeOut = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.text_fade_out);
+
+                                bankView.startAnimation(fadeOut);
                                 setAmount(account.getArmedAmount());
+                                bankView.startAnimation(fadeIn);
                             }
                             if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
                                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
@@ -204,12 +213,8 @@ implements View.OnTouchListener {
         if(to>99){
             bankView.setTextSize(100);
         }
-        Animation fadeIn = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.text_fade_in);
-        Animation fadeOut = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.text_fade_out);
 
-        bankView.startAnimation(fadeOut);
         bankView.setText(Integer.toString(to));
-        bankView.startAnimation(fadeIn);
         // This will never be called when getView() is null
         //noinspection ConstantConditions
         getView().findViewById(R.id.btnArm).setEnabled(to != 0);
