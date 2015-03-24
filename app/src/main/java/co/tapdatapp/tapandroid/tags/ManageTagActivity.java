@@ -19,6 +19,7 @@ import android.nfc.tech.NdefFormatable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -31,7 +32,6 @@ import java.util.UUID;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
-import co.tapdatapp.tapandroid.helpers.Files;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.localdata.Tag;
 import co.tapdatapp.tapandroid.localdata.Yapa;
@@ -65,17 +65,18 @@ implements TextWatcher,
         if (mode == 0) {
             throw new AssertionError("must provide a mode");
         }
-        needsSaved = mode == MODE_NEW;
+
         tag = new Tag();
         String tagId = intent.getStringExtra(TAG_ID);
         tag.moveTo(tagId);
+        fillIn();
+        needsSaved = mode == MODE_NEW;
+        setActionButtonState();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        setActionButtonState();
-        fillIn();
     }
 
     @Override
@@ -101,8 +102,13 @@ implements TextWatcher,
     /**
      * Enable/disable the write button as appropriate
      */
+    // @TODO fix me
     private void setActionButtonState() {
-        findViewById(R.id.btnWriteTag).setEnabled(!needsSaved);
+        Log.d("TRACKING", "needsSaved = " + needsSaved);
+        findViewById(R.id.btnWriteTag).setEnabled(true);
+        findViewById(R.id.btnSaveTag).setEnabled(true);
+        //findViewById(R.id.btnWriteTag).setEnabled(!needsSaved);
+        //findViewById(R.id.btnSaveTag).setEnabled(needsSaved);
     }
 
     /**
@@ -216,15 +222,17 @@ implements TextWatcher,
                     }
                     catch (FileNotFoundException fnfe) {
                         TapApplication.errorToUser(TapApplication.string(R.string.file_access_problem));
+                        Log.wtf("IMAGE", fnfe);
                         return;
                     }
                     String imageId = UUID.randomUUID().toString();
                     AndroidCache cache = new AndroidCache();
                     try {
-                        cache.put(imageId, "", Files.readAllBytes(imageStream));
+                        cache.put(imageId, "", imageStream);
                     }
-                    catch (IOException ioe) {
+                    catch (Throwable t) {
                         TapApplication.errorToUser(TapApplication.string(R.string.file_access_problem));
+                        Log.wtf("IMAGE", t);
                         return;
                     }
                     finally {
@@ -273,17 +281,12 @@ implements TextWatcher,
         );
     }
 
-
-
-
-
-
-
-
-
-
-    //NFC TAG STUFF
-    public void startWrite (View view){
+    /**
+     * Start the process of writing a tag (initiated by click)
+     *
+     * @param view The WRITE button
+     */
+    public void onClickWrite(View view) {
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         mNfcPendingIntent = PendingIntent.getActivity(this, 0,
@@ -305,26 +308,35 @@ implements TextWatcher,
         //  startActivity(i);
 
     }
+
+    /**
+     *
+     */
     private void enableTagWriteMode() {
         mWriteMode = true;
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         IntentFilter[] mWriteTagFilters = new IntentFilter[] { tagDetected };
         mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent, mWriteTagFilters, null);
     }
+
+    /**
+     *
+     */
     private void disableTagWriteMode() {
         mWriteMode = false;
         mNfcAdapter.disableForegroundDispatch(this);
     }
+
+    /**
+     *
+     * @param intent The intent that started this Activity
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         // Tag writing mode
         if (mWriteMode && NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
             android.nfc.Tag detectedTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            // Get ID from local storage
-            // write ID to tag
-            //String strMime = "tapdat/performer";
             String strID = tag.getTagId();
-            //NdefRecord record = NdefRecord.createMime( strMime, strID.getBytes());
             NdefRecord record = NdefRecord.createUri("http://tapnology.co/nfc_tags/" + strID);
             NdefMessage message = new NdefMessage(new NdefRecord[] { record });
             if (writeDaTag(message, detectedTag)) {
@@ -332,7 +344,17 @@ implements TextWatcher,
                         .show();
             }
         }
+        else {
+            Log.d("FLOW", "onNewIntent() not ACTION_TAG_DISCOVERED");
+        }
     }
+
+    /**
+     *
+     * @param message
+     * @param tag
+     * @return
+     */
     public boolean writeDaTag(NdefMessage message, android.nfc.Tag tag) {
         int size = message.toByteArray().length;
         try {
@@ -353,7 +375,8 @@ implements TextWatcher,
                 }
                 ndef.writeNdefMessage(message);
                 return true;
-            } else {
+            }
+            else {
                 NdefFormatable format = NdefFormatable.get(tag);
                 if (format != null) {
                     try {
