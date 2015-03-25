@@ -58,7 +58,7 @@ public class DeveloperServices {
   @PUT
   @Path("store")
   public Response store(byte[] body) {
-    Monitor.trace("Saving data");
+    Monitor.trace("Saving data of size " + body.length);
     return Response.ok(data.storeNew(body)).build();
   }
   
