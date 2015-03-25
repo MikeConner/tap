@@ -4,6 +4,7 @@
 
 package co.tapdatapp.tapandroid.arm;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -54,7 +55,7 @@ implements View.OnTouchListener {
         LinearLayout swipeLayout = (LinearLayout) view.findViewById(R.id.clickable_area);
         LinearLayout scrollLayout = (LinearLayout) view.findViewById(R.id.scrollable_area);
         //I don't know how to get rid of this warning.
-        final Vibrator vibe = (Vibrator) getActivity().getSystemService(getActivity().getApplication().getApplicationContext().VIBRATOR_SERVICE);
+        final Vibrator vibe = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         cvp.setPagingEnabled(false);
         /**
          * This re-enables scrolling between pages
