@@ -1,9 +1,5 @@
 package co.tapdatapp.tapandroid;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -19,7 +15,6 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -33,13 +28,10 @@ import android.widget.Toast;
 import co.tapdatapp.tapandroid.arm.ArmFragment;
 import co.tapdatapp.tapandroid.arm.ArmedFragment;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
-import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.remotedata.TapTxnTask;
-import co.tapdatapp.tapandroid.service.TapCloud;
-import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
 import co.tapdatapp.tapandroid.tags.TagsFragment;
 import co.tapdatapp.tapandroid.user.Account;
@@ -55,21 +47,12 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
 
-    protected TapUser mTapUser;
-    protected TapCloud mTapCloud;
-
     private NfcAdapter mNfcAdapter;
     private IntentFilter[] mNdefExchangeFilters;
     private PendingIntent mNfcPendingIntent;
 
     private boolean mArmed = false;
     private ArmedFragment mArmFrag;
-
-    //For File Uploads
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    String mCurrentPhotoPath;
-    boolean mFromCamera = false;
-    static final int REQUEST_TAKE_PHOTO = 1;
 
     CurrencyDAO currency;
 
@@ -129,7 +112,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     }
 
     private void setupTabs(){
-        //TODO: In teh case where balance is zero open up a load phone fragment
+        //TODO: In the case where balance is zero open up a load phone fragment
         if (mSectionsPagerAdapter == null) {
             setContentView(R.layout.activity_main);
             // Create the adapter that will return a fragment for each of the three
@@ -207,23 +190,6 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         if(mNfcAdapter != null) mNfcAdapter.disableForegroundDispatch(this);
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        return image;
-    }
-
     //ARM SCREEN
     public void armOrSend(View v){
         mArmed=true;
@@ -281,12 +247,20 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         new TapTxnTask().execute(this);
     }
 
-    //NFC STUFF
+    /**
+     * When an NFC tag is detected, Android sends an Intent to any
+     * application which has applied to receive them (see
+     * AndroidManifest.xml).
+     *
+     * If we get an NDEF Intent, handle it as appropriate
+     *
+     * @param intent the intent sent to this activity
+     */
     @Override
     protected void onNewIntent(Intent intent) {
-        //TODO: WHen not in armed mode, if intent is detected, change to send mode
         super.onNewIntent(intent);
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            Log.d("NFC", "NfcAdapter.ACTION_NDEF_DISCOVERED detected");
             NdefMessage[] messages = null;
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             if (rawMsgs != null) {
@@ -295,38 +269,35 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
                     messages[i] = (NdefMessage) rawMsgs[i];
                 }
             }
-            if(messages[0] != null) {
-                String result="";
+            if (messages != null && messages[0] != null) {
                 byte[] payload = messages[0].getRecords()[0].getPayload();
                 // this assumes that we get back am SOH followed by host/code
-                for (int b = 0; b<payload.length; b++) { // skip SOH
-                    result += (char) payload[b];
-                }
+                String result = new String(payload);
+                Log.d("NFC", "record read: " + result);
                 result = result.replaceAll("tapnology.co/nfc_tags/", "");
                 result = result.replaceAll("\u0003", "");
+                result = result.replaceAll("-", "");
 
-                if (mArmed){
+                if (mArmed) {
+                    Log.d("NFC", "Send transaction on tag " + result);
+                    // Immediately disable from performing other txn
+                    mArmed = false;
                     outgoingTransaction = new TapTxn();
-                    outgoingTransaction.setTagID(result.replaceAll("-", ""));
+                    outgoingTransaction.setTagID(result);
                     outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
                     outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
                     new TapTxnTask().execute(this);
-
-//                    Toast.makeText(MainActivity.this, result.getPayloadImageThumb(), Toast.LENGTH_LONG).show();
-
-                    //tv.setText(txn.getMessage());
-
                 } else {
+                    //TODO: WHen not in armed mode, if intent is detected, change to send mode
                     Toast.makeText(getApplicationContext(), "Tag Contains " + result, Toast.LENGTH_SHORT).show();
-
-                    //show tap screen, change button to SEND?
                 }
-                //Intent i = new Intent(this, TapArm.class);
-              //  i.putExtra("TAGID", result);
-              //  i.putExtra("TIPAMOUNT", fltTipAmount);
-              //  startActivity(i);
-
             }
+            else {
+                Log.d("NFC", "No messages found");
+            }
+        }
+        else {
+            Log.d("NFC", "Unexpected intent: " + intent.getAction());
         }
     }
 
@@ -340,7 +311,6 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
      */
     @Override
     public void onTapNetComplete(Transaction t) {
-        mArmed = false;
         String mMessage = outgoingTransaction.getMessage();
         mArmFrag.updateWithResult(mMessage);
         outgoingTransaction = null;
@@ -348,9 +318,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
             randomTransactionButton.setEnabled(true);
             randomTransactionButton = null;
         }
-        /**
-         * This opens the new Yapa page after a transaction
-         */
+        // This opens the new Yapa page after a transaction
         Intent openYapa = new Intent(
             this,
             new YapaDisplay().getDisplayClass(t)
@@ -358,26 +326,6 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         openYapa.putExtra(YapaDisplay.TRANSACTION_ID, t.getSlug());
         openYapa.putExtra(YapaDisplay.DELAY_TIME, 5);
         startActivity(openYapa);
-    }
-
-    public void showWithdraw(View view){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("withdraw");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        // Create and show the dialog.
-
-        WithdrawFragment mWithdrawFrag =  new WithdrawFragment();
-        mWithdrawFrag.show(ft, "withdraw");
-
-    }
-
-    //generic stuff for fragments
-    public   TapUser getUserContext(){
-        return mTapUser;
     }
 
     @Override
@@ -392,10 +340,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
