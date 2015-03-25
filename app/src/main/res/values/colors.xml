@@ -1,7 +1,7 @@
 <resources>
 
     <color name="button_background">#1795a4</color>
-    <color name="button_background_pressed">#fcfcfc</color>
+    <color name="button_background_pressed">#175673</color>
     <color name="button_background_disabled">#bdbcbc</color>
     <color name="withdraw_button_background">#bdbcbc</color>
     <color name="withdraw_button_pressed">#bfc833</color>
@@ -9,7 +9,7 @@
     <color name="load_button_background_pressed">#606060</color>
     <color name="load_button_background_disabled">#ffffff</color>
     <color name="load_button_text">#494949</color>
-    <color name="button_text">#cccccc</color>
+    <color name="button_text">#fcfcfc</color>
     <color name="text_color">#666666</color>
     <color name="button_circular_background">#666666</color>
     <color name="button_red_circular_background">#ff0000</color>
