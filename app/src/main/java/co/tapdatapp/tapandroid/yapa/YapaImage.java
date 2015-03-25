@@ -3,11 +3,11 @@ package co.tapdatapp.tapandroid.yapa;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.concurrent.ScheduledFuture;
@@ -20,7 +20,6 @@ import co.tapdatapp.tapandroid.localdata.Transaction;
 
 public class YapaImage extends Activity implements TapBitmap.Callback {
 
-    private boolean isImageFitToScreen = false;
     private ImageView imageView;
     private boolean forceReturnToArmScreen = false;
     private ScheduledFuture futureTask;
@@ -32,25 +31,17 @@ public class YapaImage extends Activity implements TapBitmap.Callback {
         final String transactionId = extras.getString(YapaDisplay.TRANSACTION_ID);
         final Transaction transaction = new Transaction();
         transaction.moveToSlug(transactionId);
+        final String yapaFullImage = transaction.getYapa_url();
 
         final Button fullButton = (Button) findViewById(R.id.full_screen_button);
         imageView = (ImageView)findViewById(R.id.yapaImage);
-        imageView.setOnClickListener(new View.OnClickListener() {
+        fullButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isImageFitToScreen) {
-                    isImageFitToScreen=false;
-                    imageView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
-                    imageView.setAdjustViewBounds(true);
-                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER   );
-                    fullButton.setVisibility(View.VISIBLE);
-                }
-                else {
-                    isImageFitToScreen=true;
-                    imageView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
-                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    fullButton.setVisibility(View.GONE);
-                }
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse(yapaFullImage), "image/*");
+                startActivity(intent);
             }
         });
         new TapBitmap().execute(this, transaction.getYapa_url());
