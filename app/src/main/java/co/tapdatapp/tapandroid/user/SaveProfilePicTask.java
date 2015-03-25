@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.remotedata.RemoteStorage;
 import co.tapdatapp.tapandroid.remotedata.RemoteStorageDriver;
 
@@ -43,17 +44,7 @@ public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
         InputStream is = (InputStream)params[1];
 
         try {
-            Bitmap bmp = BitmapFactory.decodeStream(is);
-            if (bmp == null) {
-                error = new AssertionError("data failed to decode into a Bitmap");
-                return null;
-            }
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            bmp = ThumbnailUtils.extractThumbnail(bmp, 512, 512);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-            byte[] byteArray = outputStream.toByteArray();
-            RemoteStorageDriver driver = RemoteStorage.getDriver();
-            id = driver.store(byteArray);
+            id = TapBitmap.storedThumbnail(is, 512);
             new Account().setProfilePicThumbUrl(id);
             new UpdateUserInfoTask().updateUser();
         }

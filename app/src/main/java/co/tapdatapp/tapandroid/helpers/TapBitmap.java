@@ -8,9 +8,11 @@ package co.tapdatapp.tapandroid.helpers;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.NoSuchElementException;
@@ -19,6 +21,8 @@ import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+import co.tapdatapp.tapandroid.remotedata.RemoteStorage;
+import co.tapdatapp.tapandroid.remotedata.RemoteStorageDriver;
 import co.tapdatapp.tapandroid.remotedata.WebResponse;
 
 public class TapBitmap extends AsyncTask<Object, Void, Void> {
@@ -139,6 +143,33 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
                 }
             }
         }
+    }
+
+    /**
+     * Create a thumbnail version of the provided Bitmap.
+     *
+     * @param is InputStream pointing to the source image
+     * @param size size of the thumbnail
+     * @return ID of a new image in the cache
+     */
+    // The unused assignments are for early freeing of memory
+    @SuppressWarnings("UnusedAssignment")
+    public static String
+    storedThumbnail(InputStream is, int size) throws Exception {
+        Bitmap bmp = BitmapFactory.decodeStream(is);
+        if (bmp == null) {
+            throw new AssertionError("data failed to decode into a Bitmap");
+        }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bmp = ThumbnailUtils.extractThumbnail(bmp, size, size);
+        if (!bmp.compress(Bitmap.CompressFormat.JPEG, 95, outputStream)) {
+            throw new AssertionError("Failed to compress image");
+        }
+        bmp = null;
+        byte[] byteArray = outputStream.toByteArray();
+        outputStream = null;
+        RemoteStorageDriver driver = RemoteStorage.getDriver();
+        return driver.store(byteArray);
     }
 
     /**
