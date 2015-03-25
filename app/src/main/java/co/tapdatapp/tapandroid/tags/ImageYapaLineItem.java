@@ -43,9 +43,10 @@ implements View.OnClickListener, TapBitmap.Callback {
         activity.setYapaImageSelectedCallback(this);
     }
 
-    public void onImageSet(String url, AndroidCache cache) {
-        yapa.setImage(url);
-        imageButton.setImageBitmap(TapBitmap.fetchFromCache(url, cache));
+    public void onImageSet(String imageUrl, String thumbUrl, AndroidCache cache) {
+        yapa.setImage(imageUrl);
+        yapa.setThumb(thumbUrl);
+        imageButton.setImageBitmap(TapBitmap.fetchFromCache(thumbUrl, cache));
     }
 
     /**

@@ -16,10 +16,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
+import co.tapdatapp.tapandroid.localdata.Cache;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.RemoteStorage;
 import co.tapdatapp.tapandroid.remotedata.RemoteStorageDriver;
@@ -146,16 +148,45 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
     }
 
     /**
-     * Create a thumbnail version of the provided Bitmap.
+     * Create a thumbnail version of the provided Bitmap and push to
+     * remote (Amazon) storage.
      *
      * @param is InputStream pointing to the source image
      * @param size size of the thumbnail
      * @return ID of a new image in the cache
      */
-    // The unused assignments are for early freeing of memory
-    @SuppressWarnings("UnusedAssignment")
     public static String
-    storedThumbnail(InputStream is, int size) throws Exception {
+    storeThumbnailRemote(InputStream is, int size) throws Exception {
+        byte[] byteArray = getResizedBytes(is, size);
+        RemoteStorageDriver driver = RemoteStorage.getDriver();
+        return driver.store(byteArray);
+    }
+
+    /**
+     * Create a thumbnail version of the provided Bitmap and store it
+     * locally only.
+     *
+     * @param is InputStream pointing to the source image
+     * @param size size of the thumbnail
+     * @return ID of a new image in the cache
+     */
+    public static String
+    storeThumbnailLocal(InputStream is, int size) throws Exception {
+        byte[] byteArray = getResizedBytes(is, size);
+        Cache cache = new AndroidCache();
+        String name = UUID.randomUUID().toString();
+        cache.put(name, "image/jpeg", byteArray);
+        return name;
+    }
+
+    /**
+     * Do the heavy lifting of creating a resized image
+     *
+     * @param is InputStream pointing to the source image
+     * @param size size of the thumbnail
+     * @return byte array of the resized thumbnail Bitmap
+     */
+    private static byte[] getResizedBytes(InputStream is, int size) {
         Bitmap bmp = BitmapFactory.decodeStream(is);
         if (bmp == null) {
             throw new AssertionError("data failed to decode into a Bitmap");
@@ -165,11 +196,7 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
         if (!bmp.compress(Bitmap.CompressFormat.JPEG, 95, outputStream)) {
             throw new AssertionError("Failed to compress image");
         }
-        bmp = null;
-        byte[] byteArray = outputStream.toByteArray();
-        outputStream = null;
-        RemoteStorageDriver driver = RemoteStorage.getDriver();
-        return driver.store(byteArray);
+        return outputStream.toByteArray();
     }
 
     /**

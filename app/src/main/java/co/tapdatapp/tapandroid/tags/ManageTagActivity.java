@@ -11,6 +11,7 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -25,13 +26,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.localdata.Tag;
 import co.tapdatapp.tapandroid.localdata.Yapa;
@@ -172,6 +173,9 @@ implements TextWatcher,
     private void saveUI() {
         tag.setName(((EditText)findViewById(R.id.etTagName)).getText().toString());
         tag.update();
+        for (Yapa y : tag.getYapa()) {
+            y.update();
+        }
     }
 
     /**
@@ -216,19 +220,17 @@ implements TextWatcher,
         switch (requestCode) {
             case YapaLineItem.SELECT_PICTURE :
                 if (resultCode == RESULT_OK) {
-                    InputStream imageStream;
-                    try {
-                        imageStream = getContentResolver().openInputStream(data.getData());
-                    }
-                    catch (FileNotFoundException fnfe) {
-                        TapApplication.errorToUser(TapApplication.string(R.string.file_access_problem));
-                        Log.wtf("IMAGE", fnfe);
-                        return;
-                    }
-                    String imageId = UUID.randomUUID().toString();
                     AndroidCache cache = new AndroidCache();
+                    String thumbUrl;
+                    String imageUrl;
+                    InputStream imageStream = null;
                     try {
-                        cache.put(imageId, "", imageStream);
+                        Uri streamUrl = data.getData();
+                        imageStream = getContentResolver().openInputStream(streamUrl);
+                        thumbUrl = TapBitmap.storeThumbnailLocal(imageStream, 512);
+                        imageStream.close();
+                        imageStream = getContentResolver().openInputStream(streamUrl);
+                        imageUrl = TapBitmap.storeThumbnailLocal(imageStream, 1024);
                     }
                     catch (Throwable t) {
                         TapApplication.errorToUser(TapApplication.string(R.string.file_access_problem));
@@ -248,7 +250,7 @@ implements TextWatcher,
                             }
                         }
                     }
-                    imageSelectedCallback.onImageSet(imageId, cache);
+                    imageSelectedCallback.onImageSet(imageUrl, thumbUrl, cache);
                 }
                 else {
                     TapApplication.errorToUser(TapApplication.string(R.string.no_image_selected));
@@ -351,9 +353,6 @@ implements TextWatcher,
 
     /**
      *
-     * @param message
-     * @param tag
-     * @return
      */
     public boolean writeDaTag(NdefMessage message, android.nfc.Tag tag) {
         int size = message.toByteArray().length;

@@ -4,19 +4,13 @@
  */
 package co.tapdatapp.tapandroid.user;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
-import co.tapdatapp.tapandroid.remotedata.RemoteStorage;
-import co.tapdatapp.tapandroid.remotedata.RemoteStorageDriver;
 
 public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
 
@@ -44,7 +38,7 @@ public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
         InputStream is = (InputStream)params[1];
 
         try {
-            id = TapBitmap.storedThumbnail(is, 512);
+            id = TapBitmap.storeThumbnailRemote(is, 512);
             new Account().setProfilePicThumbUrl(id);
             new UpdateUserInfoTask().updateUser();
         }
