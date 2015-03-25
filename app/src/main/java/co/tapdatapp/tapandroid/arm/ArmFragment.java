@@ -6,6 +6,7 @@ package co.tapdatapp.tapandroid.arm;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -296,6 +297,7 @@ implements View.OnTouchListener {
         for (int i = 0; i < d.length; i++) {
             ImageView iv = new ImageView(getActivity());
             iv.setImageBitmap(scaleDenomination(b[i]));
+            iv.setBackgroundColor(Color.TRANSPARENT);
             commonDenominationSetup(iv);
             iv.setTag(d[i].getAmount());
             layout.addView(iv);
