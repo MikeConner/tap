@@ -9,6 +9,8 @@
     <color name="load_button_background_pressed">#606060</color>
     <color name="load_button_background_disabled">#ffffff</color>
     <color name="load_button_text">#494949</color>
+    <color name="balance_item_background">#f9f9f9</color>
+    <color name="balance_item_background_pressed">#fcfcfc</color>
     <color name="button_text">#fcfcfc</color>
     <color name="text_color">#666666</color>
     <color name="button_circular_background">#666666</color>
@@ -25,4 +27,5 @@
     <color name="account_background">#EEEEEE</color>
     <color name="profile_text_gray">#616261</color>
     <color name="dark_gray">#808080</color>
+    <color name="balance_list_background">#eeeeee</color>
 </resources>

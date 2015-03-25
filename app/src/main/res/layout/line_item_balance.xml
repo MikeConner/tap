@@ -11,6 +11,7 @@
                   android:layout_height="match_parent">
 
         <ImageView
+            style="@style/AppTheme.Balance_Items"
             android:layout_margin="3dp"
             android:id="@+id/balance_line_item_icon"
             android:contentDescription="@string/currency_icon_description"
@@ -20,13 +21,13 @@
             android:layout_centerVertical="true" />
 
         <TextView
+            style="@style/AppTheme.Balance_Items"
             android:id="@+id/balance_line_item_balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:textSize="28sp"
             android:fontFamily="sans-serif-thin"
-            android:background="@color/white"
             android:layout_toEndOf="@+id/balance_line_item_icon"
             android:layout_centerVertical="true" />
         
