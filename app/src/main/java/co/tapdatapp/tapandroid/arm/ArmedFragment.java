@@ -32,7 +32,6 @@ public class ArmedFragment extends DialogFragment implements View.OnClickListene
      *
      *  @param message textual "thank you" message
      */
-    // @TODO this probably needs to launch a new activity to show the Yapa, since it might not be textual
     public void updateWithResult(String message) {
         // This will never be called with a null View
         //noinspection ConstantConditions
