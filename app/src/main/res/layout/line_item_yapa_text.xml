@@ -10,6 +10,7 @@
                   android:layout_height="match_parent">
 
         <EditText
+            style="@style/AppTheme"
             android:id="@+id/etYapaContent"
             android:hint="@string/hint_yapa_content"
             android:layout_width="match_parent"

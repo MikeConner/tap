@@ -3,28 +3,30 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditText
+        style="@style/AppTheme"
         android:id="@+id/etYapaText"
         android:hint="@string/hint_yapa_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <LinearLayout
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    <LinearLayout android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent">
 
-    <TextView
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="10dp"
-        android:id="@+id/tvYapaThreshold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <TextView
+            style="@style/AppTheme"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:id="@+id/tvYapaThreshold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
-    <SeekBar
-        android:id="@+id/seekYapaThreshold"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        <SeekBar
+            style="@style/AppTheme"
+            android:id="@+id/seekYapaThreshold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
 
     </LinearLayout>
 
