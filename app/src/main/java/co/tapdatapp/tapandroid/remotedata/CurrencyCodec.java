@@ -11,10 +11,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.localdata.BaseCodec;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Denomination;
 
-public class CurrencyCodec {
+public class CurrencyCodec extends BaseCodec {
     private int id;
     private String name;
     private String icon;
@@ -41,10 +42,7 @@ public class CurrencyCodec {
         JSONObject nest = json.getJSONObject("response");
         name = nest.getString(NAME);
         icon = nest.getString(ICON);
-        symbol = nest.getString(SYMBOL);
-        if (symbol == null || "null".equals(symbol)) {
-            symbol = "";
-        }
+        symbol = ifNull(nest.getString(SYMBOL), "");
         maxTap = nest.getInt(MAX_TAP);
         JSONArray jsonDenominations = nest.getJSONArray(DENOMINATIONS);
         parseDenominations(jsonDenominations);

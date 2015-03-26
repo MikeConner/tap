@@ -8,9 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import co.tapdatapp.tapandroid.localdata.BaseCodec;
 import co.tapdatapp.tapandroid.localdata.Yapa;
 
-public class YapaCodec {
+public class YapaCodec extends BaseCodec {
 
     /**
      * Parse JSON supplied when requesting the list of tags into a
@@ -24,12 +25,12 @@ public class YapaCodec {
     public Yapa parse(String tagId, JSONObject payload) throws JSONException {
         Yapa rv = new Yapa();
         rv.setTagId(tagId);
-        rv.setUri(payload.getString("uri"));
-        rv.setContent(payload.getString("content"));
+        rv.setUri(ifNull(payload.getString("uri"), null));
+        rv.setContent(ifNull(payload.getString("content"), null));
         rv.setThreshold(payload.getInt("threshold"));
-        rv.setImage(payload.getString("payload_image"));
-        rv.setThumb(payload.getString("payload_thumb"));
-        rv.setDescription(payload.getString("description"));
+        rv.setImage(ifNull(payload.getString("payload_image"), null));
+        rv.setThumb(ifNull(payload.getString("payload_thumb"), null));
+        rv.setDescription(ifNull(payload.getString("description"), null));
         rv.setType(payload.getString("content_type"));
         return rv;
     }

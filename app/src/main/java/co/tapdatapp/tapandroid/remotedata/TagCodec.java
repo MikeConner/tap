@@ -8,10 +8,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import co.tapdatapp.tapandroid.localdata.BaseCodec;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Tag;
 
-public class TagCodec {
+public class TagCodec extends BaseCodec {
 
     private String id;
     private String name;
