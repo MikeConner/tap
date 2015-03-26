@@ -15,7 +15,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/clickable_area">
+        android:id="@+id/clickable_area"
+        android:layout_weight=".55">
         <Space
             android:layout_width="match_parent"
             android:layout_height="45dp"
@@ -47,7 +48,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/scrollable_area"
         android:orientation="horizontal"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:layout_weight=".15">
         <Space
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -69,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.18" />
+        android:layout_weight="0.085" />
 
     <Button
         style="@style/AppTheme.Button"
@@ -79,6 +81,13 @@
         android:id="@+id/btnArm"
         android:onClick="armOrSend"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp" />
+        android:layout_marginRight="20dp"
+        android:layout_weight=".13" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.085" />
 
 </LinearLayout>
