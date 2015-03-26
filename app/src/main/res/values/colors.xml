@@ -5,7 +5,7 @@
     <color name="button_background_disabled">#bdbcbc</color>
     <color name="withdraw_button_background">#bdbcbc</color>
     <color name="withdraw_button_pressed">#bfc833</color>
-    <color name="load_button_background">#d0d0d0</color>
+    <color name="load_button_background">#efefef</color>
     <color name="load_button_background_pressed">#606060</color>
     <color name="load_button_background_disabled">#ffffff</color>
     <color name="load_button_text">#494949</color>

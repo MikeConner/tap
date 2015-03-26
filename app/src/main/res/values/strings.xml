@@ -59,5 +59,7 @@
     <string name="no_image_selected">No image was selected</string>
     <string name="tag_was_saved">Tag and all its Yapa have been saved</string>
     <string name="withdraw_button_text">W</string>
+    <string name="edit_profile">EDIT PROFILE</string>
+    <string name="manage_tags">MANAGE TAGS</string>
 
 </resources>
