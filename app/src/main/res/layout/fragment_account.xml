@@ -41,6 +41,7 @@
                     android:textColor="@color/white"
                     android:id="@+id/etNickName"
                     android:layout_gravity="start"
+                    android:singleLine="true"
                     tools:ignore="HardcodedText"
                     android:layout_above="@+id/etEmail"
                     android:layout_alignParentStart="true"/>
@@ -53,6 +54,7 @@
                     android:id="@+id/etEmail"
                     android:layout_gravity="start"
                     tools:ignore="HardcodedText"
+                    android:singleLine="true"
                     android:layout_alignBottom="@+id/profile_picture"
                     android:layout_alignEnd="@+id/etNickName"
                     android:layout_alignParentLeft="true"/>

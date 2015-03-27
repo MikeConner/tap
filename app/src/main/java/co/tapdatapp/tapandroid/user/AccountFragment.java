@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -50,6 +51,7 @@ implements View.OnClickListener,
     private TextView nickname;
     private CustomViewPager cvp;
     private boolean editMode = false;
+    private Button editButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -71,6 +73,7 @@ implements View.OnClickListener,
         nickname = (TextView)view.findViewById(R.id.etNickName);
         profilePic = (ImageView)view.findViewById(R.id.profile_picture);
         email = (TextView)view.findViewById(R.id.etEmail);
+        editButton = (Button) view.findViewById(R.id.btn_edit_profile);
         nickname.setText(account.getNickname());
         profilePic.setOnClickListener(null);
         new SetProfilePicTask().execute();
@@ -83,7 +86,7 @@ implements View.OnClickListener,
         }
         view.findViewById(R.id.btn_Load_Code).setOnClickListener(this);
         view.findViewById(R.id.btn_bitcoin_load).setOnClickListener(this);
-        view.findViewById(R.id.btn_edit_profile).setOnClickListener(this);
+        editButton.setOnClickListener(this);
         nickname.setOnClickListener(null);
         email.setOnClickListener(null);
         view.findViewById(R.id.account_layout).setOnTouchListener(new View.OnTouchListener() {
@@ -262,6 +265,7 @@ implements View.OnClickListener,
             profilePic.setOnClickListener(this);
             email.setOnClickListener(this);
             editMode = true;
+            editButton.setText(R.string.done_editing);
         }
         else{
             editPic.setVisibility(View.GONE);
@@ -269,6 +273,7 @@ implements View.OnClickListener,
             profilePic.setOnClickListener(null);
             email.setOnClickListener(null);
             editMode = false;
+            editButton.setText(R.string.edit_profile);
         }
 
     }

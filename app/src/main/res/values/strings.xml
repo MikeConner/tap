@@ -60,6 +60,7 @@
     <string name="tag_was_saved">Tag and all its Yapa have been saved</string>
     <string name="withdraw_button_text">W</string>
     <string name="edit_profile">EDIT PROFILE</string>
+    <string name="done_editing">DONE</string>
     <string name="manage_tags">MANAGE TAGS</string>
     <string name="edit_nickname">Edit Nickname</string>
     <string name="enter_new_nickname">Enter a new nickname: </string>
