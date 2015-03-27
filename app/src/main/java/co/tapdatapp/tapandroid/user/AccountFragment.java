@@ -33,7 +33,6 @@ import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
-import co.tapdatapp.tapandroid.tags.TagsFragment;
 import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
 
 public class AccountFragment
@@ -77,7 +76,6 @@ implements View.OnClickListener,
         editButton = (Button) view.findViewById(R.id.btn_edit_profile);
         nickname.setText(account.getNickname());
         profilePic.setOnClickListener(null);
-        new SetProfilePicTask().execute();
 
         String mEmailAddy = account.getEmail();
         if (mEmailAddy.isEmpty()) {
@@ -112,10 +110,20 @@ implements View.OnClickListener,
     public void setUserVisibleHint(boolean visible) {
         super.setUserVisibleHint(visible);
         if (visible) {
+            new SetProfilePicTask().execute();
             // Race condition exists where this might be called
             // before the view is inflated
             if (getView() != null) {
                 fillInList();
+            }
+        }
+        else {
+            try {
+                balanceList.setAdapter(null);
+                profilePic.setImageDrawable(null);
+            }
+            catch (NullPointerException npe) {
+                // Ignore, happens when the view is first started
             }
         }
     }
