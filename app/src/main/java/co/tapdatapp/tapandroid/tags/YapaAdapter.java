@@ -82,6 +82,16 @@ public class YapaAdapter extends BaseAdapter {
                 return R.layout.line_item_yapa_text;
             case Yapa.TYPE_IMAGE :
                 return R.layout.line_item_yapa_image;
+            //TODO: ARASH MAKING THESE AS DUMMY LAYOUTS UNTIL WE DO THE REAL THING
+            case Yapa.TYPE_VIDEO :
+                return R.layout.line_item_yapa_image;
+            case Yapa.TYPE_AUDIO :
+                return R.layout.line_item_yapa_image;
+            case Yapa.TYPE_COUPON :
+                return R.layout.line_item_yapa_image;
+            case Yapa.TYPE_URL :
+                return R.layout.line_item_yapa_image;
+
             default :
                 throw new AssertionError("Unknown yapa type " + tag.getYapa()[0].getType());
         }

@@ -120,7 +120,7 @@ implements TextWatcher,
      */
     // @TODO fix me
     private void setActionButtonState() {
-        findViewById(R.id.btnWriteTag).setEnabled(!needsSaved);
+        findViewById(R.id.btnWriteTag).setEnabled(true);
         findViewById(R.id.btnSaveTag).setEnabled(needsSaved);
     }
 
