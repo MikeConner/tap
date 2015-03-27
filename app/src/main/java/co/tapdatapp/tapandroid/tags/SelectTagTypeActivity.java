@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
