@@ -136,6 +136,19 @@ public class ServiceEndpoint {
     return Response.ok(new ResponseResponse(response)).build();
   }
   
+  @PUT
+  @Path(TAGS_PATH)
+  @Consumes({ MediaType.APPLICATION_JSON })
+  @Produces({ MediaType.APPLICATION_JSON })
+  public Response updateTag(
+    TagDataRequest request,
+    @QueryParam(AUTH_TOKEN) String authId
+  ) {
+    TagResponse response = accounts.updateTag(authId, request);
+    Monitor.trace("Updating tag with id " + response.id);
+    return Response.ok(new ResponseResponse(response)).build();
+  }
+  
   @POST
   @Path("transactions.json")
   @Produces({ MediaType.APPLICATION_JSON })

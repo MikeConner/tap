@@ -14,7 +14,7 @@ public class NfcTag {
   private String id;
   
   public void generateId() {
-    id = UUID.randomUUID().toString().replace("-", "").substring(10, 21);
+    id = UUID.randomUUID().toString().replace("-", "").substring(10, 20);
   }
   
   public void setId(String to) {

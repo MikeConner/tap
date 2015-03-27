@@ -17,6 +17,7 @@ import co.tapdatapp.taptestserver.entities.UserDetailsResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+import javax.ws.rs.BadRequestException;
 
 public class Accounts {
   
@@ -91,6 +92,41 @@ public class Accounts {
       i++;
     }
     tags.add(tag);
+    TagResponse rv = new TagResponse(tag);
+    return rv;
+  }
+  
+  public TagResponse updateTag(String authId, TagDataRequest info) {
+    NfcTag tag = null;
+    for (NfcTag oneTag : tags) {
+      if (oneTag.getId().equals(info.tag.tag_id)) {
+        tag = oneTag;
+        break;
+      }
+    }
+    if (tag == null) {
+      throw new BadRequestException("No such tag as " + info.tag.tag_id);
+    }
+    tag.currencyId = info.tag.currency_id;
+    tag.name = info.tag.name;
+    tag.setId(info.tag.tag_id);
+    tag.payloads = new PayloadObject[info.payloads.length];
+    int i = 0;
+    for (PayloadDataObject payload : info.payloads) {
+      PayloadObject ob = new PayloadObject();
+      ob.content_type = payload.content_type;
+      ob.content = payload.content;
+      ob.threshold = payload.threshold;
+      ob.uri = payload.uri;
+      ob.payload_image = payload.payload_image;
+      ob.payload_thumb = payload.payload_thumb;
+      ob.description = payload.description;
+      ob.setTagId(tag.getId());
+      ob.generateSlug();
+      payloads.add(ob);
+      tag.payloads[i] = ob;
+      i++;
+    }
     TagResponse rv = new TagResponse(tag);
     return rv;
   }
