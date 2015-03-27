@@ -76,30 +76,16 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
      */
     protected void setValues(Yapa y) {
         yapa = y;
-        etYapaDescription.setText(y.getContent());
         setThreshold(y.getThreshold());
+        etYapaDescription.setText(y.getContent());
     }
 
     /**
-     * Set the threshold on both the slider than the text
+     * Set the threshold on both the slider and the text
      */
     private void setThreshold(int to) {
         seekYapaThreshold.setProgress(to);
         tvYapaThreshold.setText(Integer.toString(to));
-    }
-
-    /**
-     * Return the threshold (minimum value necessary to earn this
-     * reward) or 0 if there's no threshold
-     */
-    private int getThreshold() {
-        String value = tvYapaThreshold.getText().toString();
-        if (value == null || value.isEmpty()) {
-            return 0;
-        }
-        else {
-            return Integer.parseInt(value);
-        }
     }
 
     /**
@@ -114,7 +100,7 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
     onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
             tvYapaThreshold.setText(Integer.toString(progress));
-            updateYapaRecord();
+            updateYapaRecord(false);
         }
     }
 
@@ -139,13 +125,18 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
     }
 
     /**
-     * Update the SQL Yapa record with the data from the view
+     * Update the Yapa object with the data from the view
+     *
+     * @param changed whether callers have changed the data in the Yapa
      */
-    protected void updateYapaRecord() {
-        yapa.setThreshold(getThreshold());
-        yapa.setDescription(etYapaDescription.getText().toString());
-        yapa.update();
-        activity.onChange();
+    protected void updateYapaRecord(boolean changed) {
+        changed |= yapa.setThresholdIfChanged(
+            seekYapaThreshold.getProgress()
+        );
+        changed |= yapa.setDescriptionIfChanged(
+            etYapaDescription.getText().toString()
+        );
+        activity.onChange(changed);
     }
 
     @Override
@@ -163,6 +154,6 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
      */
     @Override
     public void afterTextChanged(Editable s) {
-        updateYapaRecord();
+        updateYapaRecord(false);
     }
 }

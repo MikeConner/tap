@@ -17,17 +17,17 @@ import co.tapdatapp.tapandroid.localdata.Yapa;
 
 public class YapaAdapter extends BaseAdapter {
 
-    private Yapa[] yapa;
     private ManageTagActivity activity;
+    private Tag tag;
 
     /**
      * Constructor establishes adapter parameters
      *
-     * @param tag Initialize with Yapa for this tag
+     * @param _tag Tag to retrived Yapa from
      */
-    public YapaAdapter(ManageTagActivity a, Tag tag) {
+    public YapaAdapter(ManageTagActivity a, Tag _tag) {
         activity = a;
-        yapa = tag.getYapa();
+        tag = _tag;
     }
 
     @Override
@@ -42,12 +42,12 @@ public class YapaAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return yapa.length;
+        return tag.getYapa().length;
     }
 
     @Override
     public Object getItem(int position) {
-        return yapa[position];
+        return tag.getYapa()[position];
     }
 
     @Override
@@ -71,19 +71,19 @@ public class YapaAdapter extends BaseAdapter {
             v = inflater.inflate(viewType, parent, false);
             YapaLineItem.setTypeSpecificViewHolder(activity, v, viewType);
         }
-        ((YapaLineItem)v.getTag()).setValues(yapa[position]);
+        ((YapaLineItem)v.getTag()).setValues(tag.getYapa()[position]);
         return v;
     }
 
     @Override
     public int getItemViewType(int position) {
-        switch (yapa[0].getType()) {
+        switch (tag.getYapa()[0].getType()) {
             case Yapa.TYPE_TEXT :
                 return R.layout.line_item_yapa_text;
             case Yapa.TYPE_IMAGE :
                 return R.layout.line_item_yapa_image;
             default :
-                throw new AssertionError("Unknown yapa type " + yapa[0].getType());
+                throw new AssertionError("Unknown yapa type " + tag.getYapa()[0].getType());
         }
     }
 

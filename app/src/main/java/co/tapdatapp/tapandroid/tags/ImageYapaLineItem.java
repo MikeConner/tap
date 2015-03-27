@@ -21,18 +21,22 @@ implements View.OnClickListener, TapBitmap.Callback {
         imageButton.setOnClickListener(this);
     }
 
+    @Override
     public void setValues(Yapa y) {
         super.setValues(y);
         String image = y.getImage();
         imageButton.setTag(image);
         if (image != null && !image.isEmpty()) {
+            if ("null".equals(image)) {
+                throw new AssertionError("the image is the string \"null\"");
+            }
             new TapBitmap().execute(this, image);
         }
     }
 
-    protected void updateYapaRecord() {
-        yapa.setImage(yapa.getImage());
-        super.updateYapaRecord();
+    @Override
+    protected void updateYapaRecord(boolean changed) {
+        super.updateYapaRecord(changed);
     }
 
     /**
@@ -43,10 +47,18 @@ implements View.OnClickListener, TapBitmap.Callback {
         activity.setYapaImageSelectedCallback(this);
     }
 
+    /**
+     * Called when a new image has been selected
+     *
+     * @param imageUrl URL of the full-sized image
+     * @param thumbUrl URL of the thumbnail of the image
+     * @param cache reference to a cache object to get the images from
+     */
     public void onImageSet(String imageUrl, String thumbUrl, AndroidCache cache) {
-        yapa.setImage(imageUrl);
-        yapa.setThumb(thumbUrl);
+        boolean changed = yapa.setImageIfChanged(imageUrl);
+        changed |= yapa.setThumbIfChanged(thumbUrl);
         imageButton.setImageBitmap(TapBitmap.fetchFromCache(thumbUrl, cache));
+        updateYapaRecord(changed);
     }
 
     /**

@@ -180,7 +180,15 @@ public class Tag  extends BaseDAO implements SingleTable {
      * Get the next highest threshold that's not in use
      */
     public int getNextAvailableThreshold() {
-        return new Yapa().getNextAvailableThreshold(tagId);
+        getYapa();
+        int rv = 0;
+        for (Yapa y : yapa) {
+            int threshold = y.getThreshold();
+            if (threshold > rv) {
+                rv = threshold;
+            }
+        }
+        return rv + 1;
     }
 
     public String getTagId() {
@@ -191,12 +199,44 @@ public class Tag  extends BaseDAO implements SingleTable {
         this.tagId = tagId;
     }
 
+    /**
+     * Set the Tag ID to the passed value, and return true if the
+     * value has changed, or false if not.
+     */
+    public boolean setTagIdIfChanged(String to) {
+        boolean rv;
+        if (to == null) {
+            rv = tagId != null;
+        }
+        else {
+            rv = !to.equals(tagId);
+        }
+        tagId = to;
+        return rv;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Set the Tag name to the passed value and return true if the
+     * new value is different than the existing value.
+     */
+    public boolean setNameIfChanged(String to) {
+        boolean rv;
+        if (to == null) {
+            rv = name != null;
+        }
+        else {
+            rv = !to.equals(name);
+        }
+        name = to;
+        return rv;
     }
 
     public int getCurrencyId() {
@@ -215,7 +255,25 @@ public class Tag  extends BaseDAO implements SingleTable {
         return yapa;
     }
 
+    /**
+     * Set the list of Yapa on this tag to the provided list
+     *
+     * @param y List to replace the existing Yapa list
+     */
     public void setYapa(Yapa[] y) {
         yapa = y;
+    }
+
+    /**
+     * Add a Yapa to the existing list of Yapa for this tag.
+     *
+     * @param y Yapa to add
+     */
+    public void addYapa(Yapa y) {
+        getYapa();
+        Yapa[] newYapa = new Yapa[yapa.length + 1];
+        System.arraycopy(yapa, 0, newYapa, 0, yapa.length);
+        newYapa[yapa.length] = y;
+        yapa = newYapa;
     }
 }

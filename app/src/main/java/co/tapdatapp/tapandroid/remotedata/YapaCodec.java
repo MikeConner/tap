@@ -50,11 +50,11 @@ public class YapaCodec extends BaseCodec {
             JSONObject y = new JSONObject();
             y.put("threshold", item.getThreshold());
             y.put("content_type", item.getType());
-            y.put("description", "Desc" + item.getDescription());
-            y.put("content", item.getContent());
-            y.put("payload_image", item.getImage());
-            y.put("payload_thumb", item.getThumb());
-            y.put("uri", item.getUri());
+            y.put("description", ifNull(item.getDescription(), ""));
+            y.put("content", ifNull(item.getContent(), ""));
+            y.put("payload_image", ifNull(item.getImage(), ""));
+            y.put("payload_thumb", ifNull(item.getThumb(), ""));
+            y.put("uri", ifNull(item.getUri(), ""));
             rv.put(y);
         }
         return rv;

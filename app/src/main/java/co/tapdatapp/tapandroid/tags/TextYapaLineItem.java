@@ -21,14 +21,18 @@ public class TextYapaLineItem extends YapaLineItem {
         etYapaContent.addTextChangedListener(this);
     }
 
+    @Override
     public void setValues(Yapa y) {
         super.setValues(y);
         etYapaContent.setText(y.getContent());
     }
 
-    protected void updateYapaRecord() {
-        yapa.setContent(etYapaContent.getText().toString());
-        super.updateYapaRecord();
+    @Override
+    protected void updateYapaRecord(boolean changed) {
+        changed |= yapa.setContentIfChanged(
+            etYapaContent.getText().toString()
+        );
+        super.updateYapaRecord(changed);
     }
 
 }

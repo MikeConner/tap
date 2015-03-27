@@ -129,30 +129,6 @@ public class Yapa extends BaseDAO implements SingleTable {
     }
 
     /**
-     * Get the next highest threshold for the passed ID
-     */
-    public int getNextAvailableThreshold(String id) {
-        Cursor c = null;
-        try {
-            SQLiteDatabase db = getDatabaseHelper().getReadableDatabase();
-            c = db.rawQuery(
-                "SELECT MAX(" + THRESHOLD + ") FROM " + TABLE +
-                    " WHERE " + TAG_ID + " = ?",
-                new String[] {id}
-            );
-            if (c.moveToFirst()) {
-                return c.getInt(0) + 1;
-            } else {
-                return 1;
-            }
-        } finally {
-            if (c != null) {
-                c.close();
-            }
-        }
-    }
-
-    /**
      * Get an array of all the Yapa for the passed Tag ID
      */
     public Yapa[] getAllForTag(String id) {
@@ -201,12 +177,38 @@ public class Yapa extends BaseDAO implements SingleTable {
         return content;
     }
 
+    /**
+     * Sets the content and returns true if the new value differs
+     * from the old.
+     */
+    public boolean setContentIfChanged(String to) {
+        boolean rv;
+        if (to == null) {
+            rv = content != null;
+        }
+        else {
+            rv = !to.equals(content);
+        }
+        content = to;
+        return rv;
+    }
+
     public void setContent(String content) {
         this.content = content;
     }
 
     public int getThreshold() {
         return threshold;
+    }
+
+    /**
+     * Sets the threshold and returns true if the new value differs
+     * from the old.
+     */
+    public boolean setThresholdIfChanged(int to) {
+        boolean rv = to != threshold;
+        threshold = to;
+        return rv;
     }
 
     public void setThreshold(int threshold) {
@@ -217,6 +219,22 @@ public class Yapa extends BaseDAO implements SingleTable {
         return thumb;
     }
 
+    /**
+     * Sets the thumbnail and returns true if the new value differs
+     * from the old.
+     */
+    public boolean setThumbIfChanged(String to) {
+        boolean rv;
+        if (to == null) {
+            rv = thumb != null;
+        }
+        else {
+            rv = !to.equals(thumb);
+        }
+        thumb = to;
+        return rv;
+    }
+
     public void setThumb(String thumb) {
         this.thumb = thumb;
     }
@@ -225,8 +243,40 @@ public class Yapa extends BaseDAO implements SingleTable {
         return image;
     }
 
+    /**
+     * Sets the image and returns true if the new value differs
+     * from the old.
+     */
+    public boolean setImageIfChanged(String to) {
+        boolean rv;
+        if (to == null) {
+            rv = image != null;
+        }
+        else {
+            rv = !to.equals(image);
+        }
+        image = to;
+        return rv;
+    }
+
     public void setImage(String image) {
         this.image = image;
+    }
+
+    /**
+     * Sets the URI and returns true if the new value differs
+     * from the old.
+     */
+    public boolean setUriIfChanged(String to) {
+        boolean rv;
+        if (to == null) {
+            rv = uri != null;
+        }
+        else {
+            rv = !to.equals(uri);
+        }
+        uri = to;
+        return rv;
     }
 
     public void setUri(String to) {
@@ -261,6 +311,22 @@ public class Yapa extends BaseDAO implements SingleTable {
 
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Sets the description and returns true if the new value differs
+     * from the old.
+     */
+    public boolean setDescriptionIfChanged(String to) {
+        boolean rv;
+        if (to == null) {
+            rv = description != null;
+        }
+        else {
+            rv = !to.equals(description);
+        }
+        description = to;
+        return rv;
     }
 
     public void setDescription(String to) {

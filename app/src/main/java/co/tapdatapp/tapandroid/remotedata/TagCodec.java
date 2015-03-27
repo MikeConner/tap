@@ -78,6 +78,10 @@ public class TagCodec extends BaseCodec {
         if (currencyId != CurrencyDAO.CURRENCY_BITCOIN) {
             tag.put("currency_id", currencyId);
         }
+        String tagId = t.getTagId();
+        if (!Tag.NEW_TAG_ID.equals(tagId)) {
+            tag.put("tag_id", tagId);
+        }
         rv.put("tag", tag);
         YapaCodec yapaCodec = new YapaCodec();
         JSONArray yapas = yapaCodec.marshallYapaArray(t.getYapa());

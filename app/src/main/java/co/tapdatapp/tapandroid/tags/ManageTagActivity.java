@@ -47,13 +47,12 @@ implements TextWatcher,
     public final static int MODE_NEW = 1;
     public final static int MODE_MODIFY = 2;
 
-
     private NfcAdapter mNfcAdapter;
     private PendingIntent mNfcPendingIntent;
     boolean mWriteMode = false;
 
-
     private boolean needsSaved;
+    private boolean allowUserUpdating = false;
     private Tag tag = null;
     private ImageYapaLineItem imageSelectedCallback;
 
@@ -61,23 +60,39 @@ implements TextWatcher,
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_manage_tag);
-        Intent intent = getIntent();
-        int mode = intent.getIntExtra(MODE, 0);
+        String tagId;
+        int mode;
+        if (state != null) {
+            tagId = state.getString(TAG_ID);
+            mode = state.getInt(MODE);
+        }
+        else {
+            Intent intent = getIntent();
+            tagId = intent.getStringExtra(TAG_ID);
+            mode = intent.getIntExtra(MODE, 0);
+        }
         if (mode == 0) {
             throw new AssertionError("must provide a mode");
         }
-
         tag = new Tag();
-        String tagId = intent.getStringExtra(TAG_ID);
         tag.moveTo(tagId);
         fillIn();
         needsSaved = mode == MODE_NEW;
         setActionButtonState();
+        allowUserUpdating = true;
     }
 
+    /**
+     * Save whether this tag's ID has changed and whether the mode
+     * has changed.
+     *
+     * @param b Bundle carrying the data
+     */
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onSaveInstanceState(Bundle b) {
+        b.putInt(MODE, needsSaved ? MODE_MODIFY : MODE_NEW);
+        b.putString(TAG_ID, tag.getTagId());
+        super.onSaveInstanceState(b);
     }
 
     @Override
@@ -105,20 +120,25 @@ implements TextWatcher,
      */
     // @TODO fix me
     private void setActionButtonState() {
-        Log.d("TRACKING", "needsSaved = " + needsSaved);
-        findViewById(R.id.btnWriteTag).setEnabled(true);
-        findViewById(R.id.btnSaveTag).setEnabled(true);
-        //findViewById(R.id.btnWriteTag).setEnabled(!needsSaved);
-        //findViewById(R.id.btnSaveTag).setEnabled(needsSaved);
+        findViewById(R.id.btnWriteTag).setEnabled(!needsSaved);
+        findViewById(R.id.btnSaveTag).setEnabled(needsSaved);
     }
 
     /**
      * Called any time data is changed by the user. Sets the
      * modified flag to true and updates any interface widgets as
-     * needed.
+     * needed. The two challenges to making this work are first, this
+     * gets called repeatedly when the view is being created by
+     * Android, which is why allowUserUpdating is required to be
+     * false until the view is fully composited; and the fact that
+     * many operations will appear to change something without the
+     * actual data itself being modified, which is what the
+     * changed parameter indicates.
      */
-    public void onChange() {
-        needsSaved = true;
+    public void onChange(boolean changed) {
+        if (allowUserUpdating && changed) {
+            needsSaved = true;
+        }
         setActionButtonState();
     }
 
@@ -137,7 +157,7 @@ implements TextWatcher,
      */
     @Override
     public void afterTextChanged(Editable s) {
-        onChange();
+        onChange(tag.setNameIfChanged(s.toString()));
     }
 
     /**
@@ -153,9 +173,10 @@ implements TextWatcher,
         y.setThumb("");
         y.setTagId(tag.getTagId());
         y.setSlug(UUID.randomUUID());
-        y.create();
+        y.setType(tag.getYapa()[0].getType());
+        tag.addYapa(y);
         fillIn();
-        onChange();
+        onChange(true);
     }
 
     /**
@@ -163,30 +184,38 @@ implements TextWatcher,
      */
     public void onClickSave(View view) {
         findViewById(R.id.btnWriteTag).setEnabled(false);
-        saveUI();
+        saveTagAndYapaToSQL();
         new SaveTagToServerTask().execute(this, tag.getTagId());
     }
 
     /**
-     * Take what's in the UI and save it to SQLite
+     * Take what's in the Tag object and save it to SQLite
      */
-    private void saveUI() {
+    private void saveTagAndYapaToSQL() {
         tag.setName(((EditText)findViewById(R.id.etTagName)).getText().toString());
         tag.update();
-        for (Yapa y : tag.getYapa()) {
-            y.update();
+        Yapa[] yList = tag.getYapa();
+        yList[0].remove(tag.getTagId());
+        for (Yapa y : yList) {
+            y.create();
         }
     }
 
     /**
      * Callback when updating the tag on the server is complete
      *
-     * @param TagId Tag ID of what was saved, will be different if a new tag was created
+     * @param tagId Tag ID of what was saved, will be different if a new tag was created
      */
     @Override
-    public void onTagSaved(String TagId) {
+    public void onTagSaved(String tagId) {
         needsSaved = false;
         setActionButtonState();
+        tag.setTagId(tagId);
+        for (Yapa y : tag.getYapa()) {
+            y.setTagId(tagId);
+        }
+        tag.remove(Tag.NEW_TAG_ID);
+        tag.create(tag.getTagId(), tag.getName(), tag.getCurrencyId(), tag.getYapa());
         Toast t = Toast.makeText(this, R.string.tag_was_saved, Toast.LENGTH_LONG);
         t.show();
     }
@@ -251,6 +280,7 @@ implements TextWatcher,
                         }
                     }
                     imageSelectedCallback.onImageSet(imageUrl, thumbUrl, cache);
+                    imageSelectedCallback = null;
                 }
                 else {
                     TapApplication.errorToUser(TapApplication.string(R.string.no_image_selected));
