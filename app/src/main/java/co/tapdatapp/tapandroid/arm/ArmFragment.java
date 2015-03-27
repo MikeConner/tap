@@ -175,11 +175,23 @@ implements View.OnTouchListener {
      * This method is called any time the visibility of this
      * fragment changes.
      */
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void setUserVisibleHint(boolean visible) {
         super.setUserVisibleHint(visible);
         if (visible) {
             setUpScreen();
+        }
+        else {
+            try {
+                ViewFlipper layout = (ViewFlipper)getView().findViewById(R.id.currency_items);
+                layout.removeAllViews();
+                TextView viewAmount = (TextView)getView().findViewById(R.id.txtAmount);
+                viewAmount.setBackground(null);
+            }
+            catch (NullPointerException npe) {
+                // This happens when this is called before the view is created
+            }
         }
     }
 
@@ -229,6 +241,7 @@ implements View.OnTouchListener {
      * method.
      */
     private void updateBitcoinDenominations() {
+        //noinspection ConstantConditions
         TextView viewAmount = (TextView)getView().findViewById(R.id.txtAmount);
         viewAmount.setBackground(getActivity().getResources().getDrawable(R.drawable.bitcoin_icon));
         viewAmount.getBackground().setAlpha(128);
@@ -285,6 +298,7 @@ implements View.OnTouchListener {
      */
     public void
     updateDenominations(Denomination[] d, Bitmap[] b, Bitmap logo) {
+        //noinspection ConstantConditions
         TextView viewAmount = (TextView)getView().findViewById(R.id.txtAmount);
         viewAmount.setBackground(
             new BitmapDrawable(getActivity().getResources(), logo)
