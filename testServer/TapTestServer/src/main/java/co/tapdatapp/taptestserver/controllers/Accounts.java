@@ -98,18 +98,19 @@ public class Accounts {
   
   public TagResponse updateTag(String authId, TagDataRequest info) {
     NfcTag tag = null;
+    String tagId = info.tag.tag_id.replace("-", "");
     for (NfcTag oneTag : tags) {
-      if (oneTag.getId().equals(info.tag.tag_id)) {
+      if (oneTag.getId().equals(tagId)) {
         tag = oneTag;
         break;
       }
     }
     if (tag == null) {
+      Monitor.trace("Attempt to update unknown tag " + info.tag.tag_id);
       throw new BadRequestException("No such tag as " + info.tag.tag_id);
     }
     tag.currencyId = info.tag.currency_id;
     tag.name = info.tag.name;
-    tag.setId(info.tag.tag_id);
     tag.payloads = new PayloadObject[info.payloads.length];
     int i = 0;
     for (PayloadDataObject payload : info.payloads) {
