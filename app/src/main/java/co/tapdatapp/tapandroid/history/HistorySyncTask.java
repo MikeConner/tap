@@ -82,7 +82,7 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
             // The server may return transactions that do not contain
             // payloads. At this time, we're not recording those
             // locally
-            if (t.getYapa_url() != null && !t.getYapa_url().equals("null")) {
+            if (t.getContentType() != null && !t.getContentType().equals("null")) {
                 t.create();
             }
         }
