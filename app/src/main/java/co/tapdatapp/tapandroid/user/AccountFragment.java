@@ -33,6 +33,7 @@ import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
+import co.tapdatapp.tapandroid.tags.TagsFragment;
 import co.tapdatapp.tapandroid.voucher.DepositCodeFragment;
 
 public class AccountFragment
@@ -86,6 +87,7 @@ implements View.OnClickListener,
         }
         view.findViewById(R.id.btn_Load_Code).setOnClickListener(this);
         view.findViewById(R.id.btn_bitcoin_load).setOnClickListener(this);
+        view.findViewById(R.id.btn_manage_tags).setOnClickListener(this);
         editButton.setOnClickListener(this);
         nickname.setOnClickListener(null);
         email.setOnClickListener(null);
@@ -192,6 +194,9 @@ implements View.OnClickListener,
                 break;
             case R.id.btn_edit_profile:
                 makeEditable();
+                break;
+            case R.id.btn_manage_tags:
+                goToTags();
                 break;
             default :
                 throw new AssertionError("Unknown button " + v.getId());
@@ -308,6 +313,13 @@ implements View.OnClickListener,
         });
 
         alert.show();
+    }
+
+    /**
+     * Goes to the tags screen
+     */
+    public void goToTags(){
+        cvp.setCurrentItem(0);
     }
 
     /**
