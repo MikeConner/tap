@@ -88,7 +88,7 @@ public class HistoryAdapter extends BaseAdapter {
         ImageView historyIcon = ((ImageView)v.findViewById(R.id.history_icon));
         ImageView historyPreview = ((ImageView)v.findViewById(R.id.history_preview));
         if (transaction.getContentType().equals(Yapa.TYPE_IMAGE)) {
-            new ImageFetchTask().execute(historyPreview, transaction);
+            new ImageFetchTask().execute(historyPreview, transaction.getYapa_url());
         }
         YapaDisplay yl = new YapaDisplay();
         historyIcon.setImageDrawable(yl.getIcon(transaction));
@@ -128,6 +128,7 @@ public class HistoryAdapter extends BaseAdapter {
 
         Bitmap imageBitmap = null;
         ImageView imageView = null;
+        Throwable error = null;
 
         /**
          * @param params ImageView to set and Transaction to set from
@@ -135,16 +136,17 @@ public class HistoryAdapter extends BaseAdapter {
          */
         @Override
         protected Void doInBackground(Object... params) {
+
             if (params.length != 2) {
                 throw new AssertionError("Requires ImageView and transaction");
             }
             imageView = (ImageView)params[0];
-            Transaction transaction = (Transaction)params[1];
+            String thumbUrl= (String)params[1];
             try {
-                imageBitmap = TapBitmap.fetchFromCacheOrWeb(transaction.getYapa_url());
+                imageBitmap = TapBitmap.fetchFromCacheOrWeb(thumbUrl);
             }
             catch (Exception e) {
-                TapApplication.handleFailures(e);
+                error = e;
             }
             return null;
         }
@@ -161,6 +163,11 @@ public class HistoryAdapter extends BaseAdapter {
             else {
                 // @TODO provide some sort of message to the user that the image can't be displayed
             }
+
+            if(error != null){
+                TapApplication.handleFailures(error);
+            }
+
         }
     }
 }
