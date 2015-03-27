@@ -193,7 +193,7 @@ public class Transaction implements SingleTable, TransactionDAO {
         // the server side, having it be the primary key here should
         // allow SQLite to ignore the record without causing
         // issues with duplicates.
-        db.insertWithOnConflict(NAME, null, v, SQLiteDatabase.CONFLICT_IGNORE);
+        db.insertWithOnConflict(NAME, null, v, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     public String getSlug() {
