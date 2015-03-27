@@ -61,5 +61,12 @@
     <string name="withdraw_button_text">W</string>
     <string name="edit_profile">EDIT PROFILE</string>
     <string name="manage_tags">MANAGE TAGS</string>
+    <string name="edit_nickname">Edit Nickname</string>
+    <string name="enter_new_nickname">Enter a new nickname: </string>
+    <string name="edit_email">Edit E-Mail</string>
+    <string name="enter_new_email">Enter a new e-mail address: </string>
+    <string name="positive_alert">OK</string>
+    <string name="negative_alert">Cancel</string>
+    <string name="default_email">no@email.addy</string>
 
 </resources>

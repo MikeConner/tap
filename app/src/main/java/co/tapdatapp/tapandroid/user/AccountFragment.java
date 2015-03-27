@@ -77,7 +77,7 @@ implements View.OnClickListener,
 
         String mEmailAddy = account.getEmail();
         if (mEmailAddy.isEmpty()) {
-            email.setText("no@email.addy");
+            email.setText(R.string.default_email);
         } else {
             email.setText(mEmailAddy);
         }
@@ -225,13 +225,13 @@ implements View.OnClickListener,
     public void changeNickname(){
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 
-        alert.setTitle("Edit Nickname");
-        alert.setMessage("Enter a new nickname:");
+        alert.setTitle(R.string.edit_nickname);
+        alert.setMessage(R.string.enter_new_nickname);
 
         final EditText input = new EditText(getActivity());
         alert.setView(input);
 
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton(R.string.positive_alert, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 CharSequence text = input.getText();
@@ -241,7 +241,7 @@ implements View.OnClickListener,
             }
         });
 
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton(R.string.negative_alert, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Canceled.
             }
@@ -280,13 +280,13 @@ implements View.OnClickListener,
     public void changeEmail(){
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 
-        alert.setTitle("Edit E-mail");
-        alert.setMessage("Enter a new e-mail address:");
+        alert.setTitle(R.string.edit_email);
+        alert.setMessage(R.string.enter_new_email);
 
         final EditText input = new EditText(getActivity());
         alert.setView(input);
 
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton(R.string.positive_alert, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 CharSequence text = input.getText();
@@ -296,7 +296,7 @@ implements View.OnClickListener,
             }
         });
 
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton(R.string.negative_alert, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Canceled.
             }
