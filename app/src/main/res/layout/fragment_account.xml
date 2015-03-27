@@ -43,7 +43,7 @@
                     android:layout_gravity="start"
                     tools:ignore="HardcodedText"
                     android:layout_above="@+id/etEmail"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="true"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -55,7 +55,15 @@
                     tools:ignore="HardcodedText"
                     android:layout_alignBottom="@+id/profile_picture"
                     android:layout_alignEnd="@+id/etNickName"
-                    android:layout_alignParentLeft="true" />
+                    android:layout_alignParentLeft="true"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/edit_indicator"
+                    android:src="@drawable/edit_account_icon"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:visibility="gone"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -92,10 +100,16 @@
 
     </LinearLayout>
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight=".01"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight=".01"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"

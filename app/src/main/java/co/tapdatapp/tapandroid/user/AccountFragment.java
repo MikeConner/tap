@@ -49,6 +49,7 @@ implements View.OnClickListener,
     private TextView email;
     private TextView nickname;
     private CustomViewPager cvp;
+    private boolean editMode = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -71,7 +72,7 @@ implements View.OnClickListener,
         profilePic = (ImageView)view.findViewById(R.id.profile_picture);
         email = (TextView)view.findViewById(R.id.etEmail);
         nickname.setText(account.getNickname());
-        profilePic.setOnClickListener(this);
+        profilePic.setOnClickListener(null);
         new SetProfilePicTask().execute();
 
         String mEmailAddy = account.getEmail();
@@ -82,8 +83,9 @@ implements View.OnClickListener,
         }
         view.findViewById(R.id.btn_Load_Code).setOnClickListener(this);
         view.findViewById(R.id.btn_bitcoin_load).setOnClickListener(this);
-        nickname.setOnClickListener(this);
-        email.setOnClickListener(this);
+        view.findViewById(R.id.btn_edit_profile).setOnClickListener(this);
+        nickname.setOnClickListener(null);
+        email.setOnClickListener(null);
         view.findViewById(R.id.account_layout).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -185,6 +187,9 @@ implements View.OnClickListener,
             case R.id.etEmail:
                 changeEmail();
                 break;
+            case R.id.btn_edit_profile:
+                makeEditable();
+                break;
             default :
                 throw new AssertionError("Unknown button " + v.getId());
         }
@@ -244,6 +249,30 @@ implements View.OnClickListener,
 
         alert.show();
     }
+
+    /**
+     * This toggles whether the nickname, e-mail, and profile picture are editable
+     */
+    public void makeEditable(){
+        ImageView editPic = (ImageView) getActivity().findViewById(R.id.edit_indicator);
+
+        if(!editMode){
+            editPic.setVisibility(View.VISIBLE);
+            nickname.setOnClickListener(this);
+            profilePic.setOnClickListener(this);
+            email.setOnClickListener(this);
+            editMode = true;
+        }
+        else{
+            editPic.setVisibility(View.GONE);
+            nickname.setOnClickListener(null);
+            profilePic.setOnClickListener(null);
+            email.setOnClickListener(null);
+            editMode = false;
+        }
+
+    }
+
 
     /**
      * Opens a dialog to change the e-mail
