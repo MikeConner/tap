@@ -92,11 +92,14 @@ public class TapApplication extends Application {
         try{
             throw t;
         }
-        catch(UserFriendlyError ufe){
-            TapApplication.errorToUser(ufe);
+        catch (OutOfMemoryError oome) {
+            errorToUser(string(R.string.out_of_memory));
         }
-        catch(Throwable catchall) {
-            TapApplication.unknownFailure(t);
+        catch (UserFriendlyError ufe) {
+            errorToUser(ufe);
+        }
+        catch (Throwable catchall) {
+            unknownFailure(t);
         }
     }
 

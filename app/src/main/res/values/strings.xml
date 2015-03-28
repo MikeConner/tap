@@ -69,5 +69,6 @@
     <string name="positive_alert">OK</string>
     <string name="negative_alert">Cancel</string>
     <string name="default_email">no@email.addy</string>
+    <string name="out_of_memory">The device is out of memory</string>
 
 </resources>
