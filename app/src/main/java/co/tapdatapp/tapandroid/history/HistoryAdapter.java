@@ -138,21 +138,20 @@ public class HistoryAdapter extends BaseAdapter {
         protected Void doInBackground(Object... params) {
 
             if (params.length != 2) {
-                throw new AssertionError("Requires ImageView and transaction");
+                throw new AssertionError("Requires ImageView and image URL");
             }
             imageView = (ImageView)params[0];
             String thumbUrl= (String)params[1];
             try {
                 imageBitmap = TapBitmap.fetchFromCacheOrWeb(thumbUrl);
             }
-            catch (Exception e) {
+            catch (Throwable e) {
                 error = e;
             }
             return null;
         }
 
         protected void onPostExecute(Void x) {
-            //noinspection StatementWithEmptyBody
             if (imageBitmap != null) {
                 Context context = activity.getApplicationContext();
                 Resources res = context.getResources();
@@ -161,13 +160,13 @@ public class HistoryAdapter extends BaseAdapter {
                 imageView.setImageDrawable(yapaImage);
             }
             else {
-                // @TODO provide some sort of message to the user that the image can't be displayed
+                if (error != null) {
+                    TapApplication.handleFailures(error);
+                }
+                else {
+                    TapApplication.errorToUser(TapApplication.string(R.string.unknown_error));
+                }
             }
-
-            if(error != null){
-                TapApplication.handleFailures(error);
-            }
-
         }
     }
 }
