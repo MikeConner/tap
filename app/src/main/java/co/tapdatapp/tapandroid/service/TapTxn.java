@@ -25,10 +25,9 @@ public class TapTxn {
 
     private String slug;
     private String mTagID;
-    private int mSatoshi;
     private String mMessage;
     private String mTxnDate;
-    private int mEndingUserBalanaceSatoshi = 0;
+    private int mEndingUserBalanaceSatoshi;
 
     private float mTxnAmount;
 
@@ -50,14 +49,12 @@ public class TapTxn {
         mTxnDate = new_value;
     }
 
-
     public String getUserThumb(){
         return mUserImageThumb;
     }
     public void setUserThumb(String new_value){
         mUserImageThumb = new_value;
     }
-
 
     public String getPayloadImageThumb(){
         return mPayloadImageThumb;
@@ -66,15 +63,12 @@ public class TapTxn {
         mPayloadImageThumb = new_value;
     }
 
-
-
     public int getTXNamountSatoshi(){
         return mAmountSatoshi;
     }
     public void setTXNamountSatoshi(int new_value){
         mAmountSatoshi = new_value;
     }
-
 
     public float getTXNamountUSD(){
         return mAmountUSD;
@@ -83,15 +77,12 @@ public class TapTxn {
         mAmountUSD = new_value;
     }
 
-
     public String getPayloadImage(){
         return mPayloadImage;
     }
     public void setPayloadImage(String new_value){
         mPayloadImage = new_value;
     }
-
-
 
     public String getUserName(){
         return mUserNickname;
@@ -120,9 +111,6 @@ public class TapTxn {
     }
     public void setMessage(String new_value){
         mMessage = new_value;
-    }
-    public int getSatoshi(){
-        return mSatoshi;
     }
 
     public void setCurrencyId(int to) {
@@ -175,17 +163,13 @@ public class TapTxn {
             mAmountUSD = (float) (output.getJSONObject("response").getInt("dollar_amount") / 100);
         }
         catch (Exception e){
-            if(  output.getJSONObject("response").get("dollar_amount").equals(null)) {
+            if(output.getJSONObject("response").get("dollar_amount").equals(null)) {
                 //we're in a currency txn / no $ associated
             }
-            else{
-
-                //throw an exception here
+            else {
+                throw new AssertionError("Failed to get dollar_amount and it's not null");
             }
-
-
         }
-        // @TODO this webservice call has to return the slug
         slug = output.getJSONObject("response").getString("slug");
         mEndingUserBalanaceSatoshi = output.getJSONObject("response").getInt("final_balance");
         mUserImageThumb = output.getJSONObject("response").getString("tapped_user_thumb");
@@ -196,8 +180,10 @@ public class TapTxn {
         mPayloadImageThumb = output.getJSONObject("response").getJSONObject("payload").getString("thumb");
         mPayloadImage = output.getJSONObject("response").getJSONObject("payload").getString("image");
 
-//            /{"response":{"satoshi":936593,"payload":{"uri":"https:\/\/s3.amazonaws.com\/tapyapa\/new_key_needed","text":"Enter Your message here"}}}
+//      {"response":{"satoshi":936593,"payload":{"uri":"https:\/\/s3.amazonaws.com\/tapyapa\/new_key_needed","text":"Enter Your message here"}}}
 
+        // Expire local balances so they are refreshed from the server
+        new Account().expireBalances();
     }
 
     public String getSlug() {

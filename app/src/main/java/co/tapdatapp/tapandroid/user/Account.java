@@ -11,11 +11,17 @@ import android.os.Bundle;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Random;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.helpers.DateTime;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.UserAccountCodec;
@@ -33,6 +39,10 @@ public class Account {
     private final static String PROFILE_PIC_THUMB_URL = "ProfilePicThumbURL";
     private final static String INBOUND_BITCOIN_ADDRESS = "InboundBTCAddress";
     private final static String BITCOIN_QR_URL = "BitcoinQRCodeUrl";
+    private final static String BALANCES_EXPIRE = "BalancesExpire";
+    private final static String BALANCES = "Balances";
+
+    private final static int BALANCE_EXPIRE_TIME = 60; // in seconds
 
     private SharedPreferences preferences;
 
@@ -101,6 +111,98 @@ public class Account {
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
         editor.apply();
+    }
+
+    /**
+     * Return the balance list from the local storage, unless it
+     * has expired.
+     *
+     * @return HashMap of currency ID/Balance pairs
+     * @throws BalancesExpiredException
+     */
+    @SuppressWarnings({"unchecked", "ThrowFromFinallyBlock"})
+    public BalanceList
+    getBalances() throws BalancesExpiredException {
+        long expireDate = preferences.getLong(BALANCES_EXPIRE, 0);
+        if (expireDate > DateTime.currentEpochTime()) {
+            throw new BalancesExpiredException();
+        }
+        String balances = preferences.getString(BALANCES, null);
+        if (balances == null) {
+            throw new BalancesExpiredException();
+        }
+        byte[] sData = balances.getBytes();
+        ByteArrayInputStream is = null;
+        ObjectInputStream os = null;
+        try {
+            is = new ByteArrayInputStream(sData);
+            os = new ObjectInputStream(is);
+            return (BalanceList)os.readObject();
+        }
+        catch (Exception e) {
+            // If anything goes awry deserializing this, we just have
+            // to re-fetch it
+            throw new BalancesExpiredException();
+        }
+        finally {
+            try {
+                if (os != null) {
+                    os.close();
+                }
+                if (is != null) {
+                    is.close();
+                }
+            }
+            catch (IOException ioe) {
+                // If this happens, something is horribly wrong
+                throw new AssertionError(ioe);
+            }
+        }
+    }
+
+    /**
+     * Set balances to expire immediately, effectively forcing a
+     * network load the next time they are requested.
+     */
+    public void expireBalances() {
+        set(BALANCES_EXPIRE, 0L);
+    }
+
+    /**
+     * Cache the balance list for fast retrieval later
+     *
+     * @param to Balance list to store
+     */
+    @SuppressWarnings({"ThrowFromFinallyBlock"})
+    public void setBalances(BalanceList to) {
+        ByteArrayOutputStream os = null;
+        ObjectOutputStream oos = null;
+        try {
+            os = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(os);
+            oos.writeObject(to);
+            byte[] sData = os.toByteArray();
+            set(BALANCES, new String(sData));
+            set(BALANCES_EXPIRE, DateTime.currentEpochTime() + BALANCE_EXPIRE_TIME);
+        }
+        catch (Exception t) {
+            // Any errors here are a catastrophic failure
+            throw new AssertionError(t);
+        }
+        finally {
+            try {
+                if (oos != null) {
+                    oos.close();
+                }
+                if (os != null) {
+                    os.close();
+                }
+            }
+            catch (IOException ioe) {
+                // If these objects are not closeable, something is wrong
+                throw new AssertionError(ioe);
+            }
+        }
     }
 
     /**
@@ -364,6 +466,12 @@ public class Account {
     private void set(String key, String value) {
         SharedPreferences.Editor prefEditor = preferences.edit();
         prefEditor.putString(key, value);
+        prefEditor.apply();
+    }
+
+    private void set(String key, long value) {
+        SharedPreferences.Editor prefEditor = preferences.edit();
+        prefEditor.putLong(key, value);
         prefEditor.apply();
     }
 }

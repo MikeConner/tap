@@ -11,6 +11,8 @@ import android.os.AsyncTask;
 
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
+import co.tapdatapp.tapandroid.user.Account;
+import co.tapdatapp.tapandroid.user.BalancesExpiredException;
 
 public class GetAllBalancesTask
 extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
@@ -30,9 +32,20 @@ extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
             throw new AssertionError("Must provide 1 callback class");
         }
         callback = balancesActivities[0];
+        Account account = new Account();
+
         CurrencyDAO userBalance = new CurrencyDAO();
         try {
+            try {
+                balanceList = account.getBalances();
+                userBalance.ensureLocalCurrencyDetails(balanceList);
+                return null;
+            }
+            catch (BalancesExpiredException bee) {
+                // If this happens, just proceed to fetch from network
+            }
             balanceList = userBalance.getAllBalances();
+            account.setBalances(balanceList);
             userBalance.ensureLocalCurrencyDetails(balanceList);
         }
         catch (Throwable t){
