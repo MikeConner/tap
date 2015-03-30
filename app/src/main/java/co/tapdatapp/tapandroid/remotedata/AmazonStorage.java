@@ -4,12 +4,17 @@
 
 package co.tapdatapp.tapandroid.remotedata;
 
+import android.util.Log;
+import android.webkit.MimeTypeMap;
+
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URLConnection;
 import java.util.UUID;
 
 import co.tapdatapp.tapandroid.R;
@@ -33,11 +38,26 @@ public class AmazonStorage implements RemoteStorageDriver {
         String key = UUID.randomUUID().toString();
         ObjectMetadata metaData = new ObjectMetadata();
         metaData.setContentLength(data.length);
+        ByteArrayInputStream stream = new ByteArrayInputStream(data);
+        try {
+            String type = URLConnection.guessContentTypeFromStream(stream);
+            if (type != null && !type.isEmpty()) {
+                metaData.setContentType(type);
+                MimeTypeMap mtm = MimeTypeMap.getSingleton();
+                key += "." + mtm.getExtensionFromMimeType(type);
+            }
+        }
+        catch (IOException ioe) {
+            // This happens if the mime-type cannot be determined, in
+            // which case we proceed without specifying a mime-type or
+            // changing the file extension
+        }
+        Log.d("AWS", "Storing with name " + key);
         String bucket = TapApplication.string(R.string.AWS_BUCKET);
         PutObjectRequest por = new PutObjectRequest(
             bucket,
             key,
-            new ByteArrayInputStream(data),
+            stream,
             metaData
         );
         s3Client.putObject(por);
