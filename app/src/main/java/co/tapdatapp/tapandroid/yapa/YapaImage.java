@@ -87,6 +87,7 @@ public class YapaImage extends Activity implements TapBitmap.Callback {
         if (forceReturnToArmScreen) {
             futureTask.cancel(true);
             Intent startMain = new Intent(this, MainActivity.class);
+            startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(startMain);
             finish();
         }
