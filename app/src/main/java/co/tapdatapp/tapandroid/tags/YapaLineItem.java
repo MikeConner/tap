@@ -77,7 +77,7 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
     protected void setValues(Yapa y) {
         yapa = y;
         setThreshold(y.getThreshold());
-        etYapaDescription.setText(y.getContent());
+        etYapaDescription.setText(y.getDescription());
     }
 
     /**
