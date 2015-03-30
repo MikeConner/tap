@@ -117,7 +117,7 @@ implements TextWatcher,
     }
 
     /**
-     * Enable/disable the write button as appropriate
+     * Enable/disable the write and save buttons as appropriate
      */
     private void setActionButtonState() {
         findViewById(R.id.btnWriteTag).setEnabled(
@@ -338,11 +338,6 @@ implements TextWatcher,
                     }
 
                 }).create().show();
-
-
-        //  Intent i = new Intent(this, WriteActivity.class);
-        //  startActivity(i);
-
     }
 
     /**
