@@ -18,6 +18,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -89,7 +90,7 @@ implements TextWatcher,
      * @param b Bundle carrying the data
      */
     @Override
-    public void onSaveInstanceState(Bundle b) {
+    public void onSaveInstanceState(@NonNull Bundle b) {
         b.putInt(MODE, needsSaved ? MODE_MODIFY : MODE_NEW);
         b.putString(TAG_ID, tag.getTagId());
         super.onSaveInstanceState(b);
@@ -118,9 +119,10 @@ implements TextWatcher,
     /**
      * Enable/disable the write button as appropriate
      */
-    // @TODO fix me
     private void setActionButtonState() {
-        findViewById(R.id.btnWriteTag).setEnabled(true);
+        findViewById(R.id.btnWriteTag).setEnabled(
+            !Tag.NEW_TAG_ID.equals(tag.getTagId())
+        );
         findViewById(R.id.btnSaveTag).setEnabled(needsSaved);
     }
 
@@ -209,15 +211,17 @@ implements TextWatcher,
     @Override
     public void onTagSaved(String tagId) {
         needsSaved = false;
-        setActionButtonState();
         tag.setTagId(tagId);
         for (Yapa y : tag.getYapa()) {
             y.setTagId(tagId);
         }
+        // Remove any old tag related to this and completely replace it
         tag.remove(Tag.NEW_TAG_ID);
+        tag.remove(tag.getTagId());
         tag.create(tag.getTagId(), tag.getName(), tag.getCurrencyId(), tag.getYapa());
         Toast t = Toast.makeText(this, R.string.tag_was_saved, Toast.LENGTH_LONG);
         t.show();
+        setActionButtonState();
     }
 
     /**
