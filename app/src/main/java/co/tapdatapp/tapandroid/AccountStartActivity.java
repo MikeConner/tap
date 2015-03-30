@@ -15,6 +15,8 @@ import co.tapdatapp.tapandroid.remotedata.NewAccountTask;
 
 public class AccountStartActivity extends Activity {
 
+    public final static int ACCOUNT_CREATION = 1;
+
     /**
      * Just display an indefinite progress meter. In the near future,
      * this layout will give the user the opportunity to either
@@ -38,7 +40,23 @@ public class AccountStartActivity extends Activity {
         new NewAccountTask().execute(this);
     }
 
+    /**
+     * When successful, exit this Activity, which will return to the
+     * MainActivity with a created account.
+     */
     public void newAccountComplete() {
+        finish();
+    }
+
+    /**
+     * On failure, display a message and exit
+     *
+     * @param t The cause of the failure
+     */
+    // @TODO probably some better error handling
+    public void newAccountError(Throwable t) {
+        TapApplication.handleFailures(t);
+        setResult(RESULT_CANCELED);
         finish();
     }
 }

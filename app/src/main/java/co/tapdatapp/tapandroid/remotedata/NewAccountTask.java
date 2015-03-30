@@ -7,7 +7,6 @@ package co.tapdatapp.tapandroid.remotedata;
 import android.os.AsyncTask;
 
 import co.tapdatapp.tapandroid.AccountStartActivity;
-import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class NewAccountTask
@@ -33,7 +32,7 @@ extends AsyncTask<AccountStartActivity, Void, Throwable> {
     @Override
     protected void onPostExecute(Throwable t) {
         if (t != null) {
-            TapApplication.handleFailures(t);
+            callback.newAccountError(t);
         }
         else {
             callback.newAccountComplete();

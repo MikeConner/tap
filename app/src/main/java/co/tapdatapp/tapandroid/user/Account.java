@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
@@ -22,6 +21,7 @@ import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.currency.BalanceList;
 import co.tapdatapp.tapandroid.helpers.DateTime;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.UserAccountCodec;
@@ -69,37 +69,36 @@ public class Account {
      *
      * @throws WebServiceError on network problems
      */
-    public void createNew() throws WebServiceError {
+    public void createNew() throws UserFriendlyError {
         String phoneSecret = generatePhoneSecret();
         UserAccountCodec codec = new UserAccountCodec();
         JSONObject request = codec.marshallCreateRequest(phoneSecret);
         HttpHelper http = new HttpHelper();
-        JSONObject response = http.HttpPostJSON(
-            http.getFullUrl(R.string.ENDPOINT_REGISTRATION),
-            new Bundle(),
-            request
-        );
         try {
+            JSONObject response = http.HttpPostJSON(
+                http.getFullUrl(R.string.ENDPOINT_REGISTRATION),
+                new Bundle(),
+                request
+            );
             setPhoneSecret(phoneSecret);
             _setNickname(codec.getNickname(response));
             setAuthToken(codec.getAuthToken(response));
             setCurrencyOnNewUser();
-        }
-        catch (JSONException je) {
-            deleteAccount();
-            throw new WebServiceError(je);
-        }
-        response = http.HttpGetJSON(
-            http.getFullUrl(R.string.ENDPOINT_USER_API),
-            new Bundle()
-        );
-        try {
+            response = http.HttpGetJSON(
+                http.getFullUrl(R.string.ENDPOINT_USER_API),
+                new Bundle()
+            );
             setBitcoinAddress(codec.getBitcoinAddress(response));
             setBitcoinQrUrl(codec.getQRCode(response));
         }
-        catch (JSONException je) {
+        catch (Throwable t) {
             deleteAccount();
-            throw new WebServiceError(je);
+            if (t instanceof UserFriendlyError) {
+                throw (UserFriendlyError)t;
+            }
+            else {
+                throw new WebServiceError(t);
+            }
         }
     }
 

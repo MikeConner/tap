@@ -99,16 +99,25 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         Account account = new Account();
         if (!account.created()) {
             Intent intent = new Intent(this, AccountStartActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, AccountStartActivity.ACCOUNT_CREATION);
         }
         else {
             setupTabs();
         }
     }
 
+    /**
+     * Catch errors from the account creation screen and bail out if
+     * they happen.
+     */
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void
+    onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == AccountStartActivity.ACCOUNT_CREATION) {
+            if (resultCode == RESULT_CANCELED) {
+                finish();
+            }
+        }
     }
 
     private void setupTabs(){
