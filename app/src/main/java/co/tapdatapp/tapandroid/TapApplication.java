@@ -9,6 +9,8 @@ package co.tapdatapp.tapandroid;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.os.Environment;
+import android.os.StatFs;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -38,6 +40,7 @@ public class TapApplication extends Application {
         ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         Log.d("MEMORY", "Memory class = " + am.getMemoryClass());
         Log.d("MEMORY", "Large memory class = " + am.getLargeMemoryClass());
+        Log.d("STORAGE", "Available storage = " + getFreeStorage());
         // Would be nice to shut this down cleanly as well, but
         // Android provides no way to know when the application is
         // being stopped.
@@ -52,6 +55,11 @@ public class TapApplication extends Application {
      */
     public static TapApplication get() {
         return app;
+    }
+
+    public static long getFreeStorage() {
+        StatFs stat = new StatFs(Environment.getDataDirectory().getPath());
+        return stat.getAvailableBlocks() * stat.getBlockSize();
     }
 
     /**
