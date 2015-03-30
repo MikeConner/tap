@@ -5,6 +5,7 @@
 package co.tapdatapp.tapandroid.remotedata;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import org.json.JSONException;
 
@@ -49,6 +50,9 @@ public class DevStorage implements RemoteStorageDriver {
     @Override
     public void overWrite(String url, byte[] data)
     throws IOException, WebServiceError {
+        String[] bits = url.split("/");
+        url = bits[bits.length - 1];
+        Log.d("JSON", putUrl + "/" + url);
         WebResponse r = httpHelper.HttpPut(
             putUrl + "/" + url,
             new Bundle(),

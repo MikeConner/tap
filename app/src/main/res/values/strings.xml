@@ -70,5 +70,9 @@
     <string name="negative_alert">Cancel</string>
     <string name="default_email">no@email.addy</string>
     <string name="out_of_memory">The device is out of memory</string>
+    <string name="tag_write_success">Tag successfully written</string>
+    <string name="tag_read_only">The tag is read-only.</string>
+    <string name="tag_too_small">The tag has too little storage space</string>
+    <string name="tag_format_failed">Failed to format a tag message</string>
 
 </resources>

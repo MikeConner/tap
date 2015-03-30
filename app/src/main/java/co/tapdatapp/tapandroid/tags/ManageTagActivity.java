@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -34,6 +35,7 @@ import java.util.UUID;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.localdata.Tag;
 import co.tapdatapp.tapandroid.localdata.Yapa;
@@ -370,9 +372,13 @@ implements TextWatcher,
             String strID = tag.getTagId();
             NdefRecord record = NdefRecord.createUri("http://tapnology.co/nfc_tags/" + strID);
             NdefMessage message = new NdefMessage(new NdefRecord[] { record });
-            if (writeDaTag(message, detectedTag)) {
-                Toast.makeText(this, "Success: Wrote placeid to nfc tag", Toast.LENGTH_LONG)
-                        .show();
+            try {
+                writeTag(message, detectedTag);
+                Toast t = Toast.makeText(this, R.string.tag_write_success, Toast.LENGTH_LONG);
+                t.show();
+            }
+            catch (Exception ioe) {
+                TapApplication.handleFailures(ioe);
             }
         }
         else {
@@ -383,43 +389,34 @@ implements TextWatcher,
     /**
      *
      */
-    public boolean writeDaTag(NdefMessage message, android.nfc.Tag tag) {
+    public void
+    writeTag(NdefMessage message, android.nfc.Tag tag)
+    throws FormatException, IOException, UserFriendlyError {
         int size = message.toByteArray().length;
-        try {
-            Ndef ndef = Ndef.get(tag);
-            if (ndef != null) {
-                ndef.connect();
-                if (!ndef.isWritable()) {
-                    Toast.makeText(getApplicationContext(),
-                            "Error: tag not writable",
-                            Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-                if (ndef.getMaxSize() < size) {
-                    Toast.makeText(getApplicationContext(),
-                            "Error: tag too small",
-                            Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-                ndef.writeNdefMessage(message);
-                return true;
+        Ndef ndef = Ndef.get(tag);
+        if (ndef != null) {
+            ndef.connect();
+            if (!ndef.isWritable()) {
+                throw new UserFriendlyError(
+                    TapApplication.string(R.string.tag_read_only)
+                );
             }
-            else {
-                NdefFormatable format = NdefFormatable.get(tag);
-                if (format != null) {
-                    try {
-                        format.connect();
-                        format.format(message);
-                        return true;
-                    } catch (IOException e) {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
+            if (ndef.getMaxSize() < size) {
+                throw new UserFriendlyError(
+                    TapApplication.string(R.string.tag_too_small)
+                );
             }
-        } catch (Exception e) {
-            return false;
+            ndef.writeNdefMessage(message);
+        }
+        else {
+            NdefFormatable format = NdefFormatable.get(tag);
+            if (format == null) {
+                throw new FormatException(
+                    TapApplication.string(R.string.tag_format_failed)
+                );
+            }
+            format.connect();
+            format.format(message);
         }
     }
 

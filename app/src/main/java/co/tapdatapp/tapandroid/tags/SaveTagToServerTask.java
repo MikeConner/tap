@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import org.json.JSONObject;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import co.tapdatapp.tapandroid.R;
@@ -31,6 +32,7 @@ extends AsyncTask<Object, Void, String> {
     private Callback callback;
     private Throwable error;
     private AndroidCache cache;
+    private HttpHelper helper;
 
     @Override
     protected String doInBackground(Object... params) {
@@ -40,6 +42,7 @@ extends AsyncTask<Object, Void, String> {
         callback = (Callback)params[0];
         String tagId = (String)params[1];
         Tag tag = new Tag();
+        helper = new HttpHelper();
         try {
             tag.moveTo(tagId);
             tagId = saveTag(tag);
@@ -66,7 +69,6 @@ extends AsyncTask<Object, Void, String> {
     public String saveTag(Tag t) throws Exception {
         saveAllYapaImages(t);
         TagCodec codec = new TagCodec();
-        HttpHelper helper = new HttpHelper();
         if (Tag.NEW_TAG_ID.equals(t.getTagId())) {
             // Creating new tag
             JSONObject response = helper.HttpPostJSON(
@@ -112,8 +114,16 @@ extends AsyncTask<Object, Void, String> {
      */
     public String saveImage(String name) throws Exception {
         if (name != null && !name.isEmpty()) {
+            byte[] data;
+            try {
+                data = cache.get(name);
+            }
+            catch (NoSuchElementException nsee) {
+                // If the element isn't available locally, then it
+                // hasn't changed and there's nothing to do.
+                return name;
+            }
             RemoteStorageDriver storage = RemoteStorage.getDriver();
-            byte[] data = cache.get(name);
             try {
                 //noinspection ResultOfMethodCallIgnored
                 UUID.fromString(name);

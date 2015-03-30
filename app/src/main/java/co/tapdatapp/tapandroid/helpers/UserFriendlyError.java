@@ -12,6 +12,15 @@ public class UserFriendlyError extends Exception {
 
     private String userError = null;
 
+    public UserFriendlyError() {
+        super();
+    }
+
+    public UserFriendlyError(String userMessage) {
+        super();
+        userError = userMessage;
+    }
+
     /**
      * @return true if this exception includes an error that can be shown to the user
      */
