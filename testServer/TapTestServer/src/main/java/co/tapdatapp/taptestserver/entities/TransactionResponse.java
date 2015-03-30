@@ -1,8 +1,6 @@
 
 package co.tapdatapp.taptestserver.entities;
 
-import java.util.Date;
-
 public class TransactionResponse {
   public String id;
   public String date;
