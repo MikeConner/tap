@@ -45,6 +45,7 @@ public class AccountStartActivity extends Activity {
      * MainActivity with a created account.
      */
     public void newAccountComplete() {
+        setResult(RESULT_OK);
         finish();
     }
 
