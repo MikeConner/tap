@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.webkit.MimeTypeMap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -157,7 +158,7 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
      */
     public static String
     storeThumbnailRemote(InputStream is, int size) throws Exception {
-        byte[] byteArray = getResizedBytes(is, size);
+        byte[] byteArray = getResizedBytesJPEG(is, size);
         RemoteStorageDriver driver = RemoteStorage.getDriver();
         return driver.store(byteArray);
     }
@@ -172,7 +173,7 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
      */
     public static String
     storeThumbnailLocal(InputStream is, int size) throws Exception {
-        byte[] byteArray = getResizedBytes(is, size);
+        byte[] byteArray = getResizedBytesJPEG(is, size);
         Cache cache = new AndroidCache();
         String name = UUID.randomUUID().toString();
         cache.put(name, "image/jpeg", byteArray);
@@ -186,7 +187,7 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
      * @param size size of the thumbnail
      * @return byte array of the resized thumbnail Bitmap
      */
-    private static byte[] getResizedBytes(InputStream is, int size) {
+    private static byte[] getResizedBytesJPEG(InputStream is, int size) {
         Bitmap bmp = BitmapFactory.decodeStream(is);
         if (bmp == null) {
             throw new AssertionError("data failed to decode into a Bitmap");
