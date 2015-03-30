@@ -61,7 +61,10 @@
         <activity android:name=".yapa.YapaVideo"
                   android:noHistory="true"/>
         <activity android:name=".user.QRCode"/>
-        <activity android:name=".tags.ManageTagActivity"/>
+        <activity
+            android:name=".tags.ManageTagActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"
+            />
         <activity android:name=".tags.SelectTagTypeActivity"/>
     </application>
 
