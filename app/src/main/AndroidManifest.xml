@@ -42,10 +42,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".WriteActivity"
-            android:label="@string/title_activity_write" >
-        </activity>
         <activity android:name=".AccountStartActivity" >
         </activity>
         <activity android:name=".yapa.YapaImage"
