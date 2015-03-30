@@ -46,12 +46,12 @@ public class CacheManager extends Thread {
 
     /**
      * Limit at which garbage collection will be attempted. This is
-     * 0.1% of the available storage space of the device.
+     * 0.1% of the storage space of the device.
      *
      * @return # bytes over which GC should run
      */
     private int getSoftLimit() {
-        long rv = TapApplication.getFreeStorage() / 1000;
+        long rv = TapApplication.getStorage() / 1000;
         if (rv > Integer.MAX_VALUE) {
             return Integer.MAX_VALUE;
         }
@@ -62,12 +62,12 @@ public class CacheManager extends Thread {
 
     /**
      * Limit at which *something* is guaranteed to be deleted. This
-     * is 50% of the available storage space on the device
+     * is 10% of the storage space on the device
      *
      * @return # bytes over which GC _must_ delete something
      */
     private int getHardLimit() {
-        long rv = TapApplication.getFreeStorage() / 2;
+        long rv = TapApplication.getStorage() / 10;
         if (rv > Integer.MAX_VALUE) {
             return Integer.MAX_VALUE;
         }
@@ -97,6 +97,7 @@ public class CacheManager extends Thread {
      * every 30 seconds if no requests are made. Request are made
      * simply by notify()ing the thread.
      */
+    @SuppressWarnings("InfiniteLoopStatement")
     @Override
     public void run() {
         while (true) {

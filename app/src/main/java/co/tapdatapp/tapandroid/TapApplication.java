@@ -40,7 +40,7 @@ public class TapApplication extends Application {
         ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         Log.d("MEMORY", "Memory class = " + am.getMemoryClass());
         Log.d("MEMORY", "Large memory class = " + am.getLargeMemoryClass());
-        Log.d("STORAGE", "Available storage = " + getFreeStorage());
+        Log.d("STORAGE", "Available storage = " + getStorage());
         // Would be nice to shut this down cleanly as well, but
         // Android provides no way to know when the application is
         // being stopped.
@@ -57,9 +57,15 @@ public class TapApplication extends Application {
         return app;
     }
 
-    public static long getFreeStorage() {
+    /**
+     * @return Size in bytes of the device's primary storage
+     */
+    // Note that the non-deprecated methods are too new to be used:
+    // they aren't supported by older versions of Android
+    @SuppressWarnings("deprecation")
+    public static long getStorage() {
         StatFs stat = new StatFs(Environment.getDataDirectory().getPath());
-        return stat.getAvailableBlocks() * stat.getBlockSize();
+        return stat.getBlockCount() * stat.getBlockSize();
     }
 
     /**
