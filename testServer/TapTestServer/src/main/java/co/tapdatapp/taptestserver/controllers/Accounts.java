@@ -153,7 +153,8 @@ public class Accounts {
     p.content_type = "image";
     p.payload_image = ImageBuilder.getURL(300, 300, "Dynamic Yapa");
     p.payload_thumb = ImageBuilder.getURL(100, 100, "Dynamic Yapa");
-    p.content = "Dynamic Yapa";
+    p.content = "Dynamically generated Yapa for " + tagId;
+    p.description = "Dynamic Yapa";
     p.uri = ImageBuilder.getURL(400, 400, tagId);
     return p;
   }
