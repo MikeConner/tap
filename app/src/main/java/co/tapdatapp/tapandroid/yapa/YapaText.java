@@ -56,7 +56,9 @@ public class YapaText extends Activity {
     public void onBackPressed() {
         if (forceReturnToArmScreen) {
             Intent startMain = new Intent(this, MainActivity.class);
+            startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(startMain);
+            finish();
         }
         else {
             finish();
