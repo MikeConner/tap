@@ -23,7 +23,6 @@ import co.tapdatapp.tapandroid.localdata.Yapa;
 public class SelectTagTypeActivity extends Activity {
 
     private int[] currencyDropdownMap;
-    private int selectedType = -1;
 
     @Override
     public void onCreate(Bundle state) {
@@ -35,7 +34,6 @@ public class SelectTagTypeActivity extends Activity {
     public void onResume() {
         super.onResume();
         fillInCurrencies();
-        setButtonStatus();
     }
 
     /**
@@ -44,28 +42,7 @@ public class SelectTagTypeActivity extends Activity {
      * @param v the button that was selected
      */
     public void onTypeSelect(View v) {
-        if (v.isEnabled()) {
-            findViewById(R.id.btnYapaImage).setSelected(false);
-            findViewById(R.id.btnYapaText).setSelected(false);
-            // @TODO uncomment these as the code is added
-            //findViewById(R.id.btnYapaAudio).setSelected(false);
-            //findViewById(R.id.btnYapaVideo).setSelected(false);
-            //findViewById(R.id.btnYapaCoupon).setSelected(false);
-            //findViewById(R.id.btnYapaUrl).setSelected(false);
-            v.setSelected(true);
-            selectedType = v.getId();
-            setButtonStatus();
-        }
-    }
-
-    /**
-     * Enable/disable the create button based on whether all the
-     * information is provided
-     */
-    private void setButtonStatus() {
-        findViewById(R.id.btnCreateTag).setEnabled(
-            selectedType != -1
-        );
+        createTag(v.getId());
     }
 
     /**
@@ -101,19 +78,16 @@ public class SelectTagTypeActivity extends Activity {
     }
 
     /**
-     * When the "CREATE NEW TAG" button is clicked, create a local
-     * copy of the tag and proceed to the management view.
-     *
-     * @param v The create new tag button
+     * Create a new tag in SQL and proceed to the management screen.
      */
-    public void clickCreateTag(View v) {
+    public void createTag(int selectedType) {
         Tag tag = new Tag();
         tag.remove(Tag.NEW_TAG_ID);
         Yapa yapa = new Yapa();
         yapa.setTagId(Tag.NEW_TAG_ID);
         yapa.setThreshold(1);
         yapa.setSlug(UUID.randomUUID());
-        yapa.setType(getTypeStringFromId());
+        yapa.setType(getTypeStringFromId(selectedType));
         tag.create(
             Tag.NEW_TAG_ID,
             "New Tag",
@@ -134,7 +108,7 @@ public class SelectTagTypeActivity extends Activity {
      *
      * @return String of the selected Yapa type
      */
-    private String getTypeStringFromId() {
+    private String getTypeStringFromId(int selectedType) {
         switch (selectedType) {
             case R.id.btnYapaText :
                 return Yapa.TYPE_TEXT;
