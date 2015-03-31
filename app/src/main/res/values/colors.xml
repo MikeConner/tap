@@ -1,7 +1,7 @@
 <resources>
 
-    <color name="button_background">#1795a4</color>
-    <color name="button_background_pressed">#175673</color>
+    <color name="button_background">#bdc733</color>
+    <color name="button_background_pressed">#a4b728</color>
     <color name="button_background_disabled">#bdbcbc</color>
     <color name="withdraw_button_background">#bdbcbc</color>
     <color name="withdraw_button_pressed">#bfc833</color>
@@ -28,4 +28,5 @@
     <color name="profile_text_gray">#616261</color>
     <color name="dark_gray">#808080</color>
     <color name="balance_list_background">#eeeeee</color>
+    <color name="generic_background">#f6f6f6</color>
 </resources>

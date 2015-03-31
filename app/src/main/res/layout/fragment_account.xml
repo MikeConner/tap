@@ -6,7 +6,7 @@
     android:gravity="center_horizontal"
     tools:context=".profile_main"
     tools:ignore="MergeRootFrame"
-    android:background="@color/account_background"
+    android:background="@color/generic_background"
     android:id="@+id/account_layout"
     android:weightSum="1">
 

@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/yapaImageLayout"
+    android:background="@color/generic_background"
     android:weightSum="1">
 
     <ImageView
