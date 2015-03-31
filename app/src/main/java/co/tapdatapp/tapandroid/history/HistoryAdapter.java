@@ -84,7 +84,7 @@ public class HistoryAdapter extends BaseAdapter {
             );
         }
         transaction.moveToByOrder(i);
-        ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getDescription());
+        ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getNickname() +" \n" +transaction.getTimestamp());
         ImageView historyIcon = ((ImageView)v.findViewById(R.id.history_icon));
         ImageView historyPreview = ((ImageView)v.findViewById(R.id.history_preview));
         if (transaction.getContentType().equals(Yapa.TYPE_IMAGE)) {
