@@ -37,10 +37,15 @@ public class TransactionCodec extends BaseCodec {
         rv.setSlug(input.getString("id"));
         // This is ridiculous. If ever there was a lousier set of
         // classes for handling date/time, I haven't seen it.
-        rv.setTimestamp(new Timestamp(format.parse(input.getString("date")).getTime()));
-        rv.setYapa_url(ifNull(input.getString("payload_image"), null));
-        rv.setYapa_thumb_url(ifNull(input.getString("payload_thumb"), null));
         rv.setContentType(input.getString("payload_content_type"));
+        rv.setTimestamp(new Timestamp(format.parse(input.getString("date")).getTime()));
+        if(rv.getContentType()=="image" || rv.getContentType() == "coupon") {
+            rv.setYapa_url(ifNull(input.getString("payload_image"), null));
+        }
+        else {
+            rv.setYapa_url(ifNull(input.getString("uri"),null));
+        }
+        rv.setYapa_thumb_url(ifNull(input.getString("payload_thumb"), null));
         rv.setAmount(input.getInt("amount"));
         rv.setDescription(ifNull(input.getString("description"), null));
         rv.setThumb_url(ifNull(input.getString("other_user_thumb"), null));
