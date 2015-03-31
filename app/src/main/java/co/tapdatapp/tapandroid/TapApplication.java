@@ -140,6 +140,9 @@ public class TapApplication extends Application {
     }
 
     public static void errorToUser(UserFriendlyError e) {
+        if (DevHelper.isEnabled(R.string.CRASH_ON_FAILURE)) {
+            Log.e("GENERAL", "errorToUser()", e);
+        }
         if (e.hasUserError()) {
             errorToUser(e.getUserError());
         }
