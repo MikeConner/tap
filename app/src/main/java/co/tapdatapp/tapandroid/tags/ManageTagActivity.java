@@ -370,7 +370,7 @@ implements TextWatcher,
         if (mWriteMode && NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
             android.nfc.Tag detectedTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             String strID = tag.getTagId();
-            NdefRecord record = NdefRecord.createUri("http://tapnology.co/nfc_tags/" + strID);
+            NdefRecord record = NdefRecord.createUri("http://tapnology.co/tag/" + strID);
             NdefMessage message = new NdefMessage(new NdefRecord[] { record });
             try {
                 writeTag(message, detectedTag);

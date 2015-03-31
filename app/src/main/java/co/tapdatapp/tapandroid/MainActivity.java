@@ -283,7 +283,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
                 // this assumes that we get back am SOH followed by host/code
                 String result = new String(payload);
                 Log.d("NFC", "record read: " + result);
-                result = result.replaceAll("tapnology.co/nfc_tags/", "");
+                result = result.replaceAll("tapnology.co/tag/", "");
                 result = result.replaceAll("\u0003", "");
                 result = result.replaceAll("-", "");
 
