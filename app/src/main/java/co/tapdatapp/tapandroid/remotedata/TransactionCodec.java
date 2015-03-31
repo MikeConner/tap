@@ -39,7 +39,7 @@ public class TransactionCodec extends BaseCodec {
         // classes for handling date/time, I haven't seen it.
         rv.setContentType(input.getString("payload_content_type"));
         rv.setTimestamp(new Timestamp(format.parse(input.getString("date")).getTime()));
-        if(rv.getContentType()=="image" || rv.getContentType() == "coupon") {
+        if(rv.getContentType().equals("image") || rv.getContentType().equals("coupon")) {
             rv.setYapa_url(ifNull(input.getString("payload_image"), null));
         }
         else {
