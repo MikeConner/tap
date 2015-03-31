@@ -40,7 +40,9 @@ public class YapaImage extends Activity implements TapBitmap.Callback {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.parse(yapaFullImage), "image/*");
+                intent.setData(Uri.parse(yapaFullImage));
+             //   intent.addCategory(Intent.CATEGORY_BROWSABLE);
+             //   intent.setDataAndType(Uri.parse(yapaFullImage), "image/*");
                 startActivity(intent);
             }
         });
@@ -95,4 +97,7 @@ public class YapaImage extends Activity implements TapBitmap.Callback {
             finish();
         }
     }
+
+
+
 }

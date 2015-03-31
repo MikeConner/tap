@@ -56,6 +56,7 @@ implements View.OnTouchListener {
         LinearLayout scrollLayout = (LinearLayout) view.findViewById(R.id.scrollable_area);
         //I don't know how to get rid of this warning.
         final Vibrator vibe = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        //TODO: this is causing an error at times: Unable to start activity ComponentInfo{co.tapdatapp.tapandroid.demo/co.tapdatapp.tapandroid.MainActivity}: java.lang.NullPointerException
         cvp.setPagingEnabled(false);
         /**
          * This re-enables scrolling between pages
