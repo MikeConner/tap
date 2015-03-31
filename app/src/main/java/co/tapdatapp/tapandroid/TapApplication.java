@@ -65,7 +65,7 @@ public class TapApplication extends Application {
     @SuppressWarnings("deprecation")
     public static long getStorage() {
         StatFs stat = new StatFs(Environment.getDataDirectory().getPath());
-        return stat.getBlockCount() * stat.getBlockSize();
+        return (long)stat.getBlockCount() * (long)stat.getBlockSize();
     }
 
     /**
