@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.localdata.Tag;
 import co.tapdatapp.tapandroid.localdata.Yapa;
@@ -129,7 +130,11 @@ extends AsyncTask<Object, Void, String> {
                 UUID.fromString(name);
                 // If the name is successfully parsed as a UUID, then
                 // it's temporarily stored in the local cache
-                return storage.store(data);
+                // @TODO I can find no reliable way to determine the
+                // content-type of a file in Android, and hard-coding
+                // JPEG here is a terrible assumption that is going to
+                // wreck havoc if things ever change.
+                return storage.store(data, TapBitmap.TYPE_JPEG);
             }
             catch (IllegalArgumentException iae) {
                 // If we're unable to parse it as a UUID, then it

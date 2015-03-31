@@ -31,7 +31,7 @@ public class DevStorage implements RemoteStorageDriver {
     }
 
     @Override
-    public String store(byte[] data)
+    public String store(byte[] data, String type)
     throws IOException, WebServiceError {
         WebResponse r = httpHelper.HttpPut(putUrl, new Bundle(), data);
         if (r.isOK()) {

@@ -4,7 +4,6 @@
 
 package co.tapdatapp.tapandroid.remotedata;
 
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -34,13 +33,15 @@ public class AmazonStorage implements RemoteStorageDriver {
     }
 
     @Override
-    public String store(byte[] data) {
+    public String store(byte[] data, String type) {
         String key = UUID.randomUUID().toString();
         ObjectMetadata metaData = new ObjectMetadata();
         metaData.setContentLength(data.length);
         ByteArrayInputStream stream = new ByteArrayInputStream(data);
         try {
-            String type = URLConnection.guessContentTypeFromStream(stream);
+            if (type == null || type.isEmpty()) {
+                type = URLConnection.guessContentTypeFromStream(stream);
+            }
             if (type != null && !type.isEmpty()) {
                 metaData.setContentType(type);
                 MimeTypeMap mtm = MimeTypeMap.getSingleton();
@@ -52,7 +53,6 @@ public class AmazonStorage implements RemoteStorageDriver {
             // which case we proceed without specifying a mime-type or
             // changing the file extension
         }
-        Log.d("AWS", "Storing with name " + key);
         String bucket = TapApplication.string(R.string.AWS_BUCKET);
         PutObjectRequest por = new PutObjectRequest(
             bucket,

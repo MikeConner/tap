@@ -11,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.webkit.MimeTypeMap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,6 +28,8 @@ import co.tapdatapp.tapandroid.remotedata.RemoteStorageDriver;
 import co.tapdatapp.tapandroid.remotedata.WebResponse;
 
 public class TapBitmap extends AsyncTask<Object, Void, Void> {
+
+    public final static String TYPE_JPEG = "image/jpeg";
 
     /**
      * Implement this interface in UI code to easily use this class
@@ -160,7 +161,7 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
     storeThumbnailRemote(InputStream is, int size) throws Exception {
         byte[] byteArray = getResizedBytesJPEG(is, size);
         RemoteStorageDriver driver = RemoteStorage.getDriver();
-        return driver.store(byteArray);
+        return driver.store(byteArray, TYPE_JPEG);
     }
 
     /**
@@ -176,7 +177,7 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
         byte[] byteArray = getResizedBytesJPEG(is, size);
         Cache cache = new AndroidCache();
         String name = UUID.randomUUID().toString();
-        cache.put(name, "image/jpeg", byteArray);
+        cache.put(name, TYPE_JPEG, byteArray);
         return name;
     }
 

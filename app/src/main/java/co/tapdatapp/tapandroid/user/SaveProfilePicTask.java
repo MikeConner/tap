@@ -29,6 +29,7 @@ public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
      * @param params Callback, image data
      * @return nothing
      */
+    @SuppressWarnings("ThrowFromFinallyBlock")
     @Override
     protected Void doInBackground(Object... params) {
         if (params.length != 2) {
@@ -43,6 +44,9 @@ public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
             new UpdateUserInfoTask().updateUser();
         }
         catch (Throwable e) {
+            error = e;
+        }
+        finally {
             if (is != null) {
                 try {
                     is.close();
@@ -51,7 +55,6 @@ public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
                     throw new AssertionError(ioe);
                 }
             }
-            error = e;
         }
         return null;
     }
