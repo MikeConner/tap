@@ -108,7 +108,14 @@ implements TextWatcher,
      * Fill in the page if an existing tag was provided
      */
     private void fillIn() {
-        EditText tagName = (EditText)findViewById(R.id.etTagName);
+        final EditText tagName = (EditText)findViewById(R.id.etTagName);
+        //Clicking on the text field clears the field
+        tagName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    tagName.setText(" ");
+            }
+        });
         if (tag.getTagId() != null) {
             tagName.setText(tag.getName());
             ListView yapaList = (ListView)findViewById(R.id.listYapa);
