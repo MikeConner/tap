@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.arm.ArmFragment;
 import co.tapdatapp.tapandroid.arm.ArmedFragment;
+import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
@@ -351,6 +352,17 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         int id = item.getItemId();
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
+
+    public void onBackPressed(){
+        CustomViewPager cvp = (CustomViewPager) findViewById(R.id.pager);
+        if(cvp.getCurrentItem() == 2){
+            finish();
+        }
+        else{
+            cvp.setCurrentItem(2);
+        }
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -408,17 +420,6 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
             }
             return null;
         }
-    }
-
-    /**
-     * Exits the app on back press
-     */
-    public void onBackPressed() {
-        Intent startMain = new Intent(Intent.ACTION_MAIN);
-        startMain.addCategory(Intent.CATEGORY_HOME);
-        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(startMain);
-
     }
 
     @Override
