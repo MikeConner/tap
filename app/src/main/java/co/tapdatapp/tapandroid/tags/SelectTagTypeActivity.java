@@ -114,17 +114,16 @@ public class SelectTagTypeActivity extends Activity {
                 return Yapa.TYPE_TEXT;
             case R.id.btnYapaImage :
                 return Yapa.TYPE_IMAGE;
-            /*
-            // @TODO uncomment these as the code is added
+            case R.id.btnYapaLink :
+                return Yapa.TYPE_URL;
+
             case R.id.btnYapaAudio :
                 return Yapa.TYPE_AUDIO;
-            case R.id.btnYapaUrl :
-                return Yapa.TYPE_URL;
             case R.id.btnYapaVideo :
                 return Yapa.TYPE_VIDEO;
             case R.id.btnYapaCoupon :
                 return Yapa.TYPE_COUPON;
-            */
+
             default :
                 throw new AssertionError("Invalid yapa button " + selectedType);
         }

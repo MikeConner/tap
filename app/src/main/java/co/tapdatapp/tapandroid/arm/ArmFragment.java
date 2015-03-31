@@ -300,6 +300,12 @@ implements View.OnTouchListener {
     public void
     updateDenominations(Denomination[] d, Bitmap[] b, Bitmap logo) {
         //noinspection ConstantConditions
+
+        //TODO:  after tapping, this is CRASHing the app (because it's null)
+        /*Process: co.tapdatapp.tapandroid.demo, PID: 321
+    java.lang.NullPointerException
+            at co.tapdatapp.tapandroid.arm.ArmFragment.updateDenominations(ArmFragment.java:303)*/
+
         TextView viewAmount = (TextView)getView().findViewById(R.id.txtAmount);
         viewAmount.setBackground(
             new BitmapDrawable(getActivity().getResources(), logo)

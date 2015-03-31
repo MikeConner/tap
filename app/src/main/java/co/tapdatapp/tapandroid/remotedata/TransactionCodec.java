@@ -42,7 +42,7 @@ public class TransactionCodec extends BaseCodec {
         rv.setYapa_thumb_url(ifNull(input.getString("payload_thumb"), null));
         rv.setContentType(input.getString("payload_content_type"));
         rv.setAmount(input.getInt("amount"));
-        rv.setDescription(ifNull(input.getString("comment"), null));
+        rv.setDescription(ifNull(input.getString("description"), null));
         rv.setThumb_url(ifNull(input.getString("other_user_thumb"), null));
         rv.setNickname(ifNull(input.getString("other_user_nickname"), null));
         return rv;

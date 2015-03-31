@@ -43,6 +43,43 @@
             android:layout_height="100dp"
             android:scaleType="fitCenter"/>
 
+        <ImageButton
+            android:contentDescription="@string/select_yapa_url"
+            android:src="@drawable/yapa_link"
+            android:id="@+id/btnYapaLink"
+            android:onClick="onTypeSelect"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"/>
+
+        <ImageButton
+            android:contentDescription="@string/select_yapa_video"
+            android:src="@drawable/yapa_video"
+            android:id="@+id/btnYapaVideo"
+            android:onClick="onTypeSelect"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"/>
+
+        <ImageButton
+            android:contentDescription="@string/select_yapa_audio"
+            android:src="@drawable/yapa_audio"
+            android:id="@+id/btnYapaAudio"
+            android:onClick="onTypeSelect"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"/>
+
+        <ImageButton
+            android:contentDescription="@string/select_yapa_coupon"
+            android:src="@drawable/_yapa_coupon"
+            android:id="@+id/btnYapaCoupon"
+            android:onClick="onTypeSelect"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"/>
+
+
         <!-- @TODO uncomment these buttons as they are enabled
         <ImageButton
             android:enabled="false"
