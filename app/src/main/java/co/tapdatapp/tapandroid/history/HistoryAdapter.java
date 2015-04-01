@@ -86,8 +86,9 @@ public class HistoryAdapter extends BaseAdapter {
         ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getNickname() +" \n" +transaction.getTimestamp());
         ImageView historyIcon = ((ImageView)v.findViewById(R.id.history_icon));
         ImageView historyPreview = ((ImageView)v.findViewById(R.id.history_preview));
-        if (transaction.getContentType().equals(Yapa.TYPE_IMAGE)) {
-            new ImageFetchTask().execute(historyPreview, transaction.getYapa_url());
+        String thumbUrl = transaction.getYapaThumbUrl();
+        if (thumbUrl != null && !thumbUrl.isEmpty()) {
+            new ImageFetchTask().execute(historyPreview, thumbUrl);
         }
         YapaDisplay yl = new YapaDisplay();
         historyIcon.setImageDrawable(yl.getIcon(transaction));

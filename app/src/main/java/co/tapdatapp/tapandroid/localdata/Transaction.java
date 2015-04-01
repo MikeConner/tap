@@ -21,6 +21,8 @@ public class Transaction implements SingleTable {
     public final static String AMOUNT = "amount";
     public final static String NICKNAME = "nickname";
     public final static String YAPA_CONTENT_TYPE = "yapa_content_type";
+    public final static String CONTENT = "content";
+    public final static String URI = "uri";
 
     private String slug;
     private Timestamp timestamp;
@@ -31,6 +33,8 @@ public class Transaction implements SingleTable {
     private int amount;
     private String nickname;
     private String yapa_content_type;
+    private String content;
+    private String uri;
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -44,7 +48,9 @@ public class Transaction implements SingleTable {
                 DESCRIPTION + " TEXT NOT NULL, " +
                 AMOUNT + " DECIMAL NOT NULL, " +
                 NICKNAME + " TEXT NOT NULL, " +
-                YAPA_CONTENT_TYPE + " TEXT NOT NULL" +
+                YAPA_CONTENT_TYPE + " TEXT NOT NULL," +
+                CONTENT + " TEXT, " +
+                URI + " TEXT " +
                 ")"
         );
     }
@@ -122,7 +128,7 @@ public class Transaction implements SingleTable {
                 new String[]{
                     SLUG, TIMESTAMP, THUMB_URL, YAPA_URL,
                     DESCRIPTION, AMOUNT, NICKNAME,
-                    YAPA_THUMB_URL, YAPA_CONTENT_TYPE
+                    YAPA_THUMB_URL, YAPA_CONTENT_TYPE, CONTENT, URI
                 },
                 null, null, null, null,
                 TIMESTAMP + " DESC",
@@ -150,7 +156,7 @@ public class Transaction implements SingleTable {
                 new String[]{
                     SLUG, TIMESTAMP, THUMB_URL, YAPA_URL,
                     DESCRIPTION, AMOUNT, NICKNAME,
-                    YAPA_THUMB_URL, YAPA_CONTENT_TYPE
+                    YAPA_THUMB_URL, YAPA_CONTENT_TYPE, CONTENT, URI
                 },
                 SLUG + " = ?",
                 new String[] { slug },
@@ -176,6 +182,8 @@ public class Transaction implements SingleTable {
             nickname = c.getString(6);
             yapa_thumb_url = c.getString(7);
             yapa_content_type = c.getString(8);
+            content = c.getString(9);
+            uri = c.getString(10);
         } else {
             throw new Error("No TX record found");
         }
@@ -197,6 +205,8 @@ public class Transaction implements SingleTable {
         v.put(NICKNAME, nickname);
         v.put(YAPA_THUMB_URL, yapa_thumb_url);
         v.put(YAPA_CONTENT_TYPE, yapa_content_type);
+        v.put(CONTENT, content);
+        v.put(URI, uri);
         // Sometimes the webservice returns the same transaction even
         // though it's been told to only return newer. This is probably
         // the result of precision lost in the date as it passes from
@@ -267,11 +277,31 @@ public class Transaction implements SingleTable {
         this.yapa_thumb_url = yapa_thumb_url;
     }
 
+    public String getYapaThumbUrl() {
+        return yapa_thumb_url;
+    }
+
     public void setContentType(String to) {
         yapa_content_type = to;
     }
 
     public String getContentType() {
         return yapa_content_type;
+    }
+
+    public void setContent(String to) {
+        content = to;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setURI(String to) {
+        uri = to;
+    }
+
+    public String getURI() {
+        return uri;
     }
 }

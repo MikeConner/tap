@@ -42,10 +42,10 @@ public class YapaVideo extends Activity{
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                Intent openVideo = new Intent(Intent.ACTION_VIEW, Uri.parse(transaction.getYapa_url()));
+                Intent openVideo = new Intent(Intent.ACTION_VIEW, Uri.parse(transaction.getURI()));
                 openVideo.setAction(Intent.ACTION_VIEW);
                 openVideo.addCategory(Intent.CATEGORY_BROWSABLE);
-                openVideo.setData(Uri.parse(transaction.getYapa_url()));
+                openVideo.setData(Uri.parse(transaction.getURI()));
                 startActivity(openVideo);
             }
         });

@@ -45,7 +45,7 @@ public class YapaUrl extends Activity{
                 Intent goToURL = new Intent();
                 goToURL.setAction(Intent.ACTION_VIEW);
                 goToURL.addCategory(Intent.CATEGORY_BROWSABLE);
-                goToURL.setData(Uri.parse(transaction.getYapa_url()));
+                goToURL.setData(Uri.parse(transaction.getURI()));
                 startActivity(goToURL);
             }
         });

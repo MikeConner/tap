@@ -35,21 +35,18 @@ public class TransactionCodec extends BaseCodec {
     throws JSONException, ParseException {
         Transaction rv = new Transaction();
         rv.setSlug(input.getString("id"));
+        rv.setContentType(input.getString("payload_content_type"));
         // This is ridiculous. If ever there was a lousier set of
         // classes for handling date/time, I haven't seen it.
-        rv.setContentType(input.getString("payload_content_type"));
         rv.setTimestamp(new Timestamp(format.parse(input.getString("date")).getTime()));
-        if(rv.getContentType().equals("image") || rv.getContentType().equals("coupon")) {
-            rv.setYapa_url(ifNull(input.getString("payload_image"), null));
-        }
-        else {
-            rv.setYapa_url(ifNull(input.getString("uri"),null));
-        }
+        rv.setYapa_url(ifNull(input.getString("payload_image"), null));
+        rv.setURI(ifNull(input.getString("uri"), null));
         rv.setYapa_thumb_url(ifNull(input.getString("payload_thumb"), null));
         rv.setAmount(input.getInt("amount"));
         rv.setDescription(ifNull(input.getString("description"), null));
         rv.setThumb_url(ifNull(input.getString("other_user_thumb"), null));
         rv.setNickname(ifNull(input.getString("other_user_nickname"), null));
+        rv.setContent(ifNull(input.getString("content"), null));
         return rv;
     }
 
