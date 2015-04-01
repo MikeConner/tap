@@ -2,12 +2,11 @@ package co.tapdatapp.tapandroid.yapa;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.concurrent.ScheduledFuture;
@@ -15,12 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
-import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
-public class YapaImage extends Activity implements TapBitmap.Callback {
+public class YapaImage extends Activity {
 
-    private ImageView imageView;
     private boolean forceReturnToArmScreen = false;
     private ScheduledFuture futureTask;
 
@@ -33,28 +30,19 @@ public class YapaImage extends Activity implements TapBitmap.Callback {
         transaction.moveToSlug(transactionId);
         final String yapaFullImage = transaction.getYapa_url();
 
-        final Button fullButton = (Button) findViewById(R.id.full_screen_button);
-        imageView = (ImageView)findViewById(R.id.yapaImage);
-        fullButton.setOnClickListener(new View.OnClickListener() {
+        //This makes clicking the top frame open the image in an image viewer.
+        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_image);
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(yapaFullImage));
-             //   intent.addCategory(Intent.CATEGORY_BROWSABLE);
-             //   intent.setDataAndType(Uri.parse(yapaFullImage), "image/*");
                 startActivity(intent);
             }
         });
-        new TapBitmap().execute(this, transaction.getYapa_url());
 
-        final TextView imageSender = (TextView) findViewById(R.id.image_sender);
-        final TextView imageDescription = (TextView) findViewById(R.id.image_description);
-        final TextView imageDate = (TextView) findViewById(R.id.image_date);
-        imageSender.setText(transaction.getNickname());
-        imageDescription.setText(transaction.getDescription());
-        imageDate.setText(transaction.getTimestamp().toString() + "  " + Integer.toString(transaction.getAmount()));
-
+        //This is all related to the timer task from the arm screen.
         int showTime = extras.getInt(YapaDisplay.DELAY_TIME, -1);
         if (showTime != -1) {
             /**
@@ -69,11 +57,6 @@ public class YapaImage extends Activity implements TapBitmap.Callback {
             };
             futureTask = YapaDisplay.delayWorker.schedule(task, showTime, TimeUnit.SECONDS);
         }
-    }
-
-    @Override
-    public void onImageRetrieved(Bitmap image) {
-        imageView.setImageBitmap(image);
     }
 
     /**
@@ -101,3 +84,4 @@ public class YapaImage extends Activity implements TapBitmap.Callback {
 
 
 }
+

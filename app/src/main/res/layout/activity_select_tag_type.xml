@@ -45,7 +45,7 @@
 
         <ImageButton
             android:contentDescription="@string/select_yapa_url"
-            android:src="@drawable/yapa_link"
+            android:src="@drawable/yapa_url"
             android:id="@+id/btnYapaLink"
             android:onClick="onTypeSelect"
             android:layout_width="100dp"

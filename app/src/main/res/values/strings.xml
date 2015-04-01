@@ -81,4 +81,13 @@
     <string name="tag_too_small">The tag has too little storage space</string>
     <string name="tag_format_failed">Failed to format a tag message</string>
 
+    <string name="single_yapa_image_click">click to view</string>
+    <string name="single_yapa_url_click">click to visit</string>
+    <string name="single_yapa_video_click">click to watch</string>
+    <string name="single_yapa_audio_click">click to listen</string>
+    <string name="single_yapa_coupon_click">click to save</string>
+    <string name="single_yapa_text_click">click to read</string>
+    <string name="sender_timestamp_divider"> | </string>
+    <string name="yapa_exit_button">exit</string>
+
 </resources>
