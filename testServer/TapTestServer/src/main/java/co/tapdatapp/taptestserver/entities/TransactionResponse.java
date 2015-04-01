@@ -10,6 +10,9 @@ public class TransactionResponse {
   public int amount;
   public int dollar_amount;
   public String comment;
+  public String description;
+  public String uri;
+  public String content;
   public String other_user_thumb;
   public String other_user_nickname;
 }
