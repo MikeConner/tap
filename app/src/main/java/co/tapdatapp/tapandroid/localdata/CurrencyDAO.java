@@ -384,7 +384,13 @@ implements SingleTable {
         }
     }
 
-    private void
+    /**
+     * Force an update of the local currency data from the server
+     *
+     * @param currencyId Currency ID to update
+     * @throws WebServiceError
+     */
+    public void
     syncCurrencyWithServer(int currencyId)
     throws WebServiceError {
         HttpHelper http = new HttpHelper();

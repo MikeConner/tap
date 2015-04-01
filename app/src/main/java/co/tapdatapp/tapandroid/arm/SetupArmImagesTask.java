@@ -7,9 +7,12 @@ package co.tapdatapp.tapandroid.arm;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Denomination;
+import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 import co.tapdatapp.tapandroid.user.Account;
 
 public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
@@ -18,6 +21,7 @@ public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
     private Denomination[] denominations;
     private Bitmap[] bitmaps;
     private Bitmap icon;
+    private Throwable error = null;
 
     /**
      * Fetch all currency details and all bitmaps associated with
@@ -35,28 +39,56 @@ public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
         armFragment = params[0];
         CurrencyDAO currency = new CurrencyDAO();
         Account account = new Account();
+        int currencyId = account.getActiveCurrency();
         try {
-            currency.ensureLocalCurrencyDetails(account.getActiveCurrency());
+            currency.ensureLocalCurrencyDetails(currencyId);
+            currency.moveTo(currencyId);
+        }
+        catch (WebServiceError wse) {
+            error = wse;
+            return null;
+        }
+        try {
             icon = TapBitmap.fetchFromCacheOrWeb(currency.getIconUrl());
         }
         catch (Exception e) {
-            // @TODO substitute a default image here
-        }
-        denominations = currency.getDenominations(
-            account.getActiveCurrency()
-        );
-        bitmaps = new Bitmap[denominations.length];
-        for (int i = 0; i < denominations.length; i++) {
+            // if we get an exception, assume the currency data is
+            // stale and force a reload
             try {
-                bitmaps[i] = TapBitmap.fetchFromCacheOrWeb(
-                    denominations[i].getURL()
-                );
+                currency.syncCurrencyWithServer(currencyId);
+                icon = TapBitmap.fetchFromCacheOrWeb(currency.getIconUrl());
             }
-            catch (Exception e) {
-                // @TODO substitute a default image here
+            catch (Exception e0) {
+                error = e0;
+                return null;
+            }
+        }
+        denominations = currency.getDenominations(currencyId);
+        try {
+            getBitmaps();
+        }
+        catch (Exception e) {
+            // if we get an exception, assume the currency data is
+            // stale and force a reload
+            try {
+                currency.syncCurrencyWithServer(currencyId);
+                getBitmaps();
+            }
+            catch (Exception e0) {
+                error = e0;
+                return null;
             }
         }
         return null;
+    }
+
+    private void getBitmaps() throws Exception {
+        bitmaps = new Bitmap[denominations.length];
+        for (int i = 0; i < denominations.length; i++) {
+            bitmaps[i] = TapBitmap.fetchFromCacheOrWeb(
+                denominations[i].getURL()
+            );
+        }
     }
 
     /**
@@ -66,6 +98,11 @@ public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
      */
     @Override
     protected void onPostExecute(Void v) {
-        armFragment.updateDenominations(denominations, bitmaps, icon);
+        if (error != null) {
+            TapApplication.handleFailures(error);
+        }
+        else {
+            armFragment.updateDenominations(denominations, bitmaps, icon);
+        }
     }
 }
