@@ -11,8 +11,10 @@ import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.localdata.Yapa;
 
 public class CouponYapaLineItem
-        extends YapaLineItem
-        implements View.OnClickListener, TapBitmap.Callback {
+extends YapaLineItem
+implements View.OnClickListener,
+           TapBitmap.Callback,
+           ManageTagActivity.YapaLineItemWithImage {
 
     private ImageButton imageButton;
 
@@ -45,7 +47,7 @@ public class CouponYapaLineItem
      */
     @Override
     public void onClick(View v) {
-        activity.setYapaCouponImageSelectedCallback(this);
+        activity.setYapaImageSelectedCallback(this);
     }
 
     /**
@@ -55,6 +57,7 @@ public class CouponYapaLineItem
      * @param thumbUrl URL of the thumbnail of the image
      * @param cache reference to a cache object to get the images from
      */
+    @Override
     public void onImageSet(String imageUrl, String thumbUrl, AndroidCache cache) {
         boolean changed = yapa.setImageIfChanged(imageUrl);
         changed |= yapa.setThumbIfChanged(thumbUrl);

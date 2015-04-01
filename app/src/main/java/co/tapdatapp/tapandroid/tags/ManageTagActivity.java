@@ -57,9 +57,17 @@ implements TextWatcher,
     private boolean needsSaved;
     private boolean allowUserUpdating = false;
     private Tag tag = null;
-    private ImageYapaLineItem imageSelectedCallback;
-    private CouponYapaLineItem couponImageSelectedCallback;
-    private boolean couponImageCallback = false; //coupon if true, image if false
+    private YapaLineItemWithImage imageSelectedCallback;
+
+    /**
+     * Interface for line items that will allow the user to select
+     * an image. This allows the line item to be notified once the
+     * image is selected, so it can display it and record what was
+     * selected.
+     */
+    public interface YapaLineItemWithImage {
+        void onImageSet(String imageUrl, String thumbUrl, AndroidCache cache);
+    }
 
     @Override
     public void onCreate(Bundle state) {
@@ -294,14 +302,8 @@ implements TextWatcher,
                             }
                         }
                     }
-                    if (couponImageCallback){
-                        couponImageSelectedCallback.onImageSet(imageUrl, thumbUrl, cache);
-                        couponImageSelectedCallback = null;
-
-                    }else {
-                        imageSelectedCallback.onImageSet(imageUrl, thumbUrl, cache);
-                        imageSelectedCallback = null;
-                    }
+                    imageSelectedCallback.onImageSet(imageUrl, thumbUrl, cache);
+                    imageSelectedCallback = null;
                 }
                 else {
                     TapApplication.errorToUser(TapApplication.string(R.string.no_image_selected));
@@ -321,11 +323,10 @@ implements TextWatcher,
      * it can send the Bitmap to the correct ImageYapaLineItem object
      * to to be displayed.
      *
-     * @param i the ImageYapaLineItem associated with the clicked button
+     * @param i the Yapa line item associated with the clicked button
      */
-    public void setYapaImageSelectedCallback(ImageYapaLineItem i) {
+    public void setYapaImageSelectedCallback(YapaLineItemWithImage i) {
         imageSelectedCallback = i;
-        couponImageCallback = false;
         Intent newImage = new Intent();
         newImage.setType("image/*");
         newImage.setAction(Intent.ACTION_GET_CONTENT);
@@ -335,17 +336,6 @@ implements TextWatcher,
         );
     }
 
-    public void setYapaCouponImageSelectedCallback(CouponYapaLineItem i) {
-        couponImageSelectedCallback = i;
-        couponImageCallback = true;
-        Intent newImage = new Intent();
-        newImage.setType("image/*");
-        newImage.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(
-                Intent.createChooser(newImage, "Select Image"),
-                YapaLineItem.SELECT_PICTURE
-        );
-    }
     /**
      * Start the process of writing a tag (initiated by click)
      *
