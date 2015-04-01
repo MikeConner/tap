@@ -42,6 +42,16 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
                 return new TextYapaLineItem(a, v);
             case R.layout.line_item_yapa_image :
                 return new ImageYapaLineItem(a, v);
+            case R.layout.line_item_yapa_url :
+                return new UrlYapaLineItem(a, v);
+            case R.layout.line_item_yapa_video :
+                return new VideoYapaLineItem(a, v);
+            case R.layout.line_item_yapa_audio :
+                return new AudioYapaLineItem(a, v);
+            case R.layout.line_item_yapa_coupon :
+                return new CouponYapaLineItem(a, v);
+
+
             default :
                 throw new AssertionError("Unknown Yapa view type " + v.getId());
         }

@@ -58,6 +58,8 @@ implements TextWatcher,
     private boolean allowUserUpdating = false;
     private Tag tag = null;
     private ImageYapaLineItem imageSelectedCallback;
+    private CouponYapaLineItem couponImageSelectedCallback;
+    private boolean couponImageCallback = false; //coupon if true, image if false
 
     @Override
     public void onCreate(Bundle state) {
@@ -292,8 +294,14 @@ implements TextWatcher,
                             }
                         }
                     }
-                    imageSelectedCallback.onImageSet(imageUrl, thumbUrl, cache);
-                    imageSelectedCallback = null;
+                    if (couponImageCallback){
+                        couponImageSelectedCallback.onImageSet(imageUrl, thumbUrl, cache);
+                        couponImageSelectedCallback = null;
+
+                    }else {
+                        imageSelectedCallback.onImageSet(imageUrl, thumbUrl, cache);
+                        imageSelectedCallback = null;
+                    }
                 }
                 else {
                     TapApplication.errorToUser(TapApplication.string(R.string.no_image_selected));
@@ -317,6 +325,7 @@ implements TextWatcher,
      */
     public void setYapaImageSelectedCallback(ImageYapaLineItem i) {
         imageSelectedCallback = i;
+        couponImageCallback = false;
         Intent newImage = new Intent();
         newImage.setType("image/*");
         newImage.setAction(Intent.ACTION_GET_CONTENT);
@@ -326,6 +335,17 @@ implements TextWatcher,
         );
     }
 
+    public void setYapaCouponImageSelectedCallback(CouponYapaLineItem i) {
+        couponImageSelectedCallback = i;
+        couponImageCallback = true;
+        Intent newImage = new Intent();
+        newImage.setType("image/*");
+        newImage.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(
+                Intent.createChooser(newImage, "Select Image"),
+                YapaLineItem.SELECT_PICTURE
+        );
+    }
     /**
      * Start the process of writing a tag (initiated by click)
      *

@@ -45,6 +45,10 @@
     <string name="add_yapa">ADD NEW YAPA</string>
     <string name="hint_yapa_text">Say something show your thanks</string>
     <string name="hint_yapa_content">Enter a written reward</string>
+    <string name="hint_yapa_url">Enter a URL</string>
+    <string name="hint_yapa_video">Enter a URL for Video</string>
+    <string name="hint_yapa_audio">Enter a URL for Audio</string>
+
     <string name="unknown_error">An unknown error has occurred.</string>
     <string name="select_yapa_type">Select Yapa Type:</string>
     <string name="select_currency">Select Currency:</string>
@@ -55,6 +59,8 @@
     <string name="select_yapa_audio">Select Audio Yapa</string>
     <string name="select_yapa_coupon">Select Coupon Yapa</string>
     <string name="yapa_image_hint">Click to add an image</string>
+    <string name="yapa_coupon_hint">Click to add a coupon image</string>
+
     <string name="file_access_problem">Could not access the selected data</string>
     <string name="no_image_selected">No image was selected</string>
     <string name="tag_was_saved">Tag and all its Yapa have been saved</string>
