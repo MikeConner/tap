@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.sql.Timestamp;
 
-public class Transaction implements SingleTable, TransactionDAO {
+public class Transaction implements SingleTable {
     public final static String NAME = "transactions";
     public final static String SLUG = "slug";
     public final static String TIMESTAMP = "timestamp";
@@ -58,7 +58,9 @@ public class Transaction implements SingleTable, TransactionDAO {
         throw new UnsupportedOperationException("No upgrades to do");
     }
 
-    @Override
+    /**
+     * Get the number of transaction records in the database
+     */
     public int getRecordCount() {
         Cursor c = null;
         try {
@@ -97,14 +99,20 @@ public class Transaction implements SingleTable, TransactionDAO {
         }
     }
 
-    @Override
-    public Transaction getByOrder(int i) {
-        Transaction rv = new Transaction();
-        rv.moveToByOrder(i);
-        return rv;
+    /**
+     * Return a new transaction object populated with the data at
+     * the specified location, ordered by descending timestamp.
+     */
+    public Transaction getByOrder(int location) {
+        Transaction t = new Transaction();
+        t.moveToByOrder(location);
+        return t;
     }
 
-    @Override
+    /**
+     * Load this object with data from the record at the specified
+     * location, order by timestamp descending.
+     */
     public void moveToByOrder(int location) {
         Cursor c = null;
         try {
@@ -173,7 +181,10 @@ public class Transaction implements SingleTable, TransactionDAO {
         }
     }
 
-    @Override
+    /**
+     * Create a new transaction record in the database with the data
+     * currently stored in this object.
+     */
     public void create() {
         SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
         ContentValues v = new ContentValues();

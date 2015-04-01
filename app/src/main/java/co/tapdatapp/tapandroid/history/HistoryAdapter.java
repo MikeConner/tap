@@ -22,18 +22,17 @@ import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.Transaction;
-import co.tapdatapp.tapandroid.localdata.TransactionDAO;
 import co.tapdatapp.tapandroid.localdata.Yapa;
 import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
 public class HistoryAdapter extends BaseAdapter {
 
     private Integer recordCount = null;
-    private TransactionDAO dao;
+    private Transaction dao;
     private Activity activity;
     private Transaction transaction;
 
-    public HistoryAdapter(TransactionDAO t, Activity a) {
+    public HistoryAdapter(Transaction t, Activity a) {
         dao = t;
         activity = a;
         transaction = new Transaction();
