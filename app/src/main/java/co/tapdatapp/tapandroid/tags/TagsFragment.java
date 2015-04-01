@@ -70,7 +70,6 @@ implements View.OnClickListener,
             // This can happen if the user navigates away from the
             // Activity faster than the background task can finish,
             // and can be ignored
-            Log.e("IGNORED", "NPE in callback", npe);
         }
     }
 

@@ -142,7 +142,6 @@ implements View.OnClickListener,
             // This can happen if the user navigates away from the
             // Activity faster than the background task can finish,
             // and can be ignored
-            Log.e("IGNORED", "NPE in callback", npe);
         }
     }
 
@@ -162,7 +161,6 @@ implements View.OnClickListener,
             );
             balanceList.setAdapter(adapter);
             //noinspection ConstantConditions
-            //TODO: this is also throwing an error if view not visible (in history screen for example)
             getView().findViewById(R.id.balances_progress_bar).setVisibility(View.GONE);
             balanceList.setVisibility(View.VISIBLE);
             cvp.setPagingEnabled(true);
@@ -171,7 +169,6 @@ implements View.OnClickListener,
             // This can happen if the user navigates away from the
             // Activity faster than the background task can finish,
             // and can be ignored
-            Log.e("IGNORED", "NPE in callback", npe);
         }
     }
 
