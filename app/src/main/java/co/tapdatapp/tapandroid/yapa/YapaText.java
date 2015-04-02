@@ -23,27 +23,27 @@ public class YapaText extends Activity {
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        setContentView(R.layout.activity_yapa_image);
+        setContentView(R.layout.activity_yapa_text);
         Bundle extras = getIntent().getExtras();
         final String transactionId = extras.getString(YapaDisplay.TRANSACTION_ID);
         final Transaction transaction = new Transaction();
         transaction.moveToSlug(transactionId);
-        final String yapaFullImage = transaction.getYapa_url();
+        final String yapaFullText = transaction.getYapa_url();
 
-        //This makes clicking the top frame open the image in an image viewer.
-        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_image);
+        //This probably needs to be changed. Some text should be on the screen.
+        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_text);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(yapaFullImage));
+                intent.setData(Uri.parse(yapaFullText));
                 startActivity(intent);
             }
         });
 
         //Clicking on the exit button emulates the back button
-        Button quitButton = (Button) findViewById(R.id.exit_button_image);
+        Button quitButton = (Button) findViewById(R.id.exit_button_text);
         quitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,11 +51,11 @@ public class YapaText extends Activity {
             }
         });
 
-        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_image);
-        TextView senderText = (TextView) findViewById(R.id.yapa_sender_image);
-        TextView timestampText = (TextView) findViewById(R.id.yapa_timestamp_image);
-        TextView amountText = (TextView) findViewById(R.id.yapa_amount_image);
-        TextView contentText = (TextView) findViewById(R.id.yapa_content_image);
+        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_text);
+        TextView senderText = (TextView) findViewById(R.id.yapa_sender_text);
+        TextView timestampText = (TextView) findViewById(R.id.yapa_timestamp_text);
+        TextView amountText = (TextView) findViewById(R.id.yapa_amount_text);
+        TextView contentText = (TextView) findViewById(R.id.yapa_content_text);
 
         descriptionText.setText(transaction.getDescription());
         senderText.setText(transaction.getNickname());
@@ -83,11 +83,9 @@ public class YapaText extends Activity {
     /**
      * This makes clicking on the back button go back to the arm screen
      * instead of the armed screen.
+     *
+     * I think the potential RAM-depleting issue has been fixed
      */
-    // @TODO I don't think this is correct, I have a feeling it is
-    // creating an infinite backstack that will eventually run the
-    // device out of RAM if the user does a lot of transactions.
-    // Research needs to be done.
     @Override
     public void onBackPressed() {
         if (forceReturnToArmScreen) {
