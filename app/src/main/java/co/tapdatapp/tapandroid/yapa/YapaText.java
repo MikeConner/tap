@@ -31,7 +31,7 @@ public class YapaText extends Activity {
         final String yapaFullText = transaction.getContent();
 
         //This probably needs to be changed. Some text should be on the screen.
-        ImageView imageView = (ImageView)findViewById(R.id.yapa_text_top_background);
+        ImageView imageView = (ImageView)findViewById(R.id.yapa_top_overlay_text);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,12 +56,14 @@ public class YapaText extends Activity {
         TextView timestampText = (TextView) findViewById(R.id.yapa_timestamp_text);
         TextView amountText = (TextView) findViewById(R.id.yapa_amount_text);
         TextView descriptionText = (TextView) findViewById(R.id.yapa_description_text);
+        TextView contentText = (TextView) findViewById(R.id.yapa_text_top_background);
 
         //nameText.setText(transaction.getName());
         senderText.setText(transaction.getNickname());
         timestampText.setText(transaction.getTimestamp().toString());
         amountText.setText(Integer.toString(transaction.getAmount()));
         descriptionText.setText(transaction.getDescription());
+        contentText.setText(transaction.getContent());
 
         //This is all related to the timer task from the arm screen.
         int showTime = extras.getInt(YapaDisplay.DELAY_TIME, -1);
