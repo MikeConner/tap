@@ -62,11 +62,11 @@ public class YapaCoupon extends Activity implements TapBitmap.Callback {
         TextView amountText = (TextView) findViewById(R.id.yapa_amount_coupon);
         TextView descriptionText = (TextView) findViewById(R.id.yapa_description_coupon);
 
-        //nameText.setText(transaction.getDescription());
+        //nameText.setText(transaction.getName());
         senderText.setText(transaction.getNickname());
         timestampText.setText(transaction.getTimestamp().toString());
         amountText.setText(Integer.toString(transaction.getAmount()));
-        descriptionText.setText(transaction.getContent());
+        descriptionText.setText(transaction.getDescription());
 
         //This is all related to the timer task from the arm screen.
         int showTime = extras.getInt(YapaDisplay.DELAY_TIME, -1);

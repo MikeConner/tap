@@ -28,7 +28,7 @@ public class YapaText extends Activity {
         final String transactionId = extras.getString(YapaDisplay.TRANSACTION_ID);
         final Transaction transaction = new Transaction();
         transaction.moveToSlug(transactionId);
-        final String yapaFullText = transaction.getURI();
+        final String yapaFullText = transaction.getContent();
 
         //This probably needs to be changed. Some text should be on the screen.
         ImageView imageView = (ImageView)findViewById(R.id.yapa_text_top_background);
@@ -51,17 +51,17 @@ public class YapaText extends Activity {
             }
         });
 
-        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_text);
+        TextView nameText = (TextView) findViewById(R.id.yapa_name_text);
         TextView senderText = (TextView) findViewById(R.id.yapa_sender_text);
         TextView timestampText = (TextView) findViewById(R.id.yapa_timestamp_text);
         TextView amountText = (TextView) findViewById(R.id.yapa_amount_text);
-        TextView contentText = (TextView) findViewById(R.id.yapa_content_text);
+        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_text);
 
-        descriptionText.setText(transaction.getDescription());
+        //nameText.setText(transaction.getName());
         senderText.setText(transaction.getNickname());
         timestampText.setText(transaction.getTimestamp().toString());
         amountText.setText(Integer.toString(transaction.getAmount()));
-        contentText.setText(transaction.getContent());
+        descriptionText.setText(transaction.getDescription());
 
         //This is all related to the timer task from the arm screen.
         int showTime = extras.getInt(YapaDisplay.DELAY_TIME, -1);
