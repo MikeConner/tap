@@ -7,8 +7,10 @@
 
     <TextView
         android:text="@string/select_currency"
+        android:textSize="14sp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-thin"/>
 
     <Spinner
         android:id="@+id/spinnerSelectCurrency"
@@ -18,7 +20,9 @@
     <TextView
         android:text="@string/select_yapa_type"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-thin"
+        android:textSize="14sp"/>
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
@@ -37,7 +41,9 @@
                 android:onClick="onTypeSelect"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"/>
 
             <ImageButton
                 android:contentDescription="@string/select_yapa_image"
@@ -47,7 +53,8 @@
                 android:onClick="onTypeSelect"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:paddingTop="10dp"/>
 
             <ImageButton
                 android:contentDescription="@string/select_yapa_url"
@@ -57,48 +64,9 @@
                 android:onClick="onTypeSelect"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:scaleType="fitCenter"/>
-
-            <TextView
-                android:layout_height="60dp"
-                android:layout_width="120dp"
-                android:text="@string/select_text"
-                android:id="@+id/select_text_text"
-                android:gravity="center"/>
-
-            <TextView
-                android:layout_height="60dp"
-                android:layout_width="120dp"
-                android:text="@string/select_image"
-                android:id="@+id/select_text_image"
-                android:gravity="center"/>
-
-            <TextView
-                android:layout_height="60dp"
-                android:layout_width="120dp"
-                android:text="@string/select_url"
-                android:id="@+id/select_text_url"
-                android:gravity="center"/>
-
-            <ImageButton
-                android:contentDescription="@string/select_yapa_video"
-                android:src="@drawable/yapa_video"
-                android:background="@null"
-                android:id="@+id/btnYapaVideo"
-                android:onClick="onTypeSelect"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:scaleType="fitCenter"/>
-
-            <ImageButton
-                android:contentDescription="@string/select_yapa_audio"
-                android:src="@drawable/yapa_audio"
-                android:background="@null"
-                android:id="@+id/btnYapaAudio"
-                android:onClick="onTypeSelect"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"/>
 
             <ImageButton
                 android:contentDescription="@string/select_yapa_coupon"
@@ -108,28 +76,32 @@
                 android:onClick="onTypeSelect"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:paddingLeft="10dp"
+                android:paddingBottom="10dp"/>
 
-            <TextView
-                android:layout_height="60dp"
+            <ImageButton
+                android:contentDescription="@string/select_yapa_audio"
+                android:src="@drawable/yapa_audio"
+                android:background="@null"
+                android:id="@+id/btnYapaAudio"
+                android:onClick="onTypeSelect"
                 android:layout_width="120dp"
-                android:text="@string/select_video"
-                android:id="@+id/select_text_video"
-                android:gravity="center"/>
+                android:layout_height="120dp"
+                android:scaleType="fitCenter"
+                android:paddingBottom="10dp"/>
 
-            <TextView
-                android:layout_height="60dp"
+            <ImageButton
+                android:contentDescription="@string/select_yapa_video"
+                android:src="@drawable/yapa_video"
+                android:background="@null"
+                android:id="@+id/btnYapaVideo"
+                android:onClick="onTypeSelect"
                 android:layout_width="120dp"
-                android:text="@string/select_audio"
-                android:id="@+id/select_text_audio"
-                android:gravity="center"/>
-
-            <TextView
-                android:layout_height="60dp"
-                android:layout_width="120dp"
-                android:text="@string/select_coupon"
-                android:id="@+id/select_text_coupon"
-                android:gravity="center"/>
+                android:layout_height="120dp"
+                android:scaleType="fitCenter"
+                android:paddingBottom="10dp"
+                android:paddingRight="10dp"/>
 
             <!-- @TODO uncomment these buttons as they are enabled
             <ImageButton

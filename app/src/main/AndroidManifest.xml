@@ -60,9 +60,9 @@
         <activity
             android:name=".tags.ManageTagActivity"
             android:windowSoftInputMode="stateHidden|adjustPan"
-            android:theme="@android:style/Theme.DeviceDefault.Dialog"
             />
-        <activity android:name=".tags.SelectTagTypeActivity"/>
+        <activity android:name=".tags.SelectTagTypeActivity"
+            android:theme="@android:style/Theme.DeviceDefault.Dialog"/>
     </application>
 
 </manifest>

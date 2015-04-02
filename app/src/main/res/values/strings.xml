@@ -50,16 +50,16 @@
     <string name="hint_yapa_audio">Enter a URL for Audio</string>
 
     <string name="unknown_error">An unknown error has occurred.</string>
-    <string name="select_yapa_type">Select Yapa Type:</string>
-    <string name="select_currency">Select Currency:</string>
-    <string name="select_yapa_text">Select Text Yapa</string>
-    <string name="select_yapa_image">Select Image Yapa</string>
-    <string name="select_yapa_url">Select URL Yapa</string>
-    <string name="select_yapa_video">Select Video Yapa</string>
-    <string name="select_yapa_audio">Select Audio Yapa</string>
-    <string name="select_yapa_coupon">Select Coupon Yapa</string>
-    <string name="yapa_image_hint">Click to add an image</string>
-    <string name="yapa_coupon_hint">Click to add a coupon image</string>
+    <string name="select_yapa_type">select yapa type:</string>
+    <string name="select_currency">select currency</string>
+    <string name="select_yapa_text">select text yapa</string>
+    <string name="select_yapa_image">select image yapa</string>
+    <string name="select_yapa_url">select url yapa</string>
+    <string name="select_yapa_video">select video yapa</string>
+    <string name="select_yapa_audio">select audio yapa</string>
+    <string name="select_yapa_coupon">select coupon yapa</string>
+    <string name="yapa_image_hint">click to add an image</string>
+    <string name="yapa_coupon_hint">click to add a coupon image</string>
 
     <string name="file_access_problem">Could not access the selected data</string>
     <string name="no_image_selected">No image was selected</string>
@@ -91,7 +91,7 @@
     <string name="single_yapa_url_click">click to visit</string>
     <string name="single_yapa_video_click">click to watch</string>
     <string name="single_yapa_audio_click">click to listen</string>
-    <string name="single_yapa_coupon_click">click to save</string>
+    <string name="single_yapa_coupon_click">click for savings</string>
     <string name="single_yapa_text_click">click to read</string>
     <string name="sender_timestamp_divider"> | </string>
     <string name="yapa_exit_button">exit</string>

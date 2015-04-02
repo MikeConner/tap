@@ -2,6 +2,7 @@ package co.tapdatapp.tapandroid.yapa;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -14,12 +15,14 @@ import java.util.concurrent.TimeUnit;
 
 import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
 public class YapaCoupon extends Activity {
 
     private boolean forceReturnToArmScreen = false;
     private ScheduledFuture futureTask;
+    private ImageView imageView;
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -31,7 +34,7 @@ public class YapaCoupon extends Activity {
         final String yapaFullCoupon = transaction.getYapa_url();
 
         //This makes clicking the top frame open the coupon in another app.
-        ImageView imageView = (ImageView)findViewById(R.id.yapa_coupon_top_background);
+        imageView = (ImageView)findViewById(R.id.yapa_coupon_top_background);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,6 +44,8 @@ public class YapaCoupon extends Activity {
                 startActivity(intent);
             }
         });
+
+        new TapBitmap().execute(this, transaction.getYapa_url());
 
         //Clicking on the exit button emulates the back button
         Button quitButton = (Button) findViewById(R.id.exit_button_coupon);
@@ -78,6 +83,10 @@ public class YapaCoupon extends Activity {
             };
             futureTask = YapaDisplay.delayWorker.schedule(task, showTime, TimeUnit.SECONDS);
         }
+    }
+
+    public void onImageRetrieved(Bitmap image) {
+        imageView.setImageBitmap(image);
     }
 
     /**
