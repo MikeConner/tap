@@ -89,5 +89,6 @@
     <string name="single_yapa_text_click">click to read</string>
     <string name="sender_timestamp_divider"> | </string>
     <string name="yapa_exit_button">exit</string>
+    <string name="no_network">There is no network available, please connect to the Internet before using this application.</string>
 
 </resources>

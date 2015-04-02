@@ -18,6 +18,7 @@ import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.localdata.CacheManager;
+import co.tapdatapp.tapandroid.remotedata.NoNetworkError;
 
 public class TapApplication extends Application {
     /**
@@ -106,6 +107,11 @@ public class TapApplication extends Application {
         try{
             throw t;
         }
+        catch (NoNetworkError nne) {
+            // TODO we want this to do more, like open the network
+            // settings and/or give a more informational message
+            errorToUser(string(R.string.no_network));
+        }
         catch (OutOfMemoryError oome) {
             errorToUser(string(R.string.out_of_memory));
         }
@@ -129,7 +135,7 @@ public class TapApplication extends Application {
      *
      * @param t Exception that caused the problem
      */
-    public static void unknownFailure(Throwable t) {
+    private static void unknownFailure(Throwable t) {
         if (DevHelper.isEnabled(R.string.CRASH_ON_FAILURE)) {
             throw new AssertionError(t);
         }
