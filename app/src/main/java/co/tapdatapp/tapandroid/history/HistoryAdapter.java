@@ -88,8 +88,12 @@ public class HistoryAdapter extends BaseAdapter {
         ImageView historyPreview = ((ImageView)v.findViewById(R.id.history_preview));
         ImageView historyOverlay = ((ImageView) v.findViewById(R.id.history_grid_overlay));
         String thumbUrl = transaction.getYapaThumbUrl();
+        String profilePic = transaction.getThumb_url();
         if (thumbUrl != null && !thumbUrl.isEmpty()) {
             new ImageFetchTask().execute(historyPreview, thumbUrl);
+        }
+        else{
+            new ImageFetchTask().execute(historyPreview, profilePic);
         }
         YapaDisplay yl = new YapaDisplay();
         historyIcon.setImageDrawable(yl.getIcon(transaction));
