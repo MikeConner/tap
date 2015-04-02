@@ -104,8 +104,8 @@
             android:layout_weight=".20"
             android:id="@+id/yapa_button_audio">
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:id="@+id/exit_button_audio"
             android:src="@drawable/done_icon_check"
             android:layout_centerInParent="true"/>

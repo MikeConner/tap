@@ -34,7 +34,7 @@
     <color name="toast_text">#525252</color>
     <color name="yapa_background_url">#0099cc</color>
     <color name="yapa_background_audio">#864c9e</color>
-    <color name="yapa_background_video">#f9a95f</color>
+    <color name="yapa_background_video">#f5881e</color>
     <color name="yapa_background_image">#bec934</color>
     <color name="yapa_background_coupon">#f48172</color>
     <color name="yapa_background_text">#aaabaa</color>
