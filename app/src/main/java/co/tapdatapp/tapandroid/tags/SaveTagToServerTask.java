@@ -85,9 +85,12 @@ extends AsyncTask<Object, Void, String> {
         }
         else {
             // Updating existing tag
+            Bundle headers = new Bundle();
+            headers.putString("Accept", "application/json");
+            headers.putString("Content-Type", "application/json");
             WebResponse response = helper.HttpPut(
                     getTagUpdateUrl(t.getTagId().replace("-", "")),
-                    new Bundle(),
+                    headers,
                     codec.marshallFullTag(t).toString()
             );
             if (!response.isOK()) {
