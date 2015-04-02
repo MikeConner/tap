@@ -28,22 +28,22 @@ public class YapaVideo extends Activity {
         final String transactionId = extras.getString(YapaDisplay.TRANSACTION_ID);
         final Transaction transaction = new Transaction();
         transaction.moveToSlug(transactionId);
-        final String yapaFullImage = transaction.getYapa_url();
+        final String yapaFullVideo = transaction.getURI();
 
-        //This makes clicking the top frame open the image in an image viewer.
-        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_image);
+        //This makes clicking the top frame open the video in a different app.
+        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_video);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(yapaFullImage));
+                intent.setData(Uri.parse(yapaFullVideo));
                 startActivity(intent);
             }
         });
 
         //Clicking on the exit button emulates the back button
-        Button quitButton = (Button) findViewById(R.id.exit_button_image);
+        Button quitButton = (Button) findViewById(R.id.exit_button_video);
         quitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,11 +51,11 @@ public class YapaVideo extends Activity {
             }
         });
 
-        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_image);
-        TextView senderText = (TextView) findViewById(R.id.yapa_sender_image);
-        TextView timestampText = (TextView) findViewById(R.id.yapa_timestamp_image);
-        TextView amountText = (TextView) findViewById(R.id.yapa_amount_image);
-        TextView contentText = (TextView) findViewById(R.id.yapa_content_image);
+        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_video);
+        TextView senderText = (TextView) findViewById(R.id.yapa_sender_video);
+        TextView timestampText = (TextView) findViewById(R.id.yapa_timestamp_video);
+        TextView amountText = (TextView) findViewById(R.id.yapa_amount_video);
+        TextView contentText = (TextView) findViewById(R.id.yapa_content_video);
 
         descriptionText.setText(transaction.getDescription());
         senderText.setText(transaction.getNickname());
@@ -83,11 +83,9 @@ public class YapaVideo extends Activity {
     /**
      * This makes clicking on the back button go back to the arm screen
      * instead of the armed screen.
+     *
+     * This causing a memory problem seems to have been fixed.
      */
-    // @TODO I don't think this is correct, I have a feeling it is
-    // creating an infinite backstack that will eventually run the
-    // device out of RAM if the user does a lot of transactions.
-    // Research needs to be done.
     @Override
     public void onBackPressed() {
         if (forceReturnToArmScreen) {

@@ -30,8 +30,8 @@ public class YapaUrl extends Activity {
         transaction.moveToSlug(transactionId);
         final String yapaFullURL = transaction.getURI();
 
-        //This makes clicking the top frame open the image in an image viewer.
-        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_image);
+        //This makes clicking the top frame open the link in the browser.
+        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_url);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,11 +83,9 @@ public class YapaUrl extends Activity {
     /**
      * This makes clicking on the back button go back to the arm screen
      * instead of the armed screen.
+     *
+     * I'm fairly sure that the RAM issue has been fixed.
      */
-    // @TODO I don't think this is correct, I have a feeling it is
-    // creating an infinite backstack that will eventually run the
-    // device out of RAM if the user does a lot of transactions.
-    // Research needs to be done.
     @Override
     public void onBackPressed() {
         if (forceReturnToArmScreen) {

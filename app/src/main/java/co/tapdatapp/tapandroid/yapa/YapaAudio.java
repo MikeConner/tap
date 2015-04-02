@@ -30,8 +30,8 @@ public class YapaAudio extends Activity {
         transaction.moveToSlug(transactionId);
         final String yapaFullAudio = transaction.getURI();
 
-        //This makes clicking the top frame open the image in an image viewer.
-        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_image);
+        //This makes clicking the top frame open the audio in a different app.
+        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_url);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,11 +83,9 @@ public class YapaAudio extends Activity {
     /**
      * This makes clicking on the back button go back to the arm screen
      * instead of the armed screen.
+     *
+     * I think the RAM problem is solved.
      */
-    // @TODO I don't think this is correct, I have a feeling it is
-    // creating an infinite backstack that will eventually run the
-    // device out of RAM if the user does a lot of transactions.
-    // Research needs to be done.
     @Override
     public void onBackPressed() {
         if (forceReturnToArmScreen) {
