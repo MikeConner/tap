@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.concurrent.ScheduledFuture;
@@ -31,7 +31,7 @@ public class YapaText extends Activity {
         final String yapaFullText = transaction.getURI();
 
         //This probably needs to be changed. Some text should be on the screen.
-        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_text);
+        ImageView imageView = (ImageView)findViewById(R.id.yapa_text_top_background);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

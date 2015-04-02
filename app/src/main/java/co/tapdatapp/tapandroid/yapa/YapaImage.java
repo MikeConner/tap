@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.concurrent.ScheduledFuture;
@@ -28,10 +28,10 @@ public class YapaImage extends Activity {
         final String transactionId = extras.getString(YapaDisplay.TRANSACTION_ID);
         final Transaction transaction = new Transaction();
         transaction.moveToSlug(transactionId);
-        final String yapaFullImage = transaction.getURI();
+        final String yapaFullImage = transaction.getYapa_url();
 
         //This makes clicking the top frame open the image in an image viewer.
-        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_image);
+        ImageView imageView = (ImageView)findViewById(R.id.yapa_image_top_background);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

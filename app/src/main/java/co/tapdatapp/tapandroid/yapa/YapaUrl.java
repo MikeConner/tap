@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.concurrent.ScheduledFuture;
@@ -23,7 +23,7 @@ public class YapaUrl extends Activity {
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        setContentView(R.layout.activity_yapa_image);
+        setContentView(R.layout.activity_yapa_url);
         Bundle extras = getIntent().getExtras();
         final String transactionId = extras.getString(YapaDisplay.TRANSACTION_ID);
         final Transaction transaction = new Transaction();
@@ -31,7 +31,7 @@ public class YapaUrl extends Activity {
         final String yapaFullURL = transaction.getURI();
 
         //This makes clicking the top frame open the link in the browser.
-        RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_url);
+        ImageView imageView = (ImageView)findViewById(R.id.yapa_url_top_background);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

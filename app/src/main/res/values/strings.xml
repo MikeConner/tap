@@ -81,6 +81,12 @@
     <string name="tag_too_small">The tag has too little storage space</string>
     <string name="tag_format_failed">Failed to format a tag message</string>
 
+    <string name="select_text">Text</string>
+    <string name="select_audio">Audio</string>
+    <string name="select_video">Video</string>
+    <string name="select_url">URL</string>
+    <string name="select_coupon">Coupon</string>
+    <string name="select_image">Image</string>
     <string name="single_yapa_image_click">click to view</string>
     <string name="single_yapa_url_click">click to visit</string>
     <string name="single_yapa_video_click">click to watch</string>
