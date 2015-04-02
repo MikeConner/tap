@@ -52,6 +52,26 @@ public class YapaDisplay {
         }
     }
 
+    public int getOverlay(Transaction t) {
+        Resources res = TapApplication.get().getResources();
+        switch(t.getContentType()){
+            case Yapa.TYPE_IMAGE :
+                return res.getColor(R.color.yapa_background_image);
+            case Yapa.TYPE_URL :
+                return res.getColor(R.color.yapa_background_url);
+            case Yapa.TYPE_TEXT :
+                return res.getColor(R.color.yapa_background_text);
+            case Yapa.TYPE_COUPON :
+                return res.getColor(R.color.yapa_background_coupon);
+            case Yapa.TYPE_AUDIO :
+                return res.getColor(R.color.yapa_background_audio);
+            case Yapa.TYPE_VIDEO :
+                return res.getColor(R.color.yapa_background_video);
+            default :
+                throw new AssertionError("Unknown Yapa type " + t.getContentType());
+        }
+    }
+
     /**
      * Get the correct Activity to display the yapa based on the type
      *

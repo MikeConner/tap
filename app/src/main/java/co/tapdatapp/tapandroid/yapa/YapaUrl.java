@@ -43,7 +43,7 @@ public class YapaUrl extends Activity {
         });
 
         //Clicking on the exit button emulates the back button
-        Button quitButton = (Button) findViewById(R.id.exit_button_url);
+        ImageView quitButton = (ImageView) findViewById(R.id.exit_button_url);
         quitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

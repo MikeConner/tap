@@ -48,7 +48,7 @@ public class YapaImage extends Activity implements TapBitmap.Callback{
         new TapBitmap().execute(this, transaction.getYapa_url());
 
         //Clicking on the exit button emulates the back button
-        Button quitButton = (Button) findViewById(R.id.exit_button_image);
+        ImageView quitButton = (ImageView) findViewById(R.id.exit_button_image);
         quitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

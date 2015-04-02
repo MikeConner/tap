@@ -11,7 +11,8 @@
         android:scaleType="centerCrop"
         android:clickable="false"
         android:focusableInTouchMode="false"
-        android:focusable="false"/>
+        android:focusable="false"
+        android:alpha=".20"/>
 
     <co.tapdatapp.tapandroid.history.SquareImageView
         android:id="@+id/history_icon"
@@ -22,6 +23,12 @@
         android:clickable="false"
         android:focusableInTouchMode="false"
         android:focusable="false"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/history_grid_overlay"
+        android:alpha=".20"/>
 
     <TextView
         android:id="@+id/history_text"

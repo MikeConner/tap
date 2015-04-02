@@ -86,12 +86,14 @@ public class HistoryAdapter extends BaseAdapter {
         ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getNickname() +" \n" +transaction.getTimestamp());
         ImageView historyIcon = ((ImageView)v.findViewById(R.id.history_icon));
         ImageView historyPreview = ((ImageView)v.findViewById(R.id.history_preview));
+        TextView historyOverlay = ((TextView) v.findViewById(R.id.history_grid_overlay));
         String thumbUrl = transaction.getYapaThumbUrl();
         if (thumbUrl != null && !thumbUrl.isEmpty()) {
             new ImageFetchTask().execute(historyPreview, thumbUrl);
         }
         YapaDisplay yl = new YapaDisplay();
         historyIcon.setImageDrawable(yl.getIcon(transaction));
+        historyOverlay.setBackgroundColor(yl.getOverlay(transaction));
         return v;
     }
 
@@ -156,7 +158,6 @@ public class HistoryAdapter extends BaseAdapter {
                 Context context = activity.getApplicationContext();
                 Resources res = context.getResources();
                 BitmapDrawable yapaImage = new BitmapDrawable(res, imageBitmap);
-                yapaImage.setAlpha(130);
                 imageView.setImageDrawable(yapaImage);
             }
             else {
