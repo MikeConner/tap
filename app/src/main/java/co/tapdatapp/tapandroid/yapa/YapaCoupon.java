@@ -28,7 +28,7 @@ public class YapaCoupon extends Activity {
         final String transactionId = extras.getString(YapaDisplay.TRANSACTION_ID);
         final Transaction transaction = new Transaction();
         transaction.moveToSlug(transactionId);
-        final String yapaFullCoupon = transaction.getURI();
+        final String yapaFullCoupon = transaction.getYapa_url();
 
         //This makes clicking the top frame open the coupon in another app.
         ImageView imageView = (ImageView)findViewById(R.id.yapa_coupon_top_background);

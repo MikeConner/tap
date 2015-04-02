@@ -60,6 +60,7 @@
         <activity
             android:name=".tags.ManageTagActivity"
             android:windowSoftInputMode="stateHidden|adjustPan"
+            android:theme="@android:style/Theme.DeviceDefault.Dialog"
             />
         <activity android:name=".tags.SelectTagTypeActivity"/>
     </application>
