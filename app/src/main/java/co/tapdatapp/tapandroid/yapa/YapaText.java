@@ -28,7 +28,7 @@ public class YapaText extends Activity {
         final String transactionId = extras.getString(YapaDisplay.TRANSACTION_ID);
         final Transaction transaction = new Transaction();
         transaction.moveToSlug(transactionId);
-        final String yapaFullText = transaction.getYapa_url();
+        final String yapaFullText = transaction.getURI();
 
         //This probably needs to be changed. Some text should be on the screen.
         RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_text);

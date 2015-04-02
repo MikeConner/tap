@@ -3,42 +3,42 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/yapaTextLayout"
+    android:id="@+id/yapaAudioLayout"
     android:background="@color/generic_background"
     android:weightSum="1">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/yapa_top_text"
+        android:id="@+id/yapa_top_audio"
         android:layout_weight=".40">
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="275dp"
-            android:id="@+id/yapa_text_top_background"
+            android:id="@+id/yapa_audio_top_background"
             android:scaleType="centerCrop"
             android:cropToPadding="false"
             android:adjustViewBounds="true"
-            android:src="@color/yapa_background_text"
+            android:src="@color/yapa_background_audio"
             android:layout_gravity="center_horizontal"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true" />
         <ImageView
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:id="@+id/single_yapa_icon_text"
-            android:src="@drawable/yapa_text"
+            android:id="@+id/single_yapa_icon_audio"
+            android:src="@drawable/yapa_audio"
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
             android:layout_marginStart="49dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/single_yapa_text_text"
-            android:text="@string/single_yapa_coupon_click"
+            android:id="@+id/single_yapa_text_audio"
+            android:text="@string/single_yapa_audio_click"
             android:textSize="24sp"
             android:textColor="@color/white"
-            android:layout_toEndOf="@+id/single_yapa_icon_text"
+            android:layout_toEndOf="@+id/single_yapa_icon_audio"
             android:layout_marginTop="80dp" />
     </RelativeLayout>
     <LinearLayout
@@ -46,11 +46,11 @@
         android:layout_height="0dp"
         android:layout_weight=".40"
         android:orientation="vertical"
-        android:id="@+id/yapa_info_text">
+        android:id="@+id/yapa_info_audio">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/yapa_description_text"
+            android:id="@+id/yapa_description_audio"
             android:textSize="28sp"
             android:layout_marginStart="15dp" />
         <Space
@@ -59,24 +59,24 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/timestamp_sender_text"
+            android:id="@+id/timestamp_sender_audio"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/yapa_sender_text"
+                android:id="@+id/yapa_sender_audio"
                 android:textSize="20sp"
                 android:layout_marginStart="15dp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/yapa_divider_text"
+                android:id="@+id/yapa_divider_audio"
                 android:textSize="20sp"
                 android:text="@string/sender_timestamp_divider"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/yapa_timestamp_text"
+                android:id="@+id/yapa_timestamp_audio"
                 android:textSize="20sp"/>
             </LinearLayout>
         <Space
@@ -85,7 +85,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/yapa_amount_text"
+            android:id="@+id/yapa_amount_audio"
             android:textSize="20sp"
             android:layout_marginStart="15dp" />
         <Space
@@ -94,7 +94,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/yapa_content_text"
+            android:id="@+id/yapa_content_audio"
             android:textSize="20sp"
             android:layout_marginStart="15dp" />
         </LinearLayout>
@@ -102,13 +102,13 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".20"
-            android:id="@+id/yapa_button_text">
+            android:id="@+id/yapa_button_audio">
         <Button
             style="@style/AppTheme.Button"
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:textSize="20sp"
-            android:id="@+id/exit_button_text"
+            android:id="@+id/exit_button_audio"
             android:text="@string/yapa_exit_button"
             android:layout_gravity="center_horizontal"
             android:layout_centerVertical="true"

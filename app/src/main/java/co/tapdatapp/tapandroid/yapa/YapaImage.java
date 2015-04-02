@@ -28,7 +28,7 @@ public class YapaImage extends Activity {
         final String transactionId = extras.getString(YapaDisplay.TRANSACTION_ID);
         final Transaction transaction = new Transaction();
         transaction.moveToSlug(transactionId);
-        final String yapaFullImage = transaction.getYapa_url();
+        final String yapaFullImage = transaction.getURI();
 
         //This makes clicking the top frame open the image in an image viewer.
         RelativeLayout imageView = (RelativeLayout)findViewById(R.id.yapa_top_image);

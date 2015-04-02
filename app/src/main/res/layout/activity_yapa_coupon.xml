@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/yapaImageLayout"
+    android:id="@+id/yapaCouponLayout"
     android:background="@color/generic_background"
     android:weightSum="1">
 
@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/single_yapa_text_coupon"
-            android:text="@string/single_yapa_image_click"
+            android:text="@string/single_yapa_coupon_click"
             android:textSize="24sp"
             android:textColor="@color/white"
             android:layout_toEndOf="@+id/single_yapa_icon_coupon"
