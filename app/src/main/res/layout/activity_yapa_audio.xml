@@ -50,7 +50,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/yapa_description_audio"
+            android:id="@+id/yapa_name_audio"
             android:textSize="28sp"
             android:layout_marginStart="15dp" />
         <Space
@@ -94,7 +94,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/yapa_content_audio"
+            android:id="@+id/yapa_description_audio"
             android:textSize="20sp"
             android:layout_marginStart="15dp" />
         </LinearLayout>

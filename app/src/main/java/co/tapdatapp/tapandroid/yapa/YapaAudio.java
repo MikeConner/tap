@@ -51,17 +51,17 @@ public class YapaAudio extends Activity {
             }
         });
 
-        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_audio);
+        TextView nameText = (TextView) findViewById(R.id.yapa_name_audio);
         TextView senderText = (TextView) findViewById(R.id.yapa_sender_audio);
         TextView timestampText = (TextView) findViewById(R.id.yapa_timestamp_audio);
         TextView amountText = (TextView) findViewById(R.id.yapa_amount_audio);
-        TextView contentText = (TextView) findViewById(R.id.yapa_content_audio);
+        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_audio);
 
-        descriptionText.setText(transaction.getDescription());
+        //nameText.setText(transaction.getName());
         senderText.setText(transaction.getNickname());
         timestampText.setText(transaction.getTimestamp().toString());
         amountText.setText(Integer.toString(transaction.getAmount()));
-        contentText.setText(transaction.getContent());
+        descriptionText.setText(transaction.getDescription());
 
         //This is all related to the timer task from the arm screen.
         int showTime = extras.getInt(YapaDisplay.DELAY_TIME, -1);

@@ -51,17 +51,17 @@ public class YapaVideo extends Activity {
             }
         });
 
-        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_video);
+        TextView nameText = (TextView) findViewById(R.id.yapa_name_video);
         TextView senderText = (TextView) findViewById(R.id.yapa_sender_video);
         TextView timestampText = (TextView) findViewById(R.id.yapa_timestamp_video);
         TextView amountText = (TextView) findViewById(R.id.yapa_amount_video);
-        TextView contentText = (TextView) findViewById(R.id.yapa_content_video);
+        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_video);
 
-        descriptionText.setText(transaction.getDescription());
+        //nameText.setText(transaction.getName());
         senderText.setText(transaction.getNickname());
         timestampText.setText(transaction.getTimestamp().toString());
         amountText.setText(Integer.toString(transaction.getAmount()));
-        contentText.setText(transaction.getContent());
+        descriptionText.setText(transaction.getDescription());
 
         //This is all related to the timer task from the arm screen.
         int showTime = extras.getInt(YapaDisplay.DELAY_TIME, -1);

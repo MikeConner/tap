@@ -56,17 +56,17 @@ public class YapaImage extends Activity implements TapBitmap.Callback{
             }
         });
 
-        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_image);
+        TextView nameText = (TextView) findViewById(R.id.yapa_name_image);
         TextView senderText = (TextView) findViewById(R.id.yapa_sender_image);
         TextView timestampText = (TextView) findViewById(R.id.yapa_timestamp_image);
         TextView amountText = (TextView) findViewById(R.id.yapa_amount_image);
-        TextView contentText = (TextView) findViewById(R.id.yapa_content_image);
+        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_image);
 
-        descriptionText.setText(transaction.getDescription());
+        //nameText.setText(transaction.getName());
         senderText.setText(transaction.getNickname());
         timestampText.setText(transaction.getTimestamp().toString());
         amountText.setText(Integer.toString(transaction.getAmount()));
-        contentText.setText(transaction.getContent());
+        descriptionText.setText(transaction.getDescription());
 
         //This is all related to the timer task from the arm screen.
         int showTime = extras.getInt(YapaDisplay.DELAY_TIME, -1);
