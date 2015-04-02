@@ -27,15 +27,14 @@
     <color name="account_background">#EEEEEE</color>
     <color name="profile_text_gray">#616261</color>
     <color name="dark_gray">#808080</color>
+    <color name="generic_text">#525252</color>
     <color name="balance_list_background">#eeeeee</color>
     <color name="generic_background">#f6f6f6</color>
     <color name="toast_background">#f9f9f9</color>
     <color name="toast_text">#525252</color>
     <color name="yapa_background_url">#0099cc</color>
     <color name="yapa_background_audio">#864c9e</color>
-    <!-- This appears to be wrong -->
     <color name="yapa_background_video">#f9a95f</color>
-    <!--Guessing on these-->
     <color name="yapa_background_image">#bec934</color>
     <color name="yapa_background_coupon">#f48172</color>
     <color name="yapa_background_text">#aaabaa</color>

@@ -3,33 +3,37 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/generic_background">
+              android:background="@color/balance_list_background">
 
     <TextView
         android:text="@string/select_currency"
         android:textSize="14sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-thin"/>
+        android:fontFamily="sans-serif-thin"
+        android:textColor="@color/generic_text"/>
 
     <Spinner
         android:id="@+id/spinnerSelectCurrency"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:background="@color/generic_background"/>
 
     <TextView
         android:text="@string/select_yapa_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-thin"
-        android:textSize="14sp"/>
+        android:textSize="14sp"
+        android:textColor="@color/generic_text"/>
+
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
         <GridLayout
-            android:layout_width="3600dp"
-            android:layout_height="360dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:columnCount="3"
             android:layout_centerInParent="true">
 
@@ -39,8 +43,8 @@
                 android:background="@null"
                 android:id="@+id/btnYapaText"
                 android:onClick="onTypeSelect"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:scaleType="fitCenter"
                 android:paddingLeft="10dp"
                 android:paddingTop="10dp"/>
@@ -51,8 +55,8 @@
                 android:background="@null"
                 android:id="@+id/btnYapaImage"
                 android:onClick="onTypeSelect"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:scaleType="fitCenter"
                 android:paddingTop="10dp"/>
 
@@ -62,8 +66,8 @@
                 android:background="@null"
                 android:id="@+id/btnYapaLink"
                 android:onClick="onTypeSelect"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:scaleType="fitCenter"
                 android:paddingTop="10dp"
                 android:paddingRight="10dp"/>
@@ -74,8 +78,8 @@
                 android:background="@null"
                 android:id="@+id/btnYapaCoupon"
                 android:onClick="onTypeSelect"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:scaleType="fitCenter"
                 android:paddingLeft="10dp"
                 android:paddingBottom="10dp"/>
@@ -86,8 +90,8 @@
                 android:background="@null"
                 android:id="@+id/btnYapaAudio"
                 android:onClick="onTypeSelect"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:scaleType="fitCenter"
                 android:paddingBottom="10dp"/>
 
@@ -97,8 +101,8 @@
                 android:background="@null"
                 android:id="@+id/btnYapaVideo"
                 android:onClick="onTypeSelect"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:scaleType="fitCenter"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"/>
