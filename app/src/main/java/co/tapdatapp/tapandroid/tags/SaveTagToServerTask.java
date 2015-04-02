@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -21,6 +22,8 @@ import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.RemoteStorage;
 import co.tapdatapp.tapandroid.remotedata.RemoteStorageDriver;
 import co.tapdatapp.tapandroid.remotedata.TagCodec;
+import co.tapdatapp.tapandroid.remotedata.WebResponse;
+import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
 public class SaveTagToServerTask
 extends AsyncTask<Object, Void, String> {
@@ -78,18 +81,24 @@ extends AsyncTask<Object, Void, String> {
                 codec.marshallFullTag(t)
             );
             codec.parseSavedTagResponse(response);
-            // @TODO update the local tag data with the new tag ID
             t.setTagId(codec.getId());
         }
         else {
             // Updating existing tag
-            helper.HttpPutJSON(
-                helper.getFullUrl(R.string.ENDPOINT_TAGS),
-                new Bundle(),
-                codec.marshallFullTag(t)
+            WebResponse response = helper.HttpPut(
+                    getTagUpdateUrl(t.getTagId().replace("-", "")),
+                    new Bundle(),
+                    codec.marshallFullTag(t).toString()
             );
+            if (!response.isOK()) {
+                throw new WebServiceError(response);
+            }
         }
         return t.getTagId();
+    }
+
+    private String getTagUpdateUrl(String tag) {
+        return helper.getFullUrl(R.string.ENDPOINT_ONE_TAG, tag, new HashMap<String, String>());
     }
 
     /**
