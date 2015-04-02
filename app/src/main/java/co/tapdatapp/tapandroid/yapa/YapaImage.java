@@ -34,7 +34,7 @@ public class YapaImage extends Activity implements TapBitmap.Callback{
         final String yapaFullImage = transaction.getYapa_url();
 
         //This makes clicking the top frame open the image in an image viewer.
-        ImageView imageView = (ImageView)findViewById(R.id.yapa_image_top_background);
+        imageView = (ImageView)findViewById(R.id.yapa_image_top_background);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
