@@ -18,7 +18,7 @@ import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
-public class YapaCoupon extends Activity {
+public class YapaCoupon extends Activity implements TapBitmap.Callback {
 
     private boolean forceReturnToArmScreen = false;
     private ScheduledFuture futureTask;
