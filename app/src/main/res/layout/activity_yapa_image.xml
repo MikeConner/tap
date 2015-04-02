@@ -23,7 +23,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
-            android:alpha=".20"/>
+            android:alpha=".60"/>
         <ImageView
             android:layout_width="120dp"
             android:layout_height="120dp"
