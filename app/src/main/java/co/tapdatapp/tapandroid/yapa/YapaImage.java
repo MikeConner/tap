@@ -42,6 +42,27 @@ public class YapaImage extends Activity {
             }
         });
 
+        //Clicking on the exit button emulates the back button
+        Button quitButton = (Button) findViewById(R.id.exit_button_image);
+        quitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        TextView descriptionText = (TextView) findViewById(R.id.yapa_description_image);
+        TextView senderText = (TextView) findViewById(R.id.yapa_sender_image);
+        TextView timestampText = (TextView) findViewById(R.id.yapa_timestamp_image);
+        TextView amountText = (TextView) findViewById(R.id.yapa_amount_image);
+        TextView contentText = (TextView) findViewById(R.id.yapa_content_image);
+
+        descriptionText.setText(transaction.getDescription());
+        senderText.setText(transaction.getNickname());
+        timestampText.setText(transaction.getTimestamp().toString());
+        amountText.setText(Integer.toString(transaction.getAmount()));
+        contentText.setText(transaction.getContent());
+
         //This is all related to the timer task from the arm screen.
         int showTime = extras.getInt(YapaDisplay.DELAY_TIME, -1);
         if (showTime != -1) {
