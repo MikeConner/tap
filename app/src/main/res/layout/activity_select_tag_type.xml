@@ -16,8 +16,7 @@
     <Spinner
         android:id="@+id/spinnerSelectCurrency"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/generic_background"/>
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:text="@string/select_yapa_type"
