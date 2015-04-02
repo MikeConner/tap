@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:background="@color/generic_background">
 
     <TextView
         android:text="@string/select_currency"
@@ -27,7 +28,8 @@
 
         <ImageButton
             android:contentDescription="@string/select_yapa_text"
-            android:src="@drawable/_yapa_text"
+            android:src="@drawable/yapa_text"
+            android:background="@color/yapa_background_text"
             android:id="@+id/btnYapaText"
             android:onClick="onTypeSelect"
             android:layout_width="100dp"
@@ -37,6 +39,7 @@
         <ImageButton
             android:contentDescription="@string/select_yapa_image"
             android:src="@drawable/yapa_image"
+            android:background="@color/yapa_background_image"
             android:id="@+id/btnYapaImage"
             android:onClick="onTypeSelect"
             android:layout_width="100dp"
@@ -46,6 +49,7 @@
         <ImageButton
             android:contentDescription="@string/select_yapa_url"
             android:src="@drawable/yapa_url"
+            android:background="@color/yapa_background_url"
             android:id="@+id/btnYapaLink"
             android:onClick="onTypeSelect"
             android:layout_width="100dp"
@@ -55,6 +59,7 @@
         <ImageButton
             android:contentDescription="@string/select_yapa_video"
             android:src="@drawable/yapa_video"
+            android:background="@color/yapa_background_video"
             android:id="@+id/btnYapaVideo"
             android:onClick="onTypeSelect"
             android:layout_width="100dp"
@@ -64,6 +69,7 @@
         <ImageButton
             android:contentDescription="@string/select_yapa_audio"
             android:src="@drawable/yapa_audio"
+            android:background="@color/yapa_background_audio"
             android:id="@+id/btnYapaAudio"
             android:onClick="onTypeSelect"
             android:layout_width="100dp"
@@ -72,7 +78,8 @@
 
         <ImageButton
             android:contentDescription="@string/select_yapa_coupon"
-            android:src="@drawable/_yapa_coupon"
+            android:src="@drawable/yapa_coupon"
+            android:background="@color/yapa_background_coupon"
             android:id="@+id/btnYapaCoupon"
             android:onClick="onTypeSelect"
             android:layout_width="100dp"
