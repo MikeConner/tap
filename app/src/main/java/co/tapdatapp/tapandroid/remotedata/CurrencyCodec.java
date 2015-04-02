@@ -82,7 +82,7 @@ public class CurrencyCodec extends BaseCodec {
     parseBalances(JSONObject response) throws JSONException {
         JSONObject in = response.getJSONObject("response");
         BalanceList rv = new BalanceList();
-        rv.put(CurrencyDAO.CURRENCY_BITCOIN, in.getInt("btc_balance"));
+        rv.put(CurrencyDAO.CURRENCY_BITCOIN, in.getInt("dollar_balance"));
         JSONArray balances = in.getJSONArray("balances");
         for (int i = 0; i < balances.length(); i++) {
             JSONObject oneBalance = balances.getJSONObject(i);

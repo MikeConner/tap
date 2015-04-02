@@ -12,6 +12,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
@@ -23,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.arm.ArmFragment;
@@ -54,6 +56,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
 
     private boolean mArmed = false;
     private ArmedFragment mArmFrag;
+    private TextView tvBalance;
 
     CurrencyDAO currency;
 
@@ -342,6 +345,17 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.activity_arm, menu);
+
+
+        tvBalance= new TextView(this);
+        tvBalance.setText("$0.00");
+        tvBalance.setTextColor(getResources().getColor(R.color.white));
+//        tv.setOnClickListener(this);
+        tvBalance.setPadding(0, 0, 10, 0);
+        tvBalance.setTypeface(null, Typeface.BOLD);
+        tvBalance.setTextSize(14);
+        menu.add(0, -1, 1, R.string.tap).setActionView(tvBalance).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         return true;
     }
     @Override

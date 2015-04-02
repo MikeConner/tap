@@ -46,7 +46,7 @@ implements SingleTable {
 
     private final static String BITCOIN_NAME = "Bitcoin";
     private final static String BITCOIN_ICON = "http://example.com/nope";
-    private final static String BITCOIN_SYMBOL = "S";
+    private final static String BITCOIN_SYMBOL = "$";
     private final static int BITCOIN_MAX_TAP = 500;
 
     /**
