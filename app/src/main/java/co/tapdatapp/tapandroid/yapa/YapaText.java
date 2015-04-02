@@ -32,6 +32,7 @@ public class YapaText extends Activity {
 
         //This probably needs to be changed. Some text should be on the screen.
         ImageView imageView = (ImageView)findViewById(R.id.yapa_top_overlay_text);
+        /**
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,6 +42,7 @@ public class YapaText extends Activity {
                 startActivity(intent);
             }
         });
+         **/
 
         //Clicking on the exit button emulates the back button
         ImageView quitButton = (ImageView) findViewById(R.id.exit_button_text);
