@@ -22,8 +22,8 @@ public class VideoYapaLineItem extends YapaLineItem {
 
     @Override
     public void setValues(Yapa y) {
-        super.setValues(y);
         etYapaContent.setText(y.getUri());
+        super.setValues(y);
     }
 
     @Override

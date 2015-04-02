@@ -23,8 +23,8 @@ public class TextYapaLineItem extends YapaLineItem {
 
     @Override
     public void setValues(Yapa y) {
-        super.setValues(y);
         etYapaContent.setText(y.getContent());
+        super.setValues(y);
     }
 
     @Override

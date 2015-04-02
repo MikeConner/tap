@@ -26,7 +26,6 @@ implements View.OnClickListener,
 
     @Override
     public void setValues(Yapa y) {
-        super.setValues(y);
         String image = y.getImage();
         imageButton.setTag(image);
         if (image != null && !image.isEmpty()) {
@@ -35,6 +34,7 @@ implements View.OnClickListener,
             }
             new TapBitmap().execute(this, image);
         }
+        super.setValues(y);
     }
 
     @Override

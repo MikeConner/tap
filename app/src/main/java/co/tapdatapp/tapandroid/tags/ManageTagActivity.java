@@ -163,6 +163,10 @@ implements TextWatcher,
         setActionButtonState();
     }
 
+    public boolean isUserUpdatingAllowed() {
+        return allowUserUpdating;
+    }
+
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         // do nothing

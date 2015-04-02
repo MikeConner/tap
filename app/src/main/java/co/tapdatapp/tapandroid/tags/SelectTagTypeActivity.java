@@ -8,6 +8,7 @@ package co.tapdatapp.tapandroid.tags;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -74,6 +75,7 @@ public class SelectTagTypeActivity extends Activity {
      */
     private int getSelectedCurrencyId() {
         int itemNumber = (int)((Spinner)findViewById(R.id.spinnerSelectCurrency)).getSelectedItemId();
+        Log.d("CURRENCY", "currency " + itemNumber + " = " + currencyDropdownMap[itemNumber]);
         return currencyDropdownMap[itemNumber];
     }
 

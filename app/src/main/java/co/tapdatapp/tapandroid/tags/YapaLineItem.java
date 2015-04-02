@@ -26,6 +26,11 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
 
     protected Yapa yapa;
     protected ManageTagActivity activity;
+    /**
+     * When locked, edits are ignored because we assume the code is the
+     * only thing that is changing values
+     */
+    protected boolean locked = true;
 
     /**
      * Instantiate and return the appropriate class to match the type
@@ -50,8 +55,6 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
                 return new AudioYapaLineItem(a, v);
             case R.layout.line_item_yapa_coupon :
                 return new CouponYapaLineItem(a, v);
-
-
             default :
                 throw new AssertionError("Unknown Yapa view type " + v.getId());
         }
@@ -83,11 +86,14 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
      * Set the display values from the passed object. This should
      * be overridden by the classes that implement the individual
      * Yapa types so they can set additional values as needed.
+     *
+     * !! Always call this super method LAST or data will get hosed !!
      */
     protected void setValues(Yapa y) {
         yapa = y;
         setThreshold(y.getThreshold());
         etYapaDescription.setText(y.getDescription());
+        locked = false;
     }
 
     /**
@@ -164,6 +170,8 @@ implements SeekBar.OnSeekBarChangeListener, TextWatcher {
      */
     @Override
     public void afterTextChanged(Editable s) {
-        updateYapaRecord(false);
+        if (activity.isUserUpdatingAllowed() && !locked) {
+            updateYapaRecord(false);
+        }
     }
 }
