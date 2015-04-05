@@ -9,13 +9,13 @@ import android.os.AsyncTask;
 import java.io.IOException;
 import java.io.InputStream;
 
-import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 
 public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
 
     public interface Callback {
         void onProfilePicSaved(String id);
+        void onProfileSaveFailure(Throwable t);
     }
 
     private Callback callback;
@@ -65,7 +65,7 @@ public class SaveProfilePicTask extends AsyncTask<Object, Void, Void> {
             callback.onProfilePicSaved(id);
         }
         else {
-            TapApplication.handleFailures(error);
+            callback.onProfileSaveFailure(error);
         }
     }
 

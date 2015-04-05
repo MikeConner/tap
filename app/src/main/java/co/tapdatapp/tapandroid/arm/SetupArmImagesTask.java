@@ -99,7 +99,7 @@ public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
     @Override
     protected void onPostExecute(Void v) {
         if (error != null) {
-            TapApplication.handleFailures(error);
+            armFragment.armImagesFailure(error);
         }
         else {
             armFragment.updateDenominations(denominations, bitmaps, icon);

@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 
@@ -87,6 +88,11 @@ public class YapaImage extends Activity implements TapBitmap.Callback{
 
     public void onImageRetrieved(Bitmap image) {
         imageView.setImageBitmap(image);
+    }
+
+    @Override
+    public void onImageFetchError(Throwable t) {
+        TapApplication.handleFailures(this, t);
     }
 
     /**

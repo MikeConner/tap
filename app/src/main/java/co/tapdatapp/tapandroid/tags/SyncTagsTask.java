@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import co.tapdatapp.tapandroid.R;
-import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.Tag;
 import co.tapdatapp.tapandroid.localdata.Yapa;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
@@ -26,6 +25,11 @@ public class SyncTagsTask extends AsyncTask<SyncTagsTask.Callback, Void, Void> {
          * Called when the tags have successfully been synchronized
          */
         void onTagsSynced();
+
+        /**
+         * Called if an error occurs syncing tags
+         */
+        void onTagSyncError(Throwable t);
     }
 
     private Throwable error = null;
@@ -52,7 +56,7 @@ public class SyncTagsTask extends AsyncTask<SyncTagsTask.Callback, Void, Void> {
             callback.onTagsSynced();
         }
         else {
-            TapApplication.handleFailures(error);
+            callback.onTagSyncError(error);
         }
     }
 

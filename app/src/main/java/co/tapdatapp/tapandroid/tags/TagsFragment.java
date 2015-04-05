@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 
 public class TagsFragment
 extends Fragment
@@ -71,6 +72,11 @@ implements View.OnClickListener,
             // Activity faster than the background task can finish,
             // and can be ignored
         }
+    }
+
+    @Override
+    public void onTagSyncError(Throwable t) {
+        TapApplication.handleFailures(getActivity(), t);
     }
 
     /**

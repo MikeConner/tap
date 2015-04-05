@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import co.tapdatapp.tapandroid.remotedata.NewAccountTask;
+import co.tapdatapp.tapandroid.remotedata.NoNetworkError;
 
 public class AccountStartActivity extends Activity {
 
@@ -56,7 +57,12 @@ public class AccountStartActivity extends Activity {
      */
     // @TODO probably some better error handling
     public void newAccountError(Throwable t) {
-        TapApplication.handleFailures(t);
+        if (t instanceof NoNetworkError) {
+            TapApplication.errorToUser(TapApplication.string(R.string.no_network));
+        }
+        else {
+            TapApplication.handleFailures(this, t);
+        }
         setResult(RESULT_CANCELED);
         finish();
     }

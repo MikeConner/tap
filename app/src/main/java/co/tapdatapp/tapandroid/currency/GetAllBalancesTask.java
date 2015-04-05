@@ -9,7 +9,6 @@ package co.tapdatapp.tapandroid.currency;
 
 import android.os.AsyncTask;
 
-import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.user.Account;
 import co.tapdatapp.tapandroid.user.BalancesExpiredException;
@@ -19,6 +18,7 @@ extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
 
     public interface Callback {
         void onBalancesLoaded(BalanceList list);
+        void onBalanceLoadFailed(Throwable t);
     }
 
     private Callback callback;
@@ -60,7 +60,7 @@ extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
             callback.onBalancesLoaded(balanceList);
         }
         else{
-            TapApplication.handleFailures(error);
+            callback.onBalanceLoadFailed(error);
         }
     }
 }

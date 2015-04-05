@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.AndroidCache;
 import co.tapdatapp.tapandroid.localdata.Yapa;
@@ -71,5 +72,10 @@ implements View.OnClickListener,
     @Override
     public void onImageRetrieved(Bitmap image) {
         imageButton.setImageBitmap(image);
+    }
+
+    @Override
+    public void onImageFetchError(Throwable t) {
+        TapApplication.handleFailures(activity, t);
     }
 }

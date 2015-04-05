@@ -15,21 +15,25 @@ import java.util.Date;
 import java.util.HashMap;
 
 import co.tapdatapp.tapandroid.R;
-import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.ISO8601Format;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.TransactionCodec;
 
 public class HistorySyncTask
-extends AsyncTask<HistorySyncCallback, Void, Void> {
+extends AsyncTask<HistorySyncTask.Callback, Void, Void> {
 
-    private HistorySyncCallback historyFragment;
+    public interface Callback {
+        void postSyncDisplay();
+        void onHistorySyncError(Throwable t);
+    }
+
+    private Callback historyFragment;
     private boolean success = false;
     private Throwable exception;
 
     @Override
-    protected Void doInBackground(HistorySyncCallback...historyFragments) {
+    protected Void doInBackground(Callback...historyFragments) {
         if (historyFragments.length != 1) {
             throw new AssertionError(
                 "Must be called with single HistoryFragment"
@@ -52,7 +56,7 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
             historyFragment.postSyncDisplay();
         }
         else {
-            TapApplication.handleFailures(exception);
+            historyFragment.onHistorySyncError(exception);
         }
     }
 

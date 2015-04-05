@@ -252,7 +252,7 @@ implements TextWatcher,
      */
     @Override
     public void onTagSaveFailed(Throwable t) {
-        TapApplication.handleFailures(t);
+        TapApplication.handleFailures(this, t);
     }
 
 
@@ -399,7 +399,7 @@ implements TextWatcher,
                 t.show();
             }
             catch (Exception ioe) {
-                TapApplication.handleFailures(ioe);
+                TapApplication.handleFailures(this, ioe);
             }
         }
         else {

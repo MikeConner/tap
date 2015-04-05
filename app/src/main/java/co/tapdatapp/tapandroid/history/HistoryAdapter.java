@@ -22,7 +22,6 @@ import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.Transaction;
-import co.tapdatapp.tapandroid.localdata.Yapa;
 import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
 public class HistoryAdapter extends BaseAdapter {
@@ -166,7 +165,7 @@ public class HistoryAdapter extends BaseAdapter {
             }
             else {
                 if (error != null) {
-                    TapApplication.handleFailures(error);
+                    TapApplication.handleFailures(activity, error);
                 }
                 else {
                     TapApplication.errorToUser(TapApplication.string(R.string.unknown_error));

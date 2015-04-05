@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 
 public class QRCode extends Activity implements TapBitmap.Callback {
@@ -40,5 +41,10 @@ public class QRCode extends Activity implements TapBitmap.Callback {
             // and can be ignored
             Log.e("IGNORED", "NPE in callback", npe);
         }
+    }
+
+    @Override
+    public void onImageFetchError(Throwable t) {
+        TapApplication.handleFailures(this, t);
     }
 }

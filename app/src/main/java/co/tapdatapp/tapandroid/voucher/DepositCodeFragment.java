@@ -66,4 +66,9 @@ implements RedeemVoucherTask.Callback, View.OnClickListener {
         callback.refreshBalanceList();
         dismiss();
     }
+
+    @Override
+    public void onVoucherFailure(Throwable t) {
+        TapApplication.handleFailures(getActivity(), t);
+    }
 }

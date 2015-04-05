@@ -342,6 +342,11 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     }
 
     @Override
+    public void onTapNetError(Throwable t) {
+        TapApplication.handleFailures(this, t);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.activity_arm, menu);

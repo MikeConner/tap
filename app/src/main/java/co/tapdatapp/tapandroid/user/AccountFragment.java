@@ -172,6 +172,11 @@ implements View.OnClickListener,
         }
     }
 
+    @Override
+    public void onBalanceLoadFailed(Throwable t) {
+        TapApplication.handleFailures(getActivity(), t);
+    }
+
     /**
      * All button clicks go through this dispatcher
      *
@@ -400,6 +405,11 @@ implements View.OnClickListener,
         new SetProfilePicTask().execute();
     }
 
+    @Override
+    public void onProfileSaveFailure(Throwable t) {
+        TapApplication.handleFailures(getActivity(), t);
+    }
+
     /**
      * Load the profile image onto the view, fetching from the web if
      * necessary.
@@ -428,7 +438,7 @@ implements View.OnClickListener,
         @Override
         protected void onPostExecute(Exception e) {
             if (e != null) {
-                TapApplication.handleFailures(e);
+                TapApplication.handleFailures(getActivity(), e);
             }
             else {
                 profilePic.setImageBitmap(thumbnail);

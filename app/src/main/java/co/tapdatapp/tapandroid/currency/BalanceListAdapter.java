@@ -24,7 +24,9 @@ import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 
-public class BalanceListAdapter extends BaseAdapter {
+public class BalanceListAdapter
+extends BaseAdapter
+implements SetBalanceImageTask.Callback {
 
     private final BalanceList balanceList;
     private CurrencyDAO[] listOfCurrencies;
@@ -132,7 +134,8 @@ public class BalanceListAdapter extends BaseAdapter {
         else {
             imageView.setImageBitmap(getLoadingImage());
             new SetBalanceImageTask().execute(
-                imageView,
+                this,
+                view,
                 currency.getIconUrl(),
                 imageSize
             );
@@ -167,4 +170,13 @@ public class BalanceListAdapter extends BaseAdapter {
         return loadingImage;
     }
 
+    @Override
+    public void onBalanceImageFetched(View view, Bitmap image) {
+        ((ImageView)view.findViewById(R.id.balance_line_item_icon)).setImageBitmap(image);
+    }
+
+    @Override
+    public void onBalanceImageFetchError(Throwable t) {
+        TapApplication.handleFailures(activity, t);
+    }
 }

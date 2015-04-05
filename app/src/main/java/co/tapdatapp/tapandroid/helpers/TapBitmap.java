@@ -43,6 +43,11 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
          * @param image Bitmap of the requested image
          */
         void onImageRetrieved(Bitmap image);
+
+        /**
+         * Called if the image could not be fetched
+         */
+        void onImageFetchError(Throwable t);
     }
 
     private Callback callback;
@@ -83,7 +88,7 @@ public class TapBitmap extends AsyncTask<Object, Void, Void> {
             callback.onImageRetrieved(image);
         }
         else {
-            TapApplication.handleFailures(error);
+            callback.onImageFetchError(error);
         }
     }
 

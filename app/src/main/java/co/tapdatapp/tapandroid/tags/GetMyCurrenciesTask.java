@@ -5,8 +5,8 @@
 package co.tapdatapp.tapandroid.tags;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
-import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 
 public class GetMyCurrenciesTask extends AsyncTask<Void, Void, Void> {
@@ -18,7 +18,9 @@ public class GetMyCurrenciesTask extends AsyncTask<Void, Void, Void> {
             currency.updateAllOwnedCurrencies();
         }
         catch (Throwable t) {
-            TapApplication.handleFailures(t);
+            // This task doesn't directly impact anything if it fails,
+            // so just log it so we know
+            Log.e("OWNED_CURRENCY_FETCH", "Failed", t);
         }
         return null;
     }

@@ -6,11 +6,11 @@ package co.tapdatapp.tapandroid.user;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.json.JSONObject;
 
 import co.tapdatapp.tapandroid.R;
-import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 
 public class UpdateUserInfoTask extends AsyncTask<Void, Void, Void> {
@@ -31,12 +31,12 @@ public class UpdateUserInfoTask extends AsyncTask<Void, Void, Void> {
     /**
      * Handles any error resulting from the background task. Since
      * this operation is more detached from the front-end than usual,
-     * just call an error handler from here.
+     * just report it from here.
      */
     @Override
     protected void onPostExecute(Void x) {
         if (error != null) {
-            TapApplication.handleFailures(error);
+            Log.e("UPDATE_USER_INFO", "failed", error);
         }
     }
 

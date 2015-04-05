@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Denomination;
@@ -299,31 +300,35 @@ implements View.OnTouchListener {
      */
     public void
     updateDenominations(Denomination[] d, Bitmap[] b, Bitmap logo) {
-        //noinspection ConstantConditions
-
-        //TODO:  after tapping, this is CRASHing the app (because it's null)
-        /*Process: co.tapdatapp.tapandroid.demo, PID: 321
-    java.lang.NullPointerException
-            at co.tapdatapp.tapandroid.arm.ArmFragment.updateDenominations(ArmFragment.java:303)*/
-
-        TextView viewAmount = (TextView)getView().findViewById(R.id.txtAmount);
-        viewAmount.setBackground(
-            new BitmapDrawable(getActivity().getResources(), logo)
-        );
-        viewAmount.getBackground().setAlpha(128);
-        // This will never be called when getView() is null
-        //noinspection ConstantConditions
-        ViewFlipper layout = (ViewFlipper)getView().findViewById(R.id.currency_items);
-        layout.removeAllViews();
-        maxIndex = d.length-1;
-        for (int i = 0; i < d.length; i++) {
-            ImageView iv = new ImageView(getActivity());
-            iv.setImageBitmap(scaleDenomination(b[i]));
-            iv.setBackgroundColor(Color.TRANSPARENT);
-            commonDenominationSetup(iv);
-            iv.setTag(d[i].getAmount());
-            layout.addView(iv);
+        try {
+            //noinspection ConstantConditions
+            TextView viewAmount = (TextView) getView().findViewById(R.id.txtAmount);
+            viewAmount.setBackground(
+                new BitmapDrawable(getActivity().getResources(), logo)
+            );
+            viewAmount.getBackground().setAlpha(128);
+            // This will never be called when getView() is null
+            //noinspection ConstantConditions
+            ViewFlipper layout = (ViewFlipper) getView().findViewById(R.id.currency_items);
+            layout.removeAllViews();
+            maxIndex = d.length - 1;
+            for (int i = 0; i < d.length; i++) {
+                ImageView iv = new ImageView(getActivity());
+                iv.setImageBitmap(scaleDenomination(b[i]));
+                iv.setBackgroundColor(Color.TRANSPARENT);
+                commonDenominationSetup(iv);
+                iv.setTag(d[i].getAmount());
+                layout.addView(iv);
+            }
         }
+        catch (NullPointerException npe) {
+            // Happens in the event that the user navigates away from the
+            // page before the background task can finish. Ignore.
+        }
+    }
+
+    public void armImagesFailure(Throwable t) {
+        TapApplication.handleFailures(getActivity(), t);
     }
 
     /**

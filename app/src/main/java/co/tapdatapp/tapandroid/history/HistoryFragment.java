@@ -20,11 +20,12 @@ import android.widget.ProgressBar;
 import android.widget.GridView;
 
 import co.tapdatapp.tapandroid.R;
+import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
-public class HistoryFragment extends Fragment implements HistorySyncCallback {
+public class HistoryFragment extends Fragment implements HistorySyncTask.Callback {
 
     private Activity parentActivity;
     private ProgressBar progressBar;
@@ -205,5 +206,10 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
         );
         gridView.setAdapter(adapter);
         loaded = true;
+    }
+
+    @Override
+    public void onHistorySyncError(Throwable t) {
+        TapApplication.handleFailures(getActivity(), t);
     }
 }

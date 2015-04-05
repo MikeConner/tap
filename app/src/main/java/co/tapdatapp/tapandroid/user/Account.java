@@ -24,6 +24,7 @@ import co.tapdatapp.tapandroid.helpers.DateTime;
 import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+import co.tapdatapp.tapandroid.remotedata.NoNetworkError;
 import co.tapdatapp.tapandroid.remotedata.UserAccountCodec;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
@@ -91,14 +92,13 @@ public class Account {
             setBitcoinAddress(codec.getBitcoinAddress(response));
             setBitcoinQrUrl(codec.getQRCode(response));
         }
+        catch (NoNetworkError | UserFriendlyError e) {
+            deleteAccount();
+            throw e;
+        }
         catch (Throwable t) {
             deleteAccount();
-            if (t instanceof UserFriendlyError) {
-                throw (UserFriendlyError)t;
-            }
-            else {
-                throw new WebServiceError(t);
-            }
+            throw new WebServiceError(t);
         }
     }
 

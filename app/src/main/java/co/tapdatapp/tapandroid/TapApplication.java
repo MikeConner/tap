@@ -6,11 +6,16 @@
 
 package co.tapdatapp.tapandroid;
 
+import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Environment;
 import android.os.StatFs;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -103,14 +108,12 @@ public class TapApplication extends Application {
      * For typical failure handling cases. Does the most logical
      * thing possible based on the failure class.
      */
-    public static void handleFailures(Throwable t) {
+    public static void handleFailures(Activity activity, Throwable t) {
         try{
             throw t;
         }
         catch (NoNetworkError nne) {
-            // TODO we want this to do more, like open the network
-            // settings and/or give a more informational message
-            errorToUser(string(R.string.no_network));
+            showNoConnectionDialog(activity);
         }
         catch (OutOfMemoryError oome) {
             errorToUser(string(R.string.out_of_memory));
@@ -121,6 +124,42 @@ public class TapApplication extends Application {
         catch (Throwable catchall) {
             unknownFailure(t);
         }
+    }
+
+    /**
+     * Show a dialog telling the user that there is no network access
+     * and give them the option to open the network settings app.
+     */
+    public static void showNoConnectionDialog(final Activity a) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(a);
+        builder.setCancelable(true);
+        builder.setMessage(R.string.no_network);
+        builder.setTitle(R.string.no_network_title);
+        builder.setPositiveButton(
+            R.string.button_network_settings,
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    a.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+                }
+            }
+        );
+        builder.setNegativeButton(
+            R.string.button_return_to_app,
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            }
+        );
+        builder.setOnCancelListener(
+            new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                }
+            }
+        );
+        builder.show();
     }
 
     /**

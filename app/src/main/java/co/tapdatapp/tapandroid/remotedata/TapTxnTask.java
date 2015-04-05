@@ -6,7 +6,6 @@ package co.tapdatapp.tapandroid.remotedata;
 
 import android.os.AsyncTask;
 
-import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.history.HistorySyncTask;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.service.TapTxn;
@@ -24,6 +23,10 @@ extends AsyncTask<TapTxnTask.TapTxnInitiator, Void, Void> {
          * Called when a successful network operation has occurred
          */
         void onTapNetComplete(Transaction t);
+        /**
+         * called when an error occurs
+         */
+        void onTapNetError(Throwable t);
     }
 
     private TapTxnInitiator callback;
@@ -56,7 +59,7 @@ extends AsyncTask<TapTxnTask.TapTxnInitiator, Void, Void> {
             callback.onTapNetComplete(result);
         }
         else {
-            TapApplication.handleFailures(error);
+            callback.onTapNetError(error);
         }
     }
 }
