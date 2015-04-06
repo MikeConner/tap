@@ -5,6 +5,7 @@
 package co.tapdatapp.tapandroid.localdata;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 
@@ -52,6 +53,44 @@ public class Denomination extends BaseDAO implements SingleTable {
     }
 
     /**
+     * Return all the denominations (in ascending order) for the
+     * requested currency
+     *
+     * @param currencyId Currency ID to get data for
+     * @return List of Denominations
+     */
+    public Denomination[] getAllForCurrency(int currencyId) {
+        SQLiteDatabase db = BaseDAO.getDatabaseHelper().getWritableDatabase();
+        Cursor c = null;
+        try {
+            c = db.query(
+                TABLE,
+                new String[]{AMOUNT, IMAGE},
+                CURRENCY_ID + " = ?",
+                new String[] { Integer.toString(currencyId) },
+                null, null,
+                AMOUNT + " ASC", null
+            );
+            Denomination[] rv = new Denomination[c.getCount()];
+            int i = 0;
+            while (c.moveToNext()) {
+                Denomination denomination = new Denomination(
+                    currencyId,
+                    c.getInt(0),
+                    c.getString(1)
+                );
+                rv[i] = denomination;
+                i++;
+            }
+            return rv;
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+    }
+
+    /**
      * Get the URL of the image for the requested denomination. This
      * version is not dependent on the data in the object, and changes
      * nothing about the object's data.
@@ -77,10 +116,6 @@ public class Denomination extends BaseDAO implements SingleTable {
                 "Currency Id = " + currency + ", amount = " + amount
             );
         }
-    }
-
-    public int getCurrencyId() {
-        return currency_id;
     }
 
     public int getAmount() {

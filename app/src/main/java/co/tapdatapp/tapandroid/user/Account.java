@@ -8,21 +8,28 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Random;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;
+import co.tapdatapp.tapandroid.helpers.DateTime;
+import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
+import co.tapdatapp.tapandroid.remotedata.NoNetworkError;
 import co.tapdatapp.tapandroid.remotedata.UserAccountCodec;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
-public class Account {
+public class Account implements GetAllBalancesTask.Callback{
 
     public final static String PREFERENCES = "CurrentUser";
 
@@ -32,11 +39,30 @@ public class Account {
     private final static String NICKNAME = "NickName";
     private final static String EMAIL = "eMail";
     private final static String PROFILE_PIC_THUMB_URL = "ProfilePicThumbURL";
+    private final static String INBOUND_BITCOIN_ADDRESS = "InboundBTCAddress";
+    private final static String BITCOIN_QR_URL = "BitcoinQRCodeUrl";
+    private final static String BALANCES_EXPIRE = "BalancesExpire";
+    private final static String BALANCES = "Balances";
+
+    private final static int BALANCE_EXPIRE_TIME = 60; // in seconds
 
     private SharedPreferences preferences;
 
     // @TODO I don't think this belongs in this class ...
     private static int armedAmount = 0;
+
+    private static BalanceChangeListener balanceChangeListener;
+
+    public interface BalanceChangeListener {
+        /**
+         * When the balance changes, this method is called
+         */
+        void onBalanceChanged(BalanceList values);
+    }
+
+    public static void setBalanceChangeListener(BalanceChangeListener to) {
+        balanceChangeListener = to;
+    }
 
     public Account() {
         super();
@@ -58,24 +84,147 @@ public class Account {
      *
      * @throws WebServiceError on network problems
      */
-    public void createNew() throws WebServiceError {
+    public void createNew() throws UserFriendlyError {
         String phoneSecret = generatePhoneSecret();
-        UserAccountCodec codex = new UserAccountCodec();
-        JSONObject request = codex.marshallCreateRequest(phoneSecret);
+        UserAccountCodec codec = new UserAccountCodec();
+        JSONObject request = codec.marshallCreateRequest(phoneSecret);
         HttpHelper http = new HttpHelper();
-        JSONObject response = http.HttpPostJSON(
-            http.getFullUrl(R.string.ENDPOINT_REGISTRATION),
-            new Bundle(),
-            request
-        );
         try {
+            JSONObject response = http.HttpPostJSON(
+                http.getFullUrl(R.string.ENDPOINT_REGISTRATION),
+                new Bundle(),
+                request
+            );
             setPhoneSecret(phoneSecret);
-            setNickname(codex.getNickname(response));
-            setAuthToken(codex.getAuthToken(response));
+            _setNickname(codec.getNickname(response));
+            setAuthToken(codec.getAuthToken(response));
             setCurrencyOnNewUser();
+            response = http.HttpGetJSON(
+                http.getFullUrl(R.string.ENDPOINT_USER_API),
+                new Bundle()
+            );
+            setBitcoinAddress(codec.getBitcoinAddress(response));
+            setBitcoinQrUrl(codec.getQRCode(response));
         }
-        catch (JSONException je) {
-            throw new WebServiceError(je);
+        catch (NoNetworkError | UserFriendlyError e) {
+            deleteAccount();
+            throw e;
+        }
+        catch (Throwable t) {
+            deleteAccount();
+            throw new WebServiceError(t);
+        }
+    }
+
+    /**
+     * Remove anything related to the account. Mainly used to clean
+     * up after a 1/2 created account fails.
+     */
+    private void deleteAccount() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
+    /**
+     * Return the balance list from the local storage, unless it
+     * has expired.
+     *
+     * @return HashMap of currency ID/Balance pairs
+     * @throws BalancesExpiredException
+     */
+    @SuppressWarnings({"unchecked", "ThrowFromFinallyBlock"})
+    public BalanceList
+    getBalances() throws BalancesExpiredException {
+        long expireDate = preferences.getLong(BALANCES_EXPIRE, 0);
+        if (expireDate > DateTime.currentEpochTime()) {
+            throw new BalancesExpiredException();
+        }
+        String balances = preferences.getString(BALANCES, null);
+        if (balances == null) {
+            throw new BalancesExpiredException();
+        }
+        byte[] sData = balances.getBytes();
+        ByteArrayInputStream is = null;
+        ObjectInputStream os = null;
+        try {
+            is = new ByteArrayInputStream(sData);
+            os = new ObjectInputStream(is);
+            return (BalanceList)os.readObject();
+        }
+        catch (Exception e) {
+            // If anything goes awry deserializing this, we just have
+            // to re-fetch it
+            throw new BalancesExpiredException();
+        }
+        finally {
+            try {
+                if (os != null) {
+                    os.close();
+                }
+                if (is != null) {
+                    is.close();
+                }
+            }
+            catch (IOException ioe) {
+                // If this happens, something is horribly wrong
+                throw new AssertionError(ioe);
+            }
+        }
+    }
+
+    /**
+     * Set balances to expire immediately, effectively forcing a
+     * network load the next time they are requested. If there is
+     * a BalanceChangeListener registered, update the balances so
+     * it is notified.
+     */
+    public void expireBalances() throws WebServiceError {
+        set(BALANCES_EXPIRE, 0L);
+        if (balanceChangeListener != null) {
+            CurrencyDAO userBalance = new CurrencyDAO();
+            setBalances(userBalance.getAllBalances());
+        }
+    }
+
+    /**
+     * Cache the balance list for fast retrieval later. If there is
+     * a BalanceChangeListener, notify it of the the updated balances.
+     *
+     * @param to Balance list to store
+     */
+    @SuppressWarnings({"ThrowFromFinallyBlock"})
+    public void setBalances(BalanceList to) {
+        ByteArrayOutputStream os = null;
+        ObjectOutputStream oos = null;
+        try {
+            os = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(os);
+            oos.writeObject(to);
+            byte[] sData = os.toByteArray();
+            set(BALANCES, new String(sData));
+            set(BALANCES_EXPIRE, DateTime.currentEpochTime() + BALANCE_EXPIRE_TIME);
+            if (balanceChangeListener != null) {
+                balanceChangeListener.onBalanceChanged(to);
+            }
+        }
+        catch (Exception t) {
+            // Any errors here are a catastrophic failure
+            throw new AssertionError(t);
+        }
+        finally {
+            try {
+                if (oos != null) {
+                    oos.close();
+                }
+                if (os != null) {
+                    os.close();
+                }
+            }
+            catch (IOException ioe) {
+                // If these objects are not closeable, something is wrong
+                throw new AssertionError(ioe);
+            }
         }
     }
 
@@ -87,7 +236,7 @@ public class Account {
      * automatically becomes the default
      */
     private void setCurrencyOnNewUser() throws WebServiceError {
-        UserBalance balance = new UserBalance();
+        CurrencyDAO balance = new CurrencyDAO();
         BalanceList balances = balance.getAllBalances();
         // Bitcoin is a special case
         balance.ensureLocalCurrencyDetails(CurrencyDAO.CURRENCY_BITCOIN);
@@ -130,16 +279,6 @@ public class Account {
     }
 
     /**
-     * Phone secret is actually the key used to identify the account
-     *
-     * @return phone secret
-     */
-    public String getPhoneSecret() {
-        throwIfNoAccount();
-        return preferences.getString(PHONE_SECRET, null);
-    }
-
-    /**
      * Set the phone secret
      *
      * @param to new phone secret
@@ -152,23 +291,43 @@ public class Account {
     }
 
     /**
-     * Set the user's nickname
+     * Set the user's inbound bitcoin address
      *
-     * @param to user's nickname
+     * @param to user's inbound bitcoin address
      */
-    public void setNickname(String to) {
+    public void setBitcoinAddress(String to) {
         if (to == null) {
-            throw new AssertionError("setting nickname to null");
+            throw new AssertionError("setting bitcoin address to null");
         }
-        set(NICKNAME, to);
+        set(INBOUND_BITCOIN_ADDRESS, to);
     }
 
     /**
-     * @return the user's nickname
+     * @return the user's inbound bitcoin address
      */
-    public String getNickname() {
+    public String getBitcoinAddress() {
         throwIfNoAccount();
-        return preferences.getString(NICKNAME, null);
+        return preferences.getString(INBOUND_BITCOIN_ADDRESS, null);
+    }
+
+    /**
+     * Set the user's bitcoin QR code URL
+     *
+     * @param to user's nickname
+     */
+    public void setBitcoinQrUrl(String to) {
+        if (to == null) {
+            throw new AssertionError("setting bitcoin QR to null");
+        }
+        set(BITCOIN_QR_URL, to);
+    }
+
+    /**
+     * @return the user's bitcoin QR code URL
+     */
+    public String getBitcoinQrUrl() {
+        throwIfNoAccount();
+        return preferences.getString(BITCOIN_QR_URL, null);
     }
 
     /**
@@ -178,6 +337,7 @@ public class Account {
      */
     public void setEmail(String to) {
         set(EMAIL, to);
+        new UpdateUserInfoTask().execute();
     }
 
     /**
@@ -193,6 +353,7 @@ public class Account {
      */
     public void setProfilePicThumbUrl(String to) {
         set(PROFILE_PIC_THUMB_URL, to);
+        new UpdateUserInfoTask().execute();
     }
 
     /**
@@ -200,7 +361,7 @@ public class Account {
      */
     public String getProfilePicThumbUrl() {
         throwIfNoAccount();
-        return preferences.getString(PROFILE_PIC_THUMB_URL, "");
+        return preferences.getString(PROFILE_PIC_THUMB_URL, null);
     }
 
     /**
@@ -211,11 +372,11 @@ public class Account {
             return Integer.parseInt(
                 preferences.getString(
                     DEFAULT_CURRENCY,
-                    Integer.toString(UserBalance.CURRENCY_BITCOIN)
+                    Integer.toString(CurrencyDAO.CURRENCY_BITCOIN)
                 )
             );
         }
-        return UserBalance.CURRENCY_BITCOIN;
+        return CurrencyDAO.CURRENCY_BITCOIN;
     }
 
     /**
@@ -226,6 +387,33 @@ public class Account {
      */
     public void setActiveCurrency(int to) {
         set(DEFAULT_CURRENCY, Integer.toString(to));
+        new GetAllBalancesTask().execute(this);
+    }
+
+    @Override
+    public void onBalancesLoaded(BalanceList list) {
+        // This method is here because GetAllBalancesTask requires
+        // it in the Callback, but since that task also triggers the
+        // BalanceChangeListener, it's not necessary to do it here
+    }
+
+    @Override
+    public void onBalanceLoadFailed(Throwable t) {
+        if (t instanceof NoNetworkError) {
+            // Special case because there is no activity here to
+            // attach a dialog to
+            TapApplication.errorToUser(
+                TapApplication.string(R.string.no_network)
+            );
+        }
+        else if (t instanceof UserFriendlyError) {
+            TapApplication.errorToUser((UserFriendlyError)t);
+        }
+        else {
+            TapApplication.errorToUser(
+                TapApplication.string(R.string.unknown_error)
+            );
+        }
     }
 
     /**
@@ -234,7 +422,7 @@ public class Account {
      * @param to Amount to arm to (absolute)
      */
     // @TODO I'm not confident that this class is the right place for
-    // this informaiton, but it's a decent placeholder for the time
+    // this information, but it's a decent placeholder for the time
     // being
     public void setArmedAmount(int to) {
         synchronized (Account.class) {
@@ -251,6 +439,36 @@ public class Account {
         synchronized (Account.class) {
             return armedAmount;
         }
+    }
+
+    /**
+     * Set the user's nickname _and_ save it to the server
+     *
+     * @param to New nickname
+     */
+    public void setNickname(String to) {
+        _setNickname(to);
+        new UpdateUserInfoTask().execute();
+    }
+
+    /**
+     * Set the user's nickname without saving it back to the server
+     *
+     * @param to user's nickname
+     */
+    private void _setNickname(String to) {
+        if (to == null) {
+            throw new AssertionError("setting nickname to null");
+        }
+        set(NICKNAME, to);
+    }
+
+    /**
+     * @return the user's nickname
+     */
+    public String getNickname() {
+        throwIfNoAccount();
+        return preferences.getString(NICKNAME, null);
     }
 
     /**
@@ -298,6 +516,12 @@ public class Account {
     private void set(String key, String value) {
         SharedPreferences.Editor prefEditor = preferences.edit();
         prefEditor.putString(key, value);
+        prefEditor.apply();
+    }
+
+    private void set(String key, long value) {
+        SharedPreferences.Editor prefEditor = preferences.edit();
+        prefEditor.putLong(key, value);
         prefEditor.apply();
     }
 }

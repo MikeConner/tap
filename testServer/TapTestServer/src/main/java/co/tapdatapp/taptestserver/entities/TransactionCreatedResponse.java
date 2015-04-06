@@ -2,6 +2,7 @@
 package co.tapdatapp.taptestserver.entities;
 
 public class TransactionCreatedResponse {
+  public String slug;
   public int amount;
   public int dollar_amount;
   public int currency_id;

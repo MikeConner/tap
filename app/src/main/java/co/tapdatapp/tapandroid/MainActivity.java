@@ -1,34 +1,22 @@
 package co.tapdatapp.tapandroid;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ExifInterface;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -36,56 +24,44 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-
-import co.tapdatapp.tapandroid.currency.BalancesActivity;
+import co.tapdatapp.tapandroid.arm.ArmFragment;
+import co.tapdatapp.tapandroid.arm.ArmedFragment;
+import co.tapdatapp.tapandroid.arm.WrongCurrencyException;
+import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
+import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.remotedata.TapTxnTask;
-import co.tapdatapp.tapandroid.service.TapCloud;
-import co.tapdatapp.tapandroid.service.TapUser;
 import co.tapdatapp.tapandroid.service.TapTxn;
+import co.tapdatapp.tapandroid.tags.TagsFragment;
 import co.tapdatapp.tapandroid.user.Account;
-import co.tapdatapp.tapandroid.voucher.RedeemVoucherActivity;
-import co.tapdatapp.tapandroid.voucher.RedeemVoucherTask;
-import co.tapdatapp.tapandroid.voucher.VoucherRedeemResponse;
+import co.tapdatapp.tapandroid.user.AccountFragment;
+import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
 public class MainActivity
 extends Activity
-implements AccountFragment.OnFragmentInteractionListener,
-           DepositBTCFragment.OnFragmentInteractionListener,
-           DepositCodeFragment.OnFragmentInteractionListener,
+implements DepositBTCFragment.OnFragmentInteractionListener,
            ActionBar.TabListener,
-           TapTxnTask.TapTxnInitiator {
+           TapTxnTask.TapTxnInitiator,
+           Account.BalanceChangeListener {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
-
-    protected TapUser mTapUser;
-    protected TapCloud mTapCloud;
 
     private NfcAdapter mNfcAdapter;
     private IntentFilter[] mNdefExchangeFilters;
     private PendingIntent mNfcPendingIntent;
 
-    private TextView txAmount = null;
+    private Account account;
 
     private boolean mArmed = false;
     private ArmedFragment mArmFrag;
-    private DepositBTCFragment mDepositFrag;
-    private DepositCodeFragment mDepositCodeFrag;
-
-    //For File Uploads
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    String mCurrentPhotoPath;
-    boolean mFromCamera = false;
-    static final int REQUEST_TAKE_PHOTO = 1;
+    private TextView tvBalance;
 
     CurrencyDAO currency;
 
@@ -98,10 +74,10 @@ implements AccountFragment.OnFragmentInteractionListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        account = new Account();
         captureNFC();
     }
 
-    //TODO: Move this to DataLoaderFragment
     private void captureNFC(){
         //Capture NFC interactions for this activity
         //TODO: make sure NFC is turned on or kill the APP with dialog
@@ -111,10 +87,12 @@ implements AccountFragment.OnFragmentInteractionListener,
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
         IntentFilter tapFilter = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
         try {
-            tapFilter.addDataType("tapdat/performer");    /* Handles all MIME based dispatches.
-                                       You should specify only the ones that you need. */
+            tapFilter.addDataScheme("http");
+            tapFilter.addDataAuthority("tapnology.co",null);
+            //tapFilter.addDataType("tapdat/performer");    /* Handles all MIME based dispatches.
+              //                         You should specify only the ones that you need. */
         }
-        catch (IntentFilter.MalformedMimeTypeException  e) {
+        catch (Exception  e) {
             throw new RuntimeException("fail", e);
         }
         mNdefExchangeFilters = new IntentFilter[] { tapFilter };
@@ -127,23 +105,31 @@ implements AccountFragment.OnFragmentInteractionListener,
     @Override
     protected void onStart() {
         super.onStart();
-        Account account = new Account();
         if (!account.created()) {
             Intent intent = new Intent(this, AccountStartActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, AccountStartActivity.ACCOUNT_CREATION);
         }
         else {
             setupTabs();
         }
     }
 
+    /**
+     * Catch errors from the account creation screen and bail out if
+     * they happen.
+     */
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void
+    onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == AccountStartActivity.ACCOUNT_CREATION) {
+            if (resultCode == RESULT_CANCELED) {
+                finish();
+            }
+        }
     }
 
     private void setupTabs(){
-        //TODO: In teh case where balance is zero open up a load phone fragment
+        //TODO: In the case where balance is zero open up a load phone fragment
         if (mSectionsPagerAdapter == null) {
             setContentView(R.layout.activity_main);
             // Create the adapter that will return a fragment for each of the three
@@ -153,10 +139,8 @@ implements AccountFragment.OnFragmentInteractionListener,
             mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager(), this);
             // Set up the action bar.
             final ActionBar actionBar = getActionBar();
+            assert actionBar != null;
             actionBar.setDisplayShowTitleEnabled(false);
-//            if (actionBar == null) {
-//                throw new AssertionError("null ActionBar on MainActivity");
-//            }
 
             // Specify that the Home/Up button should not be enabled, since there is no hierarchical
             // parent.
@@ -189,214 +173,22 @@ implements AccountFragment.OnFragmentInteractionListener,
     @Override
     public void onResume(){
         super.onResume();
-        currency = new UserBalance();
+        currency = new CurrencyDAO();
         if (mNfcAdapter != null) {
-            mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
-                    mNdefExchangeFilters, null);
-            //if (!mNfcAdapter.isEnabled()) {
-            //LayoutInflater inflater = getLayoutInflater();
-            //View dialoglayout = inflater.inflate(R.layout.nfc_settings_layout,(ViewGroup) findViewById(R.id.nfc_settings_layout));
-                /*new AlertDialog.Builder(this).setView(dialoglayout)
-                        .setPositiveButton("Update Settings", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                Intent setnfc = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                                startActivity(setnfc);
-                            }
-                        })
-                        .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            public void onCancel(DialogInterface dialog) {
-                                finish(); // exit application if user cancels
-                            }
-                        }).create().show();
-            }*/
-            // } else {
-            //     Toast.makeText(getApplicationContext(), "Sorry, No NFC Adapter found.", Toast.LENGTH_SHORT).show();
-            // }
+            mNfcAdapter.enableForegroundDispatch(
+                this,
+                mNfcPendingIntent,
+                mNdefExchangeFilters,
+                null
+            );
         }
-
-
-
     }
+
     @Override
     public void onPause(){
         super.onPause();
         if(mNfcAdapter != null) mNfcAdapter.disableForegroundDispatch(this);
     }
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        return image;
-    }
-    private void selectImage() {
-        final CharSequence[] items = { "Take Photo", "Choose from Library",
-                "Cancel" };
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Add Photo!");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                if (items[item].equals("Take Photo")) {
-                    mFromCamera = true;
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                        File photoFile = null;
-                        try {
-                            photoFile = createImageFile();
-                        } catch (IOException ex) { //catch file creation issues?
-                        }
-                        // Continue only if the File was successfully created
-                        if (photoFile != null) {
-//                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-  //                                  Uri.fromFile(photoFile));
-                            startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-                        }
-
-                    }
-                } else if (items[item].equals("Choose from Library")) {
-                    mFromCamera = false;
-                    Intent intent = new Intent(
-                            Intent.ACTION_PICK,
-                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setType("image/*");
-                    startActivityForResult(intent , 1);//one can be replaced with any action code
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
-                }
-            }
-        });
-        builder.show();
-
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            if (mFromCamera) {
-             //TODO: This only gets a shitty tumbnail right now!
-              Bitmap bmp = (Bitmap) data.getExtras().get("data");
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bmp.compress( Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-
-
-                String newFullImageURL = mTapCloud.uploadToS3withStream(byteArray, Account.getRandomString(16) + ".jpg", this);
-                Bitmap thumb = Bitmap.createScaledBitmap(bmp,512,512,false);
-                ByteArrayOutputStream thumbstream = new ByteArrayOutputStream();
-                thumb.compress(Bitmap.CompressFormat.PNG, 100, thumbstream);
-                byte[] thumbarray = thumbstream.toByteArray();
-                String newThumbImageURL = mTapCloud.uploadToS3withStream(thumbarray, Account.getRandomString(16) + ".jpg", this);
-
-
-  //              BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-  //              bmOptions.inJustDecodeBounds = true;
- //               int targetW = 512;
- //               int targetH = 512;
-  //              int photoW = bmOptions.outWidth;
-   //             int photoH = bmOptions.outHeight;
-                //                BitmapFactory.decode (mCurrentPhotoPath, bmOptions);
-//                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//                File f = new File(mCurrentPhotoPath);
-//                Uri contentUri = Uri.fromFile(f);
-//                mediaScanIntent.setData(contentUri);
-//                this.sendBroadcast(mediaScanIntent);
-//                BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-                // Determine how much to scale down the image
-//                int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-//                bmOptions.inJustDecodeBounds = false;
-//                bmOptions.inSampleSize = scaleFactor;
-//                bmOptions.inPurgeable = true;
-
-        //        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-                //THIS IS NULL!!
-                //mCurrentPhotoPath
-  //              setPic();
-         //       String newFullImageURL = mTapCloud.uploadToS3withURI(contentUri, TapUser.getRandomString(16) +".jpg", this);
-         //       String newFUllImagePath = TapCloud.getRealPathFromURI(this,contentUri);
-        //        String newThumbImageURL = "";
-   //             try {
-         //           ExifInterface exif = new ExifInterface(newFUllImagePath);
-         //           byte[] imageData = exif.getThumbnail();
-         //           Bitmap thumbnail = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-                    //mImageView.setImageBitmap(thumbnail);
-         //           newThumbImageURL = mTapCloud.uploadToS3withStream(imageData, TapUser.getRandomString(16) + ".jpg", this);
-       //         }
-     //           catch (Exception e){
-      //              //TODO: not sure what to catch here?
-      //          }
-                mTapUser.setProfilePicFull(newFullImageURL );
-                new Account().setProfilePicThumbUrl(newThumbImageURL);
-                try {
-                    mTapUser.UpdateUser(new Account().getAuthToken());
-                }
-                catch (JSONException je) {
-                    TapApplication.unknownFailure(je);
-                }
-            }
-            else {
-                Uri mContentURI = data.getData();
-                //ImageView mImageView = (ImageView) findViewById(R.id.profile_image);
-                String newFullImageURL = mTapCloud.uploadToS3withURI(mContentURI, Account.getRandomString(16) +".jpg", this);
-                String newFUllImagePath = TapCloud.getRealPathFromURI(this,mContentURI);
-                String newThumbImageURL = "";
-                try {
-                    ExifInterface exif = new ExifInterface(newFUllImagePath);
-                    byte[] imageData = exif.getThumbnail();
-                    Bitmap thumbnail = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-                    //mImageView.setImageBitmap(thumbnail);
-                     newThumbImageURL = mTapCloud.uploadToS3withStream(imageData, Account.getRandomString(16) + ".jpg", this);
-                }
-                catch (Exception e){
-                    //TODO: not sure what to catch here?
-                }
-                mTapUser.setProfilePicFull(newFullImageURL );
-                new Account().setProfilePicThumbUrl(newThumbImageURL);
-                try {
-                    mTapUser.UpdateUser(new Account().getAuthToken());
-                }
-                catch (JSONException je) {
-                    TapApplication.unknownFailure(je);
-                }
-            }
-        }
-    }
-    private void setPic() {
-       /*
-        ImageView mImageView = (ImageView) findViewById(R.id.profile_image);
-        // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
-
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        //Bitmap bm = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        mImageView.setImageBitmap(bitmap);
-        */
-    }
-
 
     //ARM SCREEN
     public void armOrSend(View v){
@@ -404,8 +196,8 @@ implements AccountFragment.OnFragmentInteractionListener,
         showArmedDialog();
         //TODO: make sure we unarm on resume
     }
+
     void showArmedDialog() {
-     //  mStackLevel++;
 
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
@@ -422,36 +214,6 @@ implements AccountFragment.OnFragmentInteractionListener,
         mArmFrag.show(ft, "armed");
     }
 
-    /**
-     * Some of this is obsolete and currently breaking the app
-     */
-   /** public void setArmedAmount(int to) {
-        if (txAmount == null) {
-            txAmount = (TextView)findViewById(R.id.txtAmount);
-        }
-        new Account().setArmedAmount(to);
-        txAmount.setText(currency.getSymbol(new Account().getActiveCurrency()) + String.valueOf(to));
-    }
-
-    private void changeAmount(int amount, boolean addition){
-        Account account = new Account();
-        int tapAmount = account.getArmedAmount();
-        if (addition) {
-            tapAmount += amount;
-            int max = currency.getMaxPayout(account.getActiveCurrency());
-            if (tapAmount > max ) {
-                tapAmount = max;
-            }
-        }
-        else {
-            tapAmount -= amount;
-            if (tapAmount < 1) {
-                tapAmount = 1;}
-        }
-        setArmedAmount(tapAmount);
-    }
-    **/
-
     private View randomTransactionButton;
 
     /**
@@ -464,18 +226,41 @@ implements AccountFragment.OnFragmentInteractionListener,
         randomTransactionButton = v;
         outgoingTransaction = new TapTxn();
         outgoingTransaction.setTagID("XX" + UUID.randomUUID().toString().replaceAll("-", "").substring(7, 15));
-        outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
-        outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
+        outgoingTransaction.setTxnAmount(account.getArmedAmount());
+        outgoingTransaction.setCurrencyId(account.getActiveCurrency());
         Log.d("TAP", "Phoney Transaction starting");
         new TapTxnTask().execute(this);
     }
 
-    //NFC STUFF
+    /**
+     * For development builds only, tap the entered tag ID
+     */
+    public void clickEnteredTransaction(String tag) {
+        if (!DevHelper.isEnabled(R.string.CREATE_FAKE_DATA_ON_SERVER)) {
+            throw new AssertionError("Dev commands issued on dev-disabled build");
+        }
+        outgoingTransaction = new TapTxn();
+        outgoingTransaction.setTagID(tag);
+        outgoingTransaction.setTxnAmount(account.getArmedAmount());
+        outgoingTransaction.setCurrencyId(account.getActiveCurrency());
+        Log.d("TAP", "entered Transaction starting");
+        new TapTxnTask().execute(this);
+    }
+
+    /**
+     * When an NFC tag is detected, Android sends an Intent to any
+     * application which has applied to receive them (see
+     * AndroidManifest.xml).
+     *
+     * If we get an NDEF Intent, handle it as appropriate
+     *
+     * @param intent the intent sent to this activity
+     */
     @Override
     protected void onNewIntent(Intent intent) {
-        //TODO: WHen not in armed mode, if intent is detected, change to send mode
         super.onNewIntent(intent);
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            Log.d("NFC", "NfcAdapter.ACTION_NDEF_DISCOVERED detected");
             NdefMessage[] messages = null;
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             if (rawMsgs != null) {
@@ -484,36 +269,35 @@ implements AccountFragment.OnFragmentInteractionListener,
                     messages[i] = (NdefMessage) rawMsgs[i];
                 }
             }
-            if(messages[0] != null) {
-                String result="";
+            if (messages != null && messages[0] != null) {
                 byte[] payload = messages[0].getRecords()[0].getPayload();
                 // this assumes that we get back am SOH followed by host/code
-                for (int b = 0; b<payload.length; b++) { // skip SOH
-                    result += (char) payload[b];
-                }
+                String result = new String(payload);
+                Log.d("NFC", "record read: " + result);
+                result = result.replaceAll("tapnology.co/tag/", "");
+                result = result.replaceAll("\u0003", "");
+                result = result.replaceAll("-", "");
 
-                if (mArmed){
+                if (mArmed) {
+                    Log.d("NFC", "Send transaction on tag " + result);
+                    // Immediately disable from performing other txn
+                    mArmed = false;
                     outgoingTransaction = new TapTxn();
-                    outgoingTransaction.setTagID(result.replaceAll("-", ""));
-                    outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
-                    outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
+                    outgoingTransaction.setTagID(result);
+                    outgoingTransaction.setTxnAmount(account.getArmedAmount());
+                    outgoingTransaction.setCurrencyId(account.getActiveCurrency());
                     new TapTxnTask().execute(this);
-
-//                    Toast.makeText(MainActivity.this, result.getPayloadImageThumb(), Toast.LENGTH_LONG).show();
-
-                    //tv.setText(txn.getMessage());
-
                 } else {
+                    //TODO: WHen not in armed mode, if intent is detected, change to send mode
                     Toast.makeText(getApplicationContext(), "Tag Contains " + result, Toast.LENGTH_SHORT).show();
-
-                    //show tap screen, change button to SEND?
                 }
-                //Intent i = new Intent(this, TapArm.class);
-              //  i.putExtra("TAGID", result);
-              //  i.putExtra("TIPAMOUNT", fltTipAmount);
-              //  startActivity(i);
-
             }
+            else {
+                Log.d("NFC", "No messages found");
+            }
+        }
+        else {
+            Log.d("NFC", "Unexpected intent: " + intent.getAction());
         }
     }
 
@@ -526,145 +310,106 @@ implements AccountFragment.OnFragmentInteractionListener,
      * Called when the webservice has responded to a transaction
      */
     @Override
-    public void onTapNetComplete() {
-        mArmed = false;
+    public void onTapNetComplete(Transaction t) {
         String mMessage = outgoingTransaction.getMessage();
-        String mYapURL = outgoingTransaction.getPayloadImageThumb();
-        mArmFrag.setValues(mMessage, mYapURL);
+        mArmFrag.updateWithResult(mMessage);
         outgoingTransaction = null;
         if (randomTransactionButton != null) {
             randomTransactionButton.setEnabled(true);
             randomTransactionButton = null;
         }
+        // This opens the new Yapa page after a transaction
+        Intent openYapa = new Intent(
+            this,
+            new YapaDisplay().getDisplayClass(t)
+        );
+        openYapa.putExtra(YapaDisplay.TRANSACTION_ID, t.getSlug());
+        openYapa.putExtra(YapaDisplay.DELAY_TIME, 5);
+        startActivity(openYapa);
+    }
+
+    // @TODO this should get a lot fancier, possibly with a screen
+    // giving detailed guidance on how to load up on the desired
+    // currency ... actually, the currency should have an instructions
+    // field on the server that can contain written instructions to
+    // the user in the event that this happens
+    @Override
+    public void tappedWrongCurrency(WrongCurrencyException wce) {
+        int currencyId = wce.getCorrectCurrency();
+        CurrencyDAO currency = new CurrencyDAO();
+        currency.moveTo(currencyId);
+        TapApplication.errorToUser(
+            TapApplication.string(R.string.wrong_currency_0) +
+            " " +
+            currency.getName() +
+            " " +
+            TapApplication.string(R.string.wrong_currency_1)
+        );
+    }
+
+    @Override
+    public void onTapNetError(Throwable t) {
+        TapApplication.handleFailures(this, t);
     }
 
     /**
-     * Called if an error occurs sending a transaction to the webservice
-     *
-     * @param t Throwable object containing failure details
+     * Add a custom TextView to the title bar to display the balance
      */
     @Override
-    public void onTapNetFailure(Throwable t) {
-        outgoingTransaction = null;
-        // @TODO friendlier error message
-        // This is a holdover to get us to a demoable state without
-        // dealing with all the UI stuff for errors just yet
-        TapApplication.unknownFailure(t);
-    }
-
-    //ACCOUNT Stuff
-    public void showDeposit(View view){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("tapbtc");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        // Create and show the dialog.
-        mDepositFrag =  new DepositBTCFragment();
-        mDepositFrag.show(ft, "tapbtc");
-    }
-
-    public void showLoadCode(View view){
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("tapcode");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        // Create and show the dialog.
-         mDepositCodeFrag =  new DepositCodeFragment();
-        mDepositCodeFrag.show(ft, "tapcode");
-    }
-
-    public void onComplete(VoucherRedeemResponse response){
-        //do nothing?
-
-
-    }
-    public void onFailure( VoucherRedeemResponse response){
-
-    }
-
-
-
-    public void showWithdraw(View view){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("withdraw");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        // Create and show the dialog.
-
-        WithdrawFragment mWithdrawFrag =  new WithdrawFragment();
-        mWithdrawFrag.show(ft, "withdraw");
-
-    }
-
-    public void myTags(View view){
-        Intent i = new Intent(this,TagActivity.class);
-        i.putExtra("AuthToken", new Account().getAuthToken());
-        startActivity(i);
-
-    }
-    public void newNickNameMe(View view){
-       new newNickTask().execute(mTapUser);
-
-    }
-    private class newNickTask extends AsyncTask<TapUser, Void, String> {
-        protected String doInBackground(TapUser... tapusers) {
-            String returnValue = "";
-            try {
-                returnValue = tapusers[0].getNewNickname(new Account().getAuthToken());
-            }
-            catch (JSONException je) {
-                TapApplication.unknownFailure(je);
-            }
-            return returnValue;
-        }
-
-        protected void onProgressUpdate(Void... progress) {
-            //setProgressPercent(progress[0]);
-        }
-
-        protected void onPostExecute(String result) {
-            TextView et = (TextView) findViewById(R.id.etNickName);
-            et.setText(      result  );
-        }
-    }
-
-
-
-
-
-
-    //generic stuff for fragments
-    public   TapUser getUserContext(){
-        return mTapUser;
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.activity_arm, menu);
+        tvBalance = new TextView(this);
+        tvBalance.setText(TapApplication.string(R.string.calculating));
+        tvBalance.setTextColor(getResources().getColor(R.color.white));
+        tvBalance.setPadding(0, 0, 10, 0);
+        tvBalance.setTypeface(null, Typeface.BOLD);
+        tvBalance.setTextSize(14);
+        menu.add(0, -1, 1, R.string.tap).setActionView(tvBalance).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        Account.setBalanceChangeListener(this);
         return true;
     }
+
+    /**
+     * Update the balance on the title bar any time it changes
+     */
+    @Override
+    public void onBalanceChanged(final BalanceList list) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    int currencyId = account.getActiveCurrency();
+                    CurrencyDAO currency = new CurrencyDAO();
+                    currency.moveTo(currencyId);
+                    String value = currency.getSymbol() + list.get(currencyId);
+                    tvBalance.setText(value);
+                }
+                catch (NullPointerException npe) {
+                    // Can happen when things are starting up/shutting down,
+                    // so ignore
+                }
+            }
+        });
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
+
+    public void onBackPressed(){
+        CustomViewPager cvp = (CustomViewPager) findViewById(R.id.pager);
+        if(cvp.getCurrentItem() == 2){
+            finish();
+        }
+        else{
+            cvp.setCurrentItem(2);
+        }
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -712,28 +457,22 @@ implements AccountFragment.OnFragmentInteractionListener,
             Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
-                    return "Tags".toUpperCase(l);
+                    return getString(R.string.title_tags).toUpperCase(l);
                 case 1:
-                    return getString(R.string.title_section1).toUpperCase(l);
+                    return getString(R.string.title_account).toUpperCase(l);
                 case 2:
-                    return getString(R.string.title_section2).toUpperCase(l);
+                    return getString(R.string.title_tap).toUpperCase(l);
                 case 3:
-                    return getString(R.string.title_section3).toUpperCase(l);
+                    return getString(R.string.title_history).toUpperCase(l);
             }
             return null;
         }
     }
 
-
     @Override
     public void onFragmentInteraction(Uri uri) {
         // we need this for fragments / menus
         //not sure what we have to do here if anything
-    }
-
-    public void startBalancesActivity(View v) {
-        Intent i = new Intent(this, BalancesActivity.class);
-        startActivity(i);
     }
 
 }

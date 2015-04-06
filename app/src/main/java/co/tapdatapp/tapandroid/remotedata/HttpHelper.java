@@ -14,8 +14,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -137,29 +139,9 @@ public class HttpHelper {
                 throw new WebServiceError(response);
             }
         }
-        catch (Exception e) {
-            throw new WebServiceError(e);
+        catch (IOException | JSONException ioe) {
+            throw new WebServiceError(ioe);
         }
-    }
-
-    /**
-     * Do an HTTP GET
-     *
-     * @param url The full URL to the web resource
-     * @param headers No headers are added by this method
-     * @return WebResponse containing the response
-     * @throws IOException Various network errors will cause this
-     */
-    public WebResponse HttpGet(String url, Bundle headers)
-    throws IOException {
-        HttpClient webClient = new DefaultHttpClient();
-        HttpGet get = new HttpGet(url);
-        Set<String> keys = headers.keySet();
-        for (String key : keys) {
-            get.setHeader(key, headers.getString(key));
-        }
-        HttpResponse response = webClient.execute(get);
-        return new WebResponse(response);
     }
 
     /**
@@ -184,8 +166,8 @@ public class HttpHelper {
                 throw new WebServiceError(response);
             }
         }
-        catch (Exception e) {
-            throw new WebServiceError(e);
+        catch (IOException | JSONException ioe) {
+            throw new WebServiceError(ioe);
         }
     }
 
@@ -201,7 +183,7 @@ public class HttpHelper {
      */
     public JSONObject
     HttpPutJSON(String url, Bundle headers, JSONObject payload)
-            throws WebServiceError {
+    throws WebServiceError {
         headers.putString("Accept", "application/json");
         headers.putString("Content-Type", "application/json");
         try {
@@ -212,14 +194,31 @@ public class HttpHelper {
                 throw new WebServiceError(response);
             }
         }
-        catch (Exception e) {
-            throw new WebServiceError(e);
+        catch (IOException | JSONException ioe) {
+            throw new WebServiceError(ioe);
         }
     }
 
-
-
-
+    /**
+     * Do an HTTP GET
+     *
+     * @param url The full URL to the web resource
+     * @param headers No headers are added by this method
+     * @return WebResponse containing the response
+     * @throws IOException Various network errors will cause this
+     */
+    public WebResponse HttpGet(String url, Bundle headers)
+        throws IOException {
+        isNetworkAvailable();
+        HttpClient webClient = new DefaultHttpClient();
+        HttpGet get = new HttpGet(url);
+        Set<String> keys = headers.keySet();
+        for (String key : keys) {
+            get.setHeader(key, headers.getString(key));
+        }
+        HttpResponse response = webClient.execute(get);
+        return new WebResponse(response);
+    }
 
     /**
      * Do an HTTP POST
@@ -234,6 +233,7 @@ public class HttpHelper {
                                 Bundle headers,
                                 String payload
     ) throws IOException {
+        isNetworkAvailable();
         HttpClient webClient = new DefaultHttpClient();
         HttpPost post = new HttpPost(url);
         Set<String> keys = headers.keySet();
@@ -245,12 +245,14 @@ public class HttpHelper {
         return new WebResponse(response);
     }
 
-
-
+    /**
+     * Do an HTTP put when the payload is a string
+     */
     public WebResponse HttpPut(String url,
-                                Bundle headers,
-                                String payload
+                               Bundle headers,
+                               String payload
     ) throws IOException {
+        isNetworkAvailable();
         HttpClient webClient = new DefaultHttpClient();
         HttpPut put = new HttpPut(url);
         Set<String> keys = headers.keySet();
@@ -262,19 +264,63 @@ public class HttpHelper {
         return new WebResponse(response);
     }
 
+    /**
+     * Do an HTTP put when the payload is a byte array
+     */
+    public WebResponse HttpPut(String url,
+                               Bundle headers,
+                               byte[] payload
+    ) throws IOException {
+        isNetworkAvailable();
+        HttpClient webClient = new DefaultHttpClient();
+        HttpPut put = new HttpPut(url);
+        Set<String> keys = headers.keySet();
+        for (String key : keys) {
+            put.setHeader(key, headers.getString(key));
+        }
+        put.setEntity(new ByteArrayEntity(payload));
+        HttpResponse response = webClient.execute(put);
+        return new WebResponse(response);
+    }
 
     /**
-     * Tests for network access
-     *
-     * @return true if there's a usable network, false otherwise
+     * Tests for network access, throws NoNetworkError if there is none
      */
-    public boolean isNetworkAvailable() {
+    private void isNetworkAvailable() {
         ConnectivityManager cm =
             (ConnectivityManager)TapApplication.get().getSystemService(
                 Context.CONNECTIVITY_SERVICE
             );
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
+        if (networkInfo == null || !networkInfo.isConnected()) {
+            throw new NoNetworkError();
+        }
+        HttpClient webClient = new DefaultHttpClient();
+        HttpGet get = new HttpGet(getFullUrl(R.string.ENDPOINT_PING));
+        WebResponse wr;
+        try {
+            HttpResponse response = webClient.execute(get);
+            wr = new WebResponse(response);
+            if (!wr.isOK()) {
+                throw new NoNetworkError("Status code not 200");
+            }
+        }
+        catch (IOException ioe) {
+            NoNetworkError nne = new NoNetworkError();
+            nne.initCause(ioe);
+            throw nne;
+        }
+        try {
+            String value = wr.getJSON().getString("response");
+            if (!"Pong".equals(value)) {
+                throw new NoNetworkError("Incorrect response: " + value);
+            }
+        }
+        catch (JSONException je) {
+            NoNetworkError nne = new NoNetworkError();
+            nne.initCause(je);
+            throw nne;
+        }
     }
 
 }

@@ -43,6 +43,7 @@ public class Transactions {
       transactions.put(request.auth_token, txns);
     }
     txns.add(t);
+    rv.slug = t.payload.getSlug();
     rv.payload = new TransactionPayloadObject(t.payload);
     rv.amount = t.amount;
     rv.currency_id = t.currency_id;
@@ -62,11 +63,16 @@ public class Transactions {
           t.date = df.format(oneT.timestamp);
           t.payload_image = oneT.payload.payload_image;
           t.payload_thumb = oneT.payload.payload_thumb;
+          t.payload_content_type = "image";
           t.amount = oneT.amount;
           t.dollar_amount = 0;
-          t.comment = oneT.payload.text;
+          t.comment = oneT.payload.description;
+          t.description = oneT.payload.description;
+          t.uri = oneT.payload.uri;
+          t.content = oneT.payload.content;
           t.other_user_thumb = ImageBuilder.getURL(100, 100, "otherUserThumb");
           t.other_user_nickname = "Other User Nickname";
+          t.tag_name = oneT.payload.getTagId();
           rv.add(t);
         }
       }

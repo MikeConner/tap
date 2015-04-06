@@ -16,4 +16,5 @@
          security method, don't enable these methods on production at all!
       -->
     <string name="CREATE_FAKE_DATA_ON_SERVER">true</string>
+    <string name="CRASH_ON_FAILURE">true</string>
 </resources>

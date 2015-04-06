@@ -9,9 +9,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
-public class Transaction implements SingleTable, TransactionDAO {
+public class Transaction implements SingleTable {
     public final static String NAME = "transactions";
     public final static String SLUG = "slug";
     public final static String TIMESTAMP = "timestamp";
@@ -21,6 +20,10 @@ public class Transaction implements SingleTable, TransactionDAO {
     public final static String DESCRIPTION = "description";
     public final static String AMOUNT = "amount";
     public final static String NICKNAME = "nickname";
+    public final static String YAPA_CONTENT_TYPE = "yapa_content_type";
+    public final static String CONTENT = "content";
+    public final static String URI = "uri";
+    public final static String TAG_NAME = "tag_name";
 
     private String slug;
     private Timestamp timestamp;
@@ -30,6 +33,10 @@ public class Transaction implements SingleTable, TransactionDAO {
     private String description;
     private int amount;
     private String nickname;
+    private String yapa_content_type;
+    private String content;
+    private String uri;
+    private String tag_name;
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -42,7 +49,11 @@ public class Transaction implements SingleTable, TransactionDAO {
                 YAPA_URL + " TEXT, " +
                 DESCRIPTION + " TEXT NOT NULL, " +
                 AMOUNT + " DECIMAL NOT NULL, " +
-                NICKNAME + " TEXT NOT NULL " +
+                NICKNAME + " TEXT NOT NULL, " +
+                YAPA_CONTENT_TYPE + " TEXT NOT NULL," +
+                CONTENT + " TEXT, " +
+                URI + " TEXT, " +
+                TAG_NAME + " TEXT" +
                 ")"
         );
     }
@@ -56,7 +67,9 @@ public class Transaction implements SingleTable, TransactionDAO {
         throw new UnsupportedOperationException("No upgrades to do");
     }
 
-    @Override
+    /**
+     * Get the number of transaction records in the database
+     */
     public int getRecordCount() {
         Cursor c = null;
         try {
@@ -95,15 +108,21 @@ public class Transaction implements SingleTable, TransactionDAO {
         }
     }
 
-    @Override
-    public Transaction getByOrder(int i) {
-        Transaction rv = new Transaction();
-        rv.moveTo(i);
-        return rv;
+    /**
+     * Return a new transaction object populated with the data at
+     * the specified location, ordered by descending timestamp.
+     */
+    public Transaction getByOrder(int location) {
+        Transaction t = new Transaction();
+        t.moveToByOrder(location);
+        return t;
     }
 
-    @Override
-    public void moveTo(int location) {
+    /**
+     * Load this object with data from the record at the specified
+     * location, order by timestamp descending.
+     */
+    public void moveToByOrder(int location) {
         Cursor c = null;
         try {
             SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
@@ -112,24 +131,14 @@ public class Transaction implements SingleTable, TransactionDAO {
                 new String[]{
                     SLUG, TIMESTAMP, THUMB_URL, YAPA_URL,
                     DESCRIPTION, AMOUNT, NICKNAME,
-                    YAPA_THUMB_URL,
+                    YAPA_THUMB_URL, YAPA_CONTENT_TYPE, CONTENT, URI,
+                    TAG_NAME
                 },
                 null, null, null, null,
                 TIMESTAMP + " DESC",
                 location + ", 1"
             );
-            if (c.moveToFirst()) {
-                slug = c.getString(0);
-                timestamp = new Timestamp(c.getLong(1));
-                thumb_url = c.getString(2);
-                yapa_url = c.getString(3);
-                description = c.getString(4);
-                amount = c.getInt(5);
-                nickname = c.getString(6);
-                yapa_thumb_url = c.getString(7);
-            } else {
-                throw new Error("No TX record at location " + location);
-            }
+            loadFromCursor(c);
         } finally {
             if (c != null) {
                 c.close();
@@ -137,7 +146,59 @@ public class Transaction implements SingleTable, TransactionDAO {
         }
     }
 
-    @Override
+    /**
+     * Move to the record with the supplied slug
+     *
+     * @param slug The unique ID for the transaction
+     */
+    public void moveToSlug(String slug) {
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
+            c = db.query(
+                NAME,
+                new String[]{
+                    SLUG, TIMESTAMP, THUMB_URL, YAPA_URL,
+                    DESCRIPTION, AMOUNT, NICKNAME,
+                    YAPA_THUMB_URL, YAPA_CONTENT_TYPE, CONTENT, URI,
+                    TAG_NAME
+                },
+                SLUG + " = ?",
+                new String[] { slug },
+                null, null,
+                null, null
+            );
+            loadFromCursor(c);
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+    }
+
+    private void loadFromCursor(Cursor c) {
+        if (c.moveToFirst()) {
+            slug = c.getString(0);
+            timestamp = new Timestamp(c.getLong(1));
+            thumb_url = c.getString(2);
+            yapa_url = c.getString(3);
+            description = c.getString(4);
+            amount = c.getInt(5);
+            nickname = c.getString(6);
+            yapa_thumb_url = c.getString(7);
+            yapa_content_type = c.getString(8);
+            content = c.getString(9);
+            uri = c.getString(10);
+            tag_name = c.getString(11);
+        } else {
+            throw new Error("No TX record found");
+        }
+    }
+
+    /**
+     * Create a new transaction record in the database with the data
+     * currently stored in this object.
+     */
     public void create() {
         SQLiteDatabase db = BaseDAO.getDatabaseHelper().getReadableDatabase();
         ContentValues v = new ContentValues();
@@ -149,7 +210,18 @@ public class Transaction implements SingleTable, TransactionDAO {
         v.put(AMOUNT, amount);
         v.put(NICKNAME, nickname);
         v.put(YAPA_THUMB_URL, yapa_thumb_url);
-        db.insertOrThrow(NAME, null, v);
+        v.put(YAPA_CONTENT_TYPE, yapa_content_type);
+        v.put(CONTENT, content);
+        v.put(URI, uri);
+        v.put(TAG_NAME, tag_name);
+        // Sometimes the webservice returns the same transaction even
+        // though it's been told to only return newer. This is probably
+        // the result of precision lost in the date as it passes from
+        // java to JSON to PostgreSQL. Since the "slug" is unique on
+        // the server side, having it be the primary key here should
+        // allow SQLite to ignore the record without causing
+        // issues with duplicates.
+        db.insertWithOnConflict(NAME, null, v, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     public String getSlug() {
@@ -208,11 +280,43 @@ public class Transaction implements SingleTable, TransactionDAO {
         this.nickname = nickname;
     }
 
-    public String getYapa_thumb_url() {
+    public void setYapa_thumb_url(String yapa_thumb_url) {
+        this.yapa_thumb_url = yapa_thumb_url;
+    }
+
+    public String getYapaThumbUrl() {
         return yapa_thumb_url;
     }
 
-    public void setYapa_thumb_url(String yapa_thumb_url) {
-        this.yapa_thumb_url = yapa_thumb_url;
+    public void setContentType(String to) {
+        yapa_content_type = to;
+    }
+
+    public String getContentType() {
+        return yapa_content_type;
+    }
+
+    public void setContent(String to) {
+        content = to;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setURI(String to) {
+        uri = to;
+    }
+
+    public String getURI() {
+        return uri;
+    }
+
+    public void setTagName(String to) {
+        tag_name = to;
+    }
+
+    public String getTagName() {
+        return tag_name;
     }
 }

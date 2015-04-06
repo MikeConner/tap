@@ -3,21 +3,26 @@
  */
 package co.tapdatapp.taptestserver.controllers;
 
+import co.tapdatapp.taptestserver.dev.Monitor;
 import co.tapdatapp.taptestserver.entities.BalanceResponse;
 import co.tapdatapp.taptestserver.entities.CreateAccountResponse;
 import co.tapdatapp.taptestserver.entities.GetBalancesResponse;
-import co.tapdatapp.taptestserver.entities.PayloadCreateRequest;
+import co.tapdatapp.taptestserver.entities.PayloadDataObject;
 import co.tapdatapp.taptestserver.entities.PayloadObject;
 import co.tapdatapp.taptestserver.entities.ResponseResponse;
+import co.tapdatapp.taptestserver.entities.TagDataRequest;
 import co.tapdatapp.taptestserver.entities.TagResponse;
+import co.tapdatapp.taptestserver.entities.UpdateAccountRequest;
+import co.tapdatapp.taptestserver.entities.UserDetailsResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+import javax.ws.rs.BadRequestException;
 
 public class Accounts {
   
   private final HashMap<String, CreateAccountResponse> accounts = new HashMap<>();
-  private final ArrayList<TagResponse> tags = new ArrayList<>();
+  private final ArrayList<NfcTag> tags = new ArrayList<>();
   private final ArrayList<PayloadObject> payloads = new ArrayList<>();
   
   private final Balances balances;
@@ -63,47 +68,135 @@ public class Accounts {
     return new ResponseResponse(rv);
   }
   
-  public TagResponse newTag(String authId) {
-    TagResponse rv = new TagResponse(authId);
-    tags.add(rv);
+  public TagResponse newTag(String authId, TagDataRequest info) {
+    NfcTag tag = new NfcTag();
+    tag.authId = authId;
+    tag.currencyId = info.tag.currency_id;
+    tag.name = info.tag.name;
+    tag.generateId();
+    tag.payloads = new PayloadObject[info.payloads.length];
+    int i = 0;
+    for (PayloadDataObject payload : info.payloads) {
+      PayloadObject ob = new PayloadObject();
+      ob.content_type = payload.content_type;
+      ob.content = payload.content;
+      ob.threshold = payload.threshold;
+      ob.uri = payload.uri;
+      ob.payload_image = payload.payload_image;
+      ob.payload_thumb = payload.payload_thumb;
+      ob.description = payload.description;
+      ob.setTagId(tag.getId());
+      ob.generateSlug();
+      payloads.add(ob);
+      tag.payloads[i] = ob;
+      i++;
+    }
+    tags.add(tag);
+    TagResponse rv = new TagResponse(tag);
+    return rv;
+  }
+  
+  public TagResponse updateTag(String authId, TagDataRequest info) {
+    NfcTag tag = null;
+    String tagId = info.tag.tag_id.replace("-", "");
+    for (NfcTag oneTag : tags) {
+      if (oneTag.getId().equals(tagId)) {
+        tag = oneTag;
+        break;
+      }
+    }
+    if (tag == null) {
+      Monitor.trace("Attempt to update unknown tag " + info.tag.tag_id);
+      throw new BadRequestException("No such tag as " + info.tag.tag_id);
+    }
+    tag.currencyId = info.tag.currency_id;
+    tag.name = info.tag.name;
+    tag.payloads = new PayloadObject[info.payloads.length];
+    int i = 0;
+    for (PayloadDataObject payload : info.payloads) {
+      PayloadObject ob = new PayloadObject();
+      ob.content_type = payload.content_type;
+      ob.content = payload.content;
+      ob.threshold = payload.threshold;
+      ob.uri = payload.uri;
+      ob.payload_image = payload.payload_image;
+      ob.payload_thumb = payload.payload_thumb;
+      ob.description = payload.description;
+      ob.setTagId(tag.getId());
+      ob.generateSlug();
+      payloads.add(ob);
+      tag.payloads[i] = ob;
+      i++;
+    }
+    TagResponse rv = new TagResponse(tag);
     return rv;
   }
   
   public TagResponse[] getUserTags(String authId) {
     ArrayList<TagResponse> rv = new ArrayList<>();
-    for (TagResponse oneTag : tags) {
-      if (oneTag.belongsTo(authId)) {
-        rv.add(oneTag);
+    for (NfcTag oneTag : tags) {
+      if (oneTag.authId.equals(authId)) {
+        rv.add(new TagResponse(oneTag));
       }
     }
     return rv.toArray(new TagResponse[rv.size()]);
   }
-  
-  public PayloadObject newPayload(String auth, PayloadCreateRequest payload) {
-    PayloadObject ob = new PayloadObject();
-    ob.text = payload.payload.content;
-    ob.threshold = payload.payload.threshold;
-    ob.uri = "";
-    ob.payload_image = payload.payload.mobile_payload_image_url;
-    ob.payload_thumb = payload.payload.mobile_payload_thumb_url;
-    ob.setTagId(payload.tag_id);
-    ob.generateSlug();
-    payloads.add(ob);
-    return ob;
-  }
-  
-  public PayloadObject getPayload(String slug) {
+   
+  public PayloadObject getPayload(String tagId) {
     for (PayloadObject p : payloads) {
-      if (p.slugEquals(slug)) {
+      if (p.tagIdEquals(tagId)) {
         return p;
       }
     }
     PayloadObject p = new PayloadObject();
     p.generateSlug();
+    p.content_type = "image";
     p.payload_image = ImageBuilder.getURL(300, 300, "Dynamic Yapa");
     p.payload_thumb = ImageBuilder.getURL(100, 100, "Dynamic Yapa");
-    p.text = "Dynamic Yapa";
-    p.uri = "http://www.example.com";
+    p.content = "Dynamically generated Yapa for " + tagId;
+    p.description = "Dynamic Yapa";
+    p.uri = ImageBuilder.getURL(400, 400, tagId);
     return p;
+  }
+
+  public UserDetailsResponse userDetails(String authId) {
+    UserDetailsResponse rv = new UserDetailsResponse();
+    CreateAccountResponse account = accounts.get(authId);
+    if (account != null) {
+      rv.nickname = account.response.nickname;
+      rv.email = "test@example.com";
+      rv.satoshi_balance = balances.getBalance(authId).get(0);
+      rv.profile_image = ImageBuilder.getURL(200, 200, "profile image");
+      rv.profile_thumb = ImageBuilder.getURL(50, 50, "profile thumb");
+      rv.inbound_btc_qrcode.inbound_btc_qrcode.url = ImageBuilder.getURL(200, 200, "QR Code");
+      rv.outbound_btc_address = null; // Replicates current Ruby behavior
+      rv.inbound_btc_address = "ABC123abc456xyz123XYZ4561029384alhglash";
+    }
+    return rv;
+  }
+
+  public Object update(String authId, UpdateAccountRequest request) {
+    CreateAccountResponse account = accounts.get(authId);
+    if (account != null) {
+      if (request.user.name != null && !request.user.name.isEmpty()) {
+        account.response.nickname = request.user.name;
+        Monitor.trace("Set nickname to " + request.user.name);
+      }
+      if (request.user.email != null && !request.user.email.isEmpty()) {
+        account.response.email = request.user.email;
+        Monitor.trace("Set email to " + request.user.email);
+      }
+      if (request.user.mobile_profile_thumb_url != null
+          && !request.user.mobile_profile_thumb_url.isEmpty()
+      ) {
+        account.response.profile_thumb = request.user.mobile_profile_thumb_url;
+        Monitor.trace("Set thumbnail to " + request.user.mobile_profile_thumb_url);
+      }
+      return null;
+    }
+    else {
+      Monitor.trace("No account found to modify: " + authId);
+      throw new AssertionError("No such account");
+    }
   }
 }

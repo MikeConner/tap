@@ -4,6 +4,8 @@
 package co.tapdatapp.taptestserver.controllers;
 
 import co.tapdatapp.taptestserver.dev.Monitor;
+import co.tapdatapp.taptestserver.entities.CurrencyResponse;
+import co.tapdatapp.taptestserver.entities.RedeemVoucherResponse;
 import java.util.HashMap;
 
 public class Balances {
@@ -33,11 +35,10 @@ public class Balances {
     Monitor.trace("Created default balances for " + authId);
     balances.put(authId, b);
     Monitor.trace("Now have " + balances.size() + " users with balances");
+    currencies.createUserCurrency(authId);
   }
 
   public HashMap<Integer, Integer> getBalance(String authId) {
-    Monitor.trace("Getting balances for " + authId);
-    Monitor.trace(balances.size() + " users with balances to choose from");
     return balances.get(authId);
   }
 
@@ -59,6 +60,55 @@ public class Balances {
     else {
       throw new AssertionError("No such account " + auth_token);
     }
+  }
+
+  public RedeemVoucherResponse redeemVoucher(String authId, String voucherId) {
+    HashMap<Integer, Integer> userBalance = balances.get(authId);
+    if (userBalance == null) {
+      throw new NullPointerException("No user found for " + authId);
+    }
+    RedeemVoucherResponse rv = new RedeemVoucherResponse();
+    String[] parts = getFakeVoucherParts(voucherId);
+    int currencyId = Integer.parseInt(parts[1]);
+    int amount = Integer.parseInt(parts[3]);
+    Integer balance = userBalance.get(currencyId);
+    if (balance == null) {
+      balance = 0;
+    }
+    balance += amount;
+    userBalance.put(currencyId, balance);
+    rv.amount_redeemed = amount;
+    rv.balance = balance;
+    rv.currency.id = currencyId;
+    CurrencyResponse cr = currencies.get(currencyId);
+    rv.currency.name = cr.name;
+    rv.currency.icon = cr.icon;
+    rv.currency.id = currencyId;
+    rv.currency.symbol = cr.symbol;
+    return rv;
+  }
+  
+  private String[] getFakeVoucherParts(String voucher) {
+    String[] rv = new String[4];
+    char[] chars = voucher.toCharArray();
+    if (chars[0] != 'C' && chars[0] != 'c') {
+      throw new AssertionError("invalid voucher, must start with 'C'");
+    }
+    rv[0] = "C";
+    int i = 1;
+    rv[1] = "";
+    while (chars[i] != 'A' && chars[i] != 'a') {
+      rv[1] += chars[i];
+      i++;
+    }
+    i++;
+    rv[2] = "A";
+    rv[3] = "";
+    while (i < chars.length) {
+      rv[3] += chars[i];
+      i++;
+    }
+    return rv;
   }
   
 }

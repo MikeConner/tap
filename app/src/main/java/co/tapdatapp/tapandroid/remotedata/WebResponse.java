@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 public class WebResponse {
 
@@ -30,35 +31,29 @@ public class WebResponse {
      *
      * @return The bytes of the response body
      */
+    @SuppressWarnings("ThrowFromFinallyBlock")
     public byte[] getBody() {
         if (body == null) {
             HttpEntity entity = httpResponse.getEntity();
-            body = new byte[
-                (int) entity.getContentLength()
-                ];
+            ArrayList<Byte> bytes = new ArrayList<>();
             InputStream is = null;
             try {
                 is = entity.getContent();
-                int position = 0;
-                int bytesRead = 0;
-                while (bytesRead != -1) {
-                    bytesRead = is.read(
-                        body,
-                        position,
-                        body.length - position
-                    );
-                    position += bytesRead;
+                int b;
+                while ((b = is.read()) != -1) {
+                    bytes.add((byte)b);
+                }
+                body = new byte[bytes.size()];
+                for (int i = 0; i < body.length; i++) {
+                    body[i] = bytes.get(i);
                 }
             } catch (IOException ioe) {
                 body = null;
             } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException ioe) {
-                        // If this happens, there really isn't anything
-                        // that can be done.
-                    }
+                if (is != null) try {
+                    is.close();
+                } catch (IOException ioe) {
+                    throw new AssertionError(ioe);
                 }
             }
         }
@@ -72,7 +67,13 @@ public class WebResponse {
      * @throws JSONException If the body is not valid JSON
      */
     public JSONObject getJSON() throws JSONException {
-        return new JSONObject(new String(getBody()));
+        String body = new String(getBody());
+        if (body.isEmpty()) {
+            return new JSONObject();
+        }
+        else {
+            return new JSONObject(body);
+        }
     }
 
     /**
@@ -95,6 +96,20 @@ public class WebResponse {
         }
         else {
             return value;
+        }
+    }
+
+    /**
+     * @return An error safe to show the user, or null if there is none
+     */
+    public String getUserError() {
+        try {
+            return getJSON().getString("user_error");
+        }
+        catch (Throwable t) {
+            // If anything fails while trying to get the error, just
+            // return null
+            return null;
         }
     }
 

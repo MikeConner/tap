@@ -11,7 +11,7 @@ public class TransactionPayloadObject {
   public String thumb;
   
   public TransactionPayloadObject(PayloadObject p) {
-    text = p.text;
+    text = p.content;
     uri = p.uri;
     image = p.payload_image;
     thumb = p.payload_thumb;

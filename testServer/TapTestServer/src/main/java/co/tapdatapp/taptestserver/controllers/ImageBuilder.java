@@ -14,8 +14,9 @@ public class ImageBuilder {
   
   public static String getURL(int width, int height, String text) {
     // @TODO make this adjust the IP based on the server
-    return 
-      "http://172.17.10.2/TapTestServer/mobile/1/developer/image/" +
+    final String BASE = "https://www.skilive.net/tap/mobile/1/developer/image/";
+    //final String BASE = "http://172.17.10.2:8080/TapTestServer/mobile/1/developer/image/";
+    return BASE +
       width + "_" + height + "_" + text.replace(" ", "-").replace("_", "-");
   }
   

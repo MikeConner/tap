@@ -7,9 +7,12 @@ package co.tapdatapp.tapandroid.history;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,21 +21,25 @@ import android.widget.GridView;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.localdata.Transaction;
-import co.tapdatapp.tapandroid.yapa.YapaImage;
-import co.tapdatapp.tapandroid.yapa.YapaUrl;
-import co.tapdatapp.tapandroid.yapa.YapaText;
+import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
-public class HistoryFragment extends Fragment implements HistorySyncCallback {
+public class HistoryFragment extends Fragment implements HistorySyncTask.Callback {
 
     private Activity parentActivity;
     private ProgressBar progressBar;
     private GridView gridView;
     private boolean loaded = false;
-    /**
-     * Defaulting yapaType to image for short-term functionality
-     */
-    public String yapaType = "image";
+
+    //Animation variables
+    private float touchX = 0;
+    private float touchY = 0;
+    private float halfX;
+    private float thirtyY;
+    private float sixtyY;
+    private int rowNum;
+    private int columnNum;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -41,8 +48,18 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history, container, false);
+        View view = inflater.inflate(R.layout.fragment_history, container, false);
+        Display display = parentActivity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
+        halfX = width/2;
+        thirtyY = height/3;
+        sixtyY = thirtyY*2;
+
+        return view;
     }
 
     /**
@@ -63,36 +80,77 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
     @Override
     public void onResume() {
         super.onResume();
+        CustomViewPager cvp = (CustomViewPager) getActivity().findViewById(R.id.pager);
+        cvp.setPagingEnabled(true);
         progressBar =
             (ProgressBar)parentActivity.findViewById(R.id.history_grid_progress_bar);
         gridView =
             (GridView)parentActivity.findViewById(R.id.history_grid_view);
 
+        /**
+         * This is to calculate the location of the grid item that was clicked to determine which
+         * animation to use
+         */
+        gridView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    touchY = event.getY();
+                    touchX = event.getX();
+
+                    if (touchX <= halfX) {
+                        columnNum = 1;
+                    } else {
+                        columnNum = 2;
+                    }
+
+                    if (touchY <= thirtyY) {
+                        rowNum = 1;
+                    } else if (touchY >= sixtyY) {
+                        rowNum = 3;
+                    } else {
+                        rowNum = 2;
+                    }
+                }
+                return false;
+            }
+        });
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /**
-                 * openYapa is currently set to null so that, in the future, different things will
-                 * happen depending on the type of yapa. Also currently operating under the assumption that
-                 * Yapas currently can only be images. More cases will be added later.
-                 */
-                Intent openYapa = null;
 
-                switch (yapaType) {
-
-                    case "image":
-                        openYapa = new Intent(getActivity(), YapaImage.class);
-                        break;
-                    case "url":
-                        openYapa = new Intent(getActivity(), YapaUrl.class);
-                        break;
-                    case "text":
-                        openYapa = new Intent(getActivity(), YapaText.class);
-                        break;
-                    default:
-                        throw new AssertionError("Invalid Yapa Type: " + yapaType);
-                }
+                Transaction transaction = new Transaction();
+                transaction.moveToByOrder(position);
+                Intent openYapa = new Intent(
+                    getActivity(),
+                    new YapaDisplay().getDisplayClass(transaction)
+                );
+                openYapa.putExtra(
+                        YapaDisplay.TRANSACTION_ID,
+                        transaction.getSlug()
+                );
                 startActivity(openYapa);
+
+                if(rowNum == 1 && columnNum == 1){
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_1x1,R.anim.fade_out);
+                }
+                else if(rowNum == 2 && columnNum ==1){
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_2x1,R.anim.fade_out);
+                }
+                else if(rowNum == 3 && columnNum ==1){
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_3x1,R.anim.fade_out);
+                }
+                else if(rowNum == 1 && columnNum ==2){
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_1x2,R.anim.fade_out);
+                }
+                else if(rowNum == 2 && columnNum ==2){
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_2x2,R.anim.fade_out);
+                }
+                else {
+                    parentActivity.overridePendingTransition(R.anim.grid_zoom_3x2,R.anim.fade_out);
+                }
+
             }
 
         });
@@ -150,13 +208,8 @@ public class HistoryFragment extends Fragment implements HistorySyncCallback {
         loaded = true;
     }
 
-    /**
-     * Called when the background sync job fails to do its work.
-     *
-     * @TODO make this a user-friendly error
-     */
-    public void syncFailure(Throwable cause) {
-        TapApplication.unknownFailure(cause);
+    @Override
+    public void onHistorySyncError(Throwable t) {
+        TapApplication.handleFailures(getActivity(), t);
     }
-
 }
