@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
@@ -82,10 +84,10 @@ public class HistoryAdapter extends BaseAdapter {
             );
         }
         transaction.moveToByOrder(i);
-        ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getNickname() +" \n" +transaction.getTimestamp());
+        TextView historyText = (TextView) v.findViewById(R.id.history_text);
+        historyText.setText(transaction.getNickname() + " \n" + transaction.getTimestamp());
         ImageView historyIcon = ((ImageView)v.findViewById(R.id.history_icon));
         ImageView historyPreview = ((ImageView)v.findViewById(R.id.history_preview));
-        ImageView historyOverlay = ((ImageView) v.findViewById(R.id.history_grid_overlay));
         String thumbUrl = transaction.getYapaThumbUrl();
         String profilePic = transaction.getThumb_url();
         if (thumbUrl != null && !thumbUrl.isEmpty()) {
@@ -96,7 +98,7 @@ public class HistoryAdapter extends BaseAdapter {
         }
         YapaDisplay yl = new YapaDisplay();
         historyIcon.setImageDrawable(yl.getIcon(transaction));
-        historyOverlay.setBackgroundColor(yl.getOverlay(transaction));
+        historyText.setBackgroundColor(yl.getOverlay(transaction));
         return v;
     }
 

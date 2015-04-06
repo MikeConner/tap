@@ -23,6 +23,7 @@
     <color name="green">#00ff00</color>
     <color name="yellow">#ffff00</color>
     <color name="purple">#9900ff</color>
+    <color name="light_gray">#aabbaa</color>
     <color name="balance_background">#f9f9f9</color>
     <color name="account_background">#EEEEEE</color>
     <color name="profile_text_gray">#616261</color>
@@ -38,4 +39,10 @@
     <color name="yapa_background_image">#bec934</color>
     <color name="yapa_background_coupon">#f48172</color>
     <color name="yapa_background_text">#aaabaa</color>
+    <color name="yapa_background_opaque_url">#cc0099cc</color>
+    <color name="yapa_background_opaque_audio">#cc864c9e</color>
+    <color name="yapa_background_opaque_video">#ccf5881e</color>
+    <color name="yapa_background_opaque_image">#ccbec934</color>
+    <color name="yapa_background_opaque_coupon">#ccf48172</color>
+    <color name="yapa_background_opaque_text">#ccaaabaa</color>
 </resources>

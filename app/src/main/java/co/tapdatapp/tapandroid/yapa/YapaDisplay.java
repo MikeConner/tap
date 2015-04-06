@@ -56,17 +56,17 @@ public class YapaDisplay {
         Resources res = TapApplication.get().getResources();
         switch(t.getContentType()){
             case Yapa.TYPE_IMAGE :
-                return res.getColor(R.color.yapa_background_image);
+                return res.getColor(R.color.yapa_background_opaque_image);
             case Yapa.TYPE_URL :
-                return res.getColor(R.color.yapa_background_url);
+                return res.getColor(R.color.yapa_background_opaque_url);
             case Yapa.TYPE_TEXT :
-                return res.getColor(R.color.yapa_background_text);
+                return res.getColor(R.color.yapa_background_opaque_text);
             case Yapa.TYPE_COUPON :
-                return res.getColor(R.color.yapa_background_coupon);
+                return res.getColor(R.color.yapa_background_opaque_coupon);
             case Yapa.TYPE_AUDIO :
-                return res.getColor(R.color.yapa_background_audio);
+                return res.getColor(R.color.yapa_background_opaque_audio);
             case Yapa.TYPE_VIDEO :
-                return res.getColor(R.color.yapa_background_video);
+                return res.getColor(R.color.yapa_background_opaque_video);
             default :
                 throw new AssertionError("Unknown Yapa type " + t.getContentType());
         }
