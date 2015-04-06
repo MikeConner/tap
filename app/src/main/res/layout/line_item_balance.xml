@@ -26,8 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textSize="28sp"
-            android:fontFamily="sans-serif-thin"
+            android:textSize="14sp"
             android:layout_toEndOf="@+id/balance_line_item_icon"
             android:layout_centerVertical="true" />
         
