@@ -72,6 +72,7 @@ public class Transactions {
           t.content = oneT.payload.content;
           t.other_user_thumb = ImageBuilder.getURL(100, 100, "otherUserThumb");
           t.other_user_nickname = "Other User Nickname";
+          t.tag_name = oneT.payload.getTagId();
           rv.add(t);
         }
       }

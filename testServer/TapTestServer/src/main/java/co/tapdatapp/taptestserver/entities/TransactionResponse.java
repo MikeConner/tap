@@ -15,4 +15,5 @@ public class TransactionResponse {
   public String content;
   public String other_user_thumb;
   public String other_user_nickname;
+  public String tag_name;
 }
