@@ -25,7 +25,7 @@ public class SetBalanceImageTask extends AsyncTask<Object, Void, Void> {
 
     @Override
     protected Void doInBackground(Object... params) {
-        if (params.length != 3) {
+        if (params.length != 4) {
             throw new AssertionError(
                 "Must provide Callback, View, url, and target size"
             );
