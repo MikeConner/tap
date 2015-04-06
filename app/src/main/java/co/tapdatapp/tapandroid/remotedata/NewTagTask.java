@@ -1,3 +1,7 @@
+/**
+ * Create a new tag on the server
+ */
+
 package co.tapdatapp.tapandroid.remotedata;
 
 import android.os.AsyncTask;
@@ -20,13 +24,7 @@ public class NewTagTask extends AsyncTask<NewTagTask.Callback, Void, Void> {
          * @param tag The created tag
          */
         void newTagReturned(TagCodec tag);
-
-        /**
-         * Called if any errors occur
-         *
-         * @param t Exception containing error details
-         */
-        void createTagFailure(Throwable t);
+        void newTagFailure(Throwable t);
     }
 
     private boolean success;
@@ -57,7 +55,7 @@ public class NewTagTask extends AsyncTask<NewTagTask.Callback, Void, Void> {
             callback.newTagReturned(tag);
         }
         else {
-            callback.createTagFailure(error);
+            callback.newTagFailure(error);
         }
     }
 
@@ -77,7 +75,9 @@ public class NewTagTask extends AsyncTask<NewTagTask.Callback, Void, Void> {
             new Bundle(),
             new JSONObject()
         );
-        return new TagCodec(response);
+        TagCodec rv = new TagCodec();
+        rv.parseGetTagResponse(response);
+        return rv;
     }
 
 }

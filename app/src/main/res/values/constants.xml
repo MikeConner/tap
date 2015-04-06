@@ -15,15 +15,29 @@
     <string name="ENDPOINT_USER_API">users/me.json</string>
     <string name="ENDPOINT_RESET_NICK">users/reset_nickname</string>
     <string name="ENDPOINT_TAGS">nfc_tags.json</string>
+    <string name="ENDPOINT_ONE_TAG">nfc_tags/</string>
     <string name="ENDPOINT_YAPA">payloads.json</string>
     <string name="ENDPOINT_TAP_ONE_YAPA">payloads/</string>
     <string name="ENDPOINT_TRANSACTION">transactions.json</string>
+    <string name="ENDPOINT_PING">ping</string>
 
     <string name="PHONE_SECRET_SIZE">16</string>
     <string name="PHONE_SECRET_ALLOWED_CHARACTERS">0123456789qwertyuiopasdfghjklzxcvbnm</string>
 
+    <string name="AWS_ACCESS_ID">AKIAJDYYGNMV5YIX74PQ</string>
+    <string name="AWS_SECRET_KEY">z516ycLCeq9ujfXxYWRbXQtQq7pnRvk3mIfqxKSj</string>
+    <string name="AWS_BUCKET">tapyapa</string>
+
     <!-- Feature enabling settings -->
     <!-- User can create fake data (good for testing) -->
     <string name="CREATE_FAKE_DATA_ON_SERVER">false</string>
+    <!-- Crash the app on an unexpected failure: this makes development
+         easier because the app stops (causing the dev to look) and
+         a full stack trace is reported. However, we don't want it
+         doing this on demos or production builds.
+    -->
+    <string name="CRASH_ON_FAILURE">false</string>
+    <!-- Use Amazon AWS for storage -->
+    <string name="USE_AWS">true</string>
 
 </resources>

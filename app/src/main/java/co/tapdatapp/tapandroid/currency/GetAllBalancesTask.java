@@ -9,36 +9,58 @@ package co.tapdatapp.tapandroid.currency;
 
 import android.os.AsyncTask;
 
-import co.tapdatapp.tapandroid.TapApplication;
-import co.tapdatapp.tapandroid.localdata.UserBalance;
-import co.tapdatapp.tapandroid.remotedata.WebServiceError;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
+import co.tapdatapp.tapandroid.user.Account;
+import co.tapdatapp.tapandroid.user.BalancesExpiredException;
 
 public class GetAllBalancesTask
-extends AsyncTask<BalancesActivity, Void, Void> {
+extends AsyncTask<GetAllBalancesTask.Callback, Void, Void> {
 
-    private BalancesActivity callback;
+    public interface Callback {
+        void onBalancesLoaded(BalanceList list);
+        void onBalanceLoadFailed(Throwable t);
+    }
+
+    private Callback callback;
     private BalanceList balanceList;
+    private Throwable error;
 
     @Override
     protected Void
-    doInBackground(BalancesActivity... balancesActivities) {
+    doInBackground(Callback... balancesActivities) {
         if (balancesActivities.length != 1) {
             throw new AssertionError("Must provide 1 callback class");
         }
         callback = balancesActivities[0];
-        UserBalance userBalance = new UserBalance();
+        Account account = new Account();
+
+        CurrencyDAO userBalance = new CurrencyDAO();
         try {
+            try {
+                balanceList = account.getBalances();
+                userBalance.ensureLocalCurrencyDetails(balanceList);
+                return null;
+            }
+            catch (BalancesExpiredException bee) {
+                // If this happens, just proceed to fetch from network
+            }
             balanceList = userBalance.getAllBalances();
+            account.setBalances(balanceList);
             userBalance.ensureLocalCurrencyDetails(balanceList);
         }
-        catch (WebServiceError wse) {
-            TapApplication.unknownFailure(wse);
+        catch (Throwable t){
+            error = t;
         }
         return null;
     }
 
     @Override
     protected void onPostExecute(Void x) {
-        callback.onBalancesLoaded(balanceList);
+        if(error == null){
+            callback.onBalancesLoaded(balanceList);
+        }
+        else{
+            callback.onBalanceLoadFailed(error);
+        }
     }
 }

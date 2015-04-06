@@ -7,13 +7,10 @@ package co.tapdatapp.tapandroid.history;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -22,18 +19,21 @@ import co.tapdatapp.tapandroid.helpers.ISO8601Format;
 import co.tapdatapp.tapandroid.localdata.Transaction;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.TransactionCodec;
-import co.tapdatapp.tapandroid.yapa.YapaImage;
 
 public class HistorySyncTask
-extends AsyncTask<HistorySyncCallback, Void, Void> {
+extends AsyncTask<HistorySyncTask.Callback, Void, Void> {
 
-    private HistorySyncCallback historyFragment;
+    public interface Callback {
+        void postSyncDisplay();
+        void onHistorySyncError(Throwable t);
+    }
+
+    private Callback historyFragment;
     private boolean success = false;
     private Throwable exception;
-    YapaImage yapaImage = new YapaImage();
 
     @Override
-    protected Void doInBackground(HistorySyncCallback...historyFragments) {
+    protected Void doInBackground(Callback...historyFragments) {
         if (historyFragments.length != 1) {
             throw new AssertionError(
                 "Must be called with single HistoryFragment"
@@ -56,7 +56,7 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
             historyFragment.postSyncDisplay();
         }
         else {
-            historyFragment.syncFailure(exception);
+            historyFragment.onHistorySyncError(exception);
         }
     }
 
@@ -64,7 +64,7 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
      * Pull down any data from the server newer than what we already
      * have
      */
-    private void syncWithServer() throws Exception {
+    public void syncWithServer() throws Exception {
         HttpHelper http = new HttpHelper();
         TransactionCodec tc = new TransactionCodec();
         Date d = new Transaction().getNewest();
@@ -76,7 +76,6 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
             "",
             params
         );
-        Log.d("WEB", url);
         JSONObject response = http.HttpGetJSON(url, new Bundle());
         JSONArray responses = response.getJSONArray("response");
         int responseNum = responses.length();
@@ -84,8 +83,12 @@ extends AsyncTask<HistorySyncCallback, Void, Void> {
         for (int i = 0; i < responseNum; i++) {
             JSONObject oneResponse = responses.getJSONObject(i);
             Transaction t = tc.unmarshall(oneResponse);
-            t.create();
-            yapaImage.setTransaction(t);
+            // The server may return transactions that do not contain
+            // payloads. At this time, we're not recording those
+            // locally
+            if (t.getContentType() != null && !t.getContentType().equals("null")) {
+                t.create();
+            }
         }
     }
 

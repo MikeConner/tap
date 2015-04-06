@@ -41,7 +41,7 @@ public class TransactionTest extends AndroidTestCase {
     createRandomTransaction(t);
     t.create();
     Transaction t1 = new Transaction();
-    t1.moveTo(0);
+    t1.moveToByOrder(0);
     assertEquals("Retrieval error", t.getDescription(), t1.getDescription());
     assertEquals("Retrieval error", t.getAmount(), t1.getAmount());
     assertEquals("Retrieval error", t.getSlug(), t1.getSlug());

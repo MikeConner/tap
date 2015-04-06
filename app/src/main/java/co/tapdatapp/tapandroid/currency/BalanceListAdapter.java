@@ -5,13 +5,18 @@
 
 package co.tapdatapp.tapandroid.currency;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
@@ -19,20 +24,46 @@ import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 
-public class BalanceListAdapter extends BaseAdapter {
+public class BalanceListAdapter
+extends BaseAdapter
+implements SetBalanceImageTask.Callback {
 
-    private final CurrencyDAO userBalance;
     private final BalanceList balanceList;
+    private CurrencyDAO[] listOfCurrencies;
     private Bitmap loadingImage;
-    private BalancesActivity activity;
+    private Activity activity;
+    private int imageSize;
 
-    public BalanceListAdapter(BalancesActivity a,
+    public BalanceListAdapter(Activity a,
                               CurrencyDAO dao,
                               BalanceList list
     ) {
-        activity = a;
         balanceList = list;
-        userBalance = dao;
+        activity = a;
+        fillInListOfBalances(dao, list);
+    }
+
+    /**
+     * The database might have additional currencies (if the user has
+     * currencies that they own but does not have a balance on them)
+     * This resolves those two lists into a correct list of currencies
+     * with balances.
+     *
+     * @param dao CurrencyDAO
+     * @param bl BalanceList
+     */
+    private void fillInListOfBalances(CurrencyDAO dao, BalanceList bl) {
+        ArrayList<CurrencyDAO> list = new ArrayList<>();
+        CurrencyDAO[] currencies = dao.getAllByNameOrder();
+        for (CurrencyDAO current : currencies) {
+            if (bl.get(current.getCurrencyId()) != null) {
+                list.add(current);
+            }
+        }
+        listOfCurrencies = new CurrencyDAO[list.size()];
+        for (int i = 0; i < listOfCurrencies.length; i++) {
+            listOfCurrencies[i] = list.get(i);
+        }
     }
 
     @Override
@@ -47,17 +78,17 @@ public class BalanceListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return balanceList.size();
+        return listOfCurrencies.length;
     }
 
     @Override
     public CurrencyDAO getItem(int i) {
-        return userBalance.getByNameOrder(i);
+        return listOfCurrencies[i];
     }
 
     @Override
     public long getItemId(int i) {
-        return userBalance.getByNameOrder(i).getCurrencyId();
+        return listOfCurrencies[i].getCurrencyId();
     }
 
     @Override
@@ -65,24 +96,50 @@ public class BalanceListAdapter extends BaseAdapter {
         return false;
     }
 
+    @SuppressLint("ViewHolder")
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        if (view == null) {
-            LayoutInflater inflater =
-                (LayoutInflater) TapApplication.get().getSystemService(
-                    Context.LAYOUT_INFLATER_SERVICE
-                );
-            view = inflater.inflate(
-                R.layout.line_item_balance,
-                viewGroup,
-                false
+        // Note that recycling Views confuses things and causes images
+        // to be applied to the wrong rows by the background task
+        LayoutInflater inflater =
+            (LayoutInflater) TapApplication.get().getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE
+            );
+        view = inflater.inflate(
+            R.layout.line_item_balance,
+            viewGroup,
+            false
+        );
+        CurrencyDAO currency = listOfCurrencies[i];
+        ((TextView)view.findViewById(R.id.balance_line_item_balance)).setText(
+            currency.getSymbol() +
+                balanceList.get(currency.getCurrencyId()).toString() +
+                " " + currency.getName()
+        );
+        imageSize = getScreenWidth(activity) / 7;
+        final ImageView imageView = (ImageView)view.findViewById(R.id.balance_line_item_icon);
+        if (currency.getCurrencyId() == CurrencyDAO.CURRENCY_BITCOIN) {
+            imageView.setImageBitmap(
+                Bitmap.createScaledBitmap(
+                    BitmapFactory.decodeResource(
+                        activity.getResources(),
+                        R.drawable.bitcoin_icon
+                    ),
+                    imageSize,
+                    imageSize,
+                    true
+                )
             );
         }
-        CurrencyDAO currency = userBalance.getByNameOrder(i);
-        ((TextView)view.findViewById(R.id.balance_line_item_balance)).setText(
-            currency.getSymbol() + balanceList.get(currency.getCurrencyId()).toString()
-        );
-        ((ImageView)view.findViewById(R.id.balance_line_item_icon)).setImageBitmap(getLoadingImage());
+        else {
+            imageView.setImageBitmap(getLoadingImage());
+            new SetBalanceImageTask().execute(
+                this,
+                view,
+                currency.getIconUrl(),
+                imageSize
+            );
+        }
         return view;
     }
 
@@ -102,16 +159,24 @@ public class BalanceListAdapter extends BaseAdapter {
     }
 
     private Bitmap getLoadingImage() {
-        final int size = getScreenWidth(activity) / 7;
         if (loadingImage == null) {
-            loadingImage = TapBitmap.getLoadingBitmapAtSize(size);
+            loadingImage = TapBitmap.getLoadingBitmapAtSize(imageSize);
         }
         else {
-            if (loadingImage.getWidth() != size) {
-                loadingImage = TapBitmap.getLoadingBitmapAtSize(size);
+            if (loadingImage.getWidth() != imageSize) {
+                loadingImage = TapBitmap.getLoadingBitmapAtSize(imageSize);
             }
         }
         return loadingImage;
     }
 
+    @Override
+    public void onBalanceImageFetched(View view, Bitmap image) {
+        ((ImageView)view.findViewById(R.id.balance_line_item_icon)).setImageBitmap(image);
+    }
+
+    @Override
+    public void onBalanceImageFetchError(Throwable t) {
+        TapApplication.handleFailures(activity, t);
+    }
 }

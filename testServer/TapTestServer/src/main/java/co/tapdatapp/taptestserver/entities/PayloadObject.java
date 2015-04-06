@@ -8,16 +8,27 @@ import java.util.UUID;
 public class PayloadObject {
   
   public String uri;
-  public String text;
+  public String content;
   public int threshold;
   public String payload_image;
   public String payload_thumb;
+  public String description;
+  public String content_type;
   
-  private int nfc_tag_id;
+  private String nfc_tag_id;
   private String slug;
   
-  public void setTagId(int to) {
+  public void setTagId(String to) {
     nfc_tag_id = to;
+  }
+  
+  public String getTagId() {
+    return nfc_tag_id;
+  }
+  
+  public boolean tagIdEquals(String otherId) {
+    otherId = otherId.replace("-", "");
+    return nfc_tag_id.equals(otherId);
   }
   
   public boolean slugEquals(String otherId) {

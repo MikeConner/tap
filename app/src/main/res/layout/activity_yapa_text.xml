@@ -3,27 +3,123 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/yapaTextLayout"
+    android:background="@color/generic_background"
     android:weightSum="1">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/text_sender"
-        android:layout_gravity="center_horizontal|left"
-        android:layout_weight="0.18" />
-
-    <TextView
+        android:layout_height="0dp"
+        android:id="@+id/yapa_top_text"
+        android:layout_weight=".40">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="275dp"
+            android:id="@+id/yapa_top_overlay_text"
+            android:scaleType="centerCrop"
+            android:cropToPadding="false"
+            android:adjustViewBounds="true"
+            android:src="@color/yapa_background_text"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:alpha=".20"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="275dp"
+            android:id="@+id/yapa_text_top_background"
+            android:cropToPadding="false"
+            android:adjustViewBounds="true"
+            android:src="@color/yapa_background_text"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:id="@+id/single_yapa_icon_text"
+            android:src="@drawable/yapa_text"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="49dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/single_yapa_text_text"
+            android:text="@string/single_yapa_text_click"
+            android:textSize="28sp"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/white"
+            android:layout_toEndOf="@+id/single_yapa_icon_text"
+            android:layout_marginTop="80dp" />
+    </RelativeLayout>
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="406dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/text_description" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/text_date"
-        android:layout_weight="0.97" />
-
+        android:layout_height="0dp"
+        android:layout_weight=".50"
+        android:orientation="vertical"
+        android:id="@+id/yapa_info_text">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/yapa_name_text"
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-thin"
+            android:layout_marginStart="15dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/timestamp_sender_text"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/yapa_sender_text"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-thin"
+                android:layout_marginStart="15dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/yapa_divider_text"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-thin"
+                android:text="@string/sender_timestamp_divider"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/yapa_timestamp_text"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-thin"/>
+            </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/yapa_amount_text"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif-thin"
+            android:layout_marginStart="15dp" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="5dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/yapa_description_text"
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginStart="15dp" />
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".10"
+            android:id="@+id/yapa_button_text">
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:id="@+id/exit_button_text"
+                android:src="@drawable/done_icon_check"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
 </LinearLayout>

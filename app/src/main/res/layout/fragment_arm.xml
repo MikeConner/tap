@@ -6,59 +6,75 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity"
-    >
-
-
-    <TextView
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="302dp"
-        android:textStyle="bold"
-        android:textSize="140sp"
-        android:background="@drawable/bank_background"
-        android:id="@+id/txtAmount"
-        android:text="0"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="10dp" />
+    android:background="@color/generic_background"
+    android:weightSum="1">
+    <!--
+    This new LinearLayout exists to provide an area where the user can swipe between pages.
+    -->
 
     <LinearLayout
-        android:gravity="center"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="25dp"
-        >
-
-        <Button
-            style="@style/AppTheme.circular_button"
-            android:text="&lt;"
-            android:id="@+id/decreaseButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"/>
+        android:id="@+id/clickable_area"
+        android:layout_weight=".45"
+        android:weightSum="1">
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.10" />
 
         <TextView
-            android:layout_width="280dp"
-            android:layout_height="100dp"
-            android:textSize="10pt"
-            android:textStyle="bold"
-            android:textColor="#000000"
             android:gravity="center"
-            android:background="@drawable/generic_currency_1"
-            android:id="@+id/deposit_text"/>
+            android:layout_width="230dp"
+            android:layout_height="205dp"
+            android:textSize="140sp"
+            android:background="@drawable/bank_background"
+            android:id="@+id/txtAmount"
+            android:text="0"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight=".80"/>
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"></FrameLayout>
-
-        <Button
-            style="@style/AppTheme.circular_button"
-            android:text="&gt;"
-            android:id="@+id/increaseButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"/>
-
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.10" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollable_area"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:layout_weight=".15">
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.50" />
+        <ViewFlipper
+            android:layout_width="270dp"
+            android:layout_height="100dp"
+            android:id="@+id/currency_items"
+            android:layout_gravity="center_horizontal">
+        </ViewFlipper>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.50" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.185" />
 
     <Button
         style="@style/AppTheme.Button"
@@ -68,6 +84,13 @@
         android:id="@+id/btnArm"
         android:onClick="armOrSend"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp" />
+        android:layout_marginRight="20dp"
+        android:layout_weight=".13" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.015" />
 
 </LinearLayout>

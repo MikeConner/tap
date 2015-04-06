@@ -11,14 +11,16 @@ import org.json.JSONObject;
 
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
+import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.remotedata.HttpHelper;
 import co.tapdatapp.tapandroid.remotedata.VoucherCodec;
+import co.tapdatapp.tapandroid.user.Account;
 
 public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
 
     public interface Callback {
         void onComplete(VoucherRedeemResponse response);
-        void onFailure(Throwable cause);
+        void onVoucherFailure(Throwable t);
     }
 
     private boolean success;
@@ -45,6 +47,12 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
             );
             VoucherCodec codec = new VoucherCodec();
             response = codec.parseRedeemResponse(httpResponse);
+            // Post redeeming the voucher, expire the cache of balances
+            // and ensure all currency details are local.
+            new Account().expireBalances();
+            CurrencyDAO balance = new CurrencyDAO();
+            balance.getAllBalances();
+            balance.ensureLocalCurrencyDetails(response.getCurrencyId());
             success = true;
         }
         catch (Throwable e) {
@@ -60,7 +68,7 @@ public class RedeemVoucherTask extends AsyncTask<Object, Void, Void> {
             callback.onComplete(response);
         }
         else {
-            callback.onFailure(exception);
+            callback.onVoucherFailure(exception);
         }
     }
 

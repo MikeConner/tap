@@ -5,80 +5,171 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     tools:context=".profile_main"
-    tools:ignore="MergeRootFrame">
+    tools:ignore="MergeRootFrame"
+    android:background="@color/generic_background"
+    android:id="@+id/account_layout"
+    android:weightSum="1">
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight=".30">
 
-        <TextView
-            android:text="n"
-            android:textSize="48sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="9pt"
-            android:text="angry helicopter"
-            android:id="@+id/etNickName"
-            android:layout_gravity="center_vertical" />
-
-    </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/profile_picture"
+            android:scaleType="centerCrop"
+            android:layout_centerHorizontal="true"
+            android:background="@color/dark_gray"
+            android:alpha=".80"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/profile_pic_shader"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignBottom="@+id/profile_picture"
+            android:background="@color/black"
+            android:alpha=".20"/>
+                <TextView
+                    android:textSize="30sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="angry helicopter"
+                    android:textColor="@color/white"
+                    android:id="@+id/etNickName"
+                    android:layout_gravity="start"
+                    android:singleLine="true"
+                    tools:ignore="HardcodedText"
+                    android:layout_above="@+id/etEmail"
+                    android:layout_alignParentStart="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="random@random.com"
+                    android:textColor="@color/white"
+                    android:id="@+id/etEmail"
+                    android:layout_gravity="start"
+                    tools:ignore="HardcodedText"
+                    android:singleLine="true"
+                    android:layout_alignBottom="@+id/profile_picture"
+                    android:layout_alignEnd="@+id/etNickName"
+                    android:layout_alignParentLeft="true"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/edit_indicator"
+                    android:src="@drawable/edit_account_icon"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:visibility="gone"/>
+    </RelativeLayout>
 
     <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:text="e"
-            android:textSize="48sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="random@random.com"
-            android:id="@+id/etEmail"
-            android:layout_gravity="center_vertical" />
-
-    </LinearLayout>
-
-    <TextView
-        android:layout_weight="1"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"/>
-
-    <Button
-        style="@style/AppTheme.Button"
-        android:layout_margin="5dp"
-        android:text="@string/button_load_code"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="showLoadCode"
-        android:id="@+id/btn_Load_Code"
         android:layout_gravity="center_horizontal"
-        android:nestedScrollingEnabled="false" />
+        android:weightSum="1"
+        android:layout_weight=".19">
 
-    <Button
-        style="@style/AppTheme.Button"
-        android:layout_margin="5dp"
-        android:text="@string/button_load"
+        <Button
+            style="@style/AppTheme.Load_Buttons"
+            android:text="@string/edit_profile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/btn_edit_profile"
+            android:textSize="14sp"
+            android:drawableLeft="@drawable/edit_profile_icon"
+            android:layout_weight=".495"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".01"
+            android:background="@color/white"/>
+
+        <Button
+            style="@style/AppTheme.Load_Buttons"
+            android:text="@string/manage_tags"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/btn_manage_tags"
+            android:textSize="14sp"
+            android:drawableLeft="@drawable/manage_tags_icon"
+            android:layout_weight=".495"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="showDeposit"/>
+        android:layout_weight=".01"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"/>
+    </LinearLayout>
 
-    <Button
-        style="@style/AppTheme.Button"
-        android:layout_margin="5dp"
-        android:text="@string/button_balances"
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:weightSum="1"
+        android:layout_weight=".19">
+
+        <Button
+            style="@style/AppTheme.Load_Buttons"
+            android:text="@string/button_load_code"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/btn_Load_Code"
+            android:textSize="14sp"
+            android:drawableLeft="@drawable/load_code_icon"
+            android:layout_weight=".495"
+            android:paddingTop="10dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".01"
+            android:background="@color/white"/>
+
+        <Button
+            style="@style/AppTheme.Load_Buttons"
+            android:text="@string/button_load_bitcoin"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/btn_bitcoin_load"
+            android:textSize="14sp"
+            android:drawableLeft="@drawable/load_bitcoin_icon"
+            android:layout_weight=".495"
+            android:paddingTop="10dp"/>
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:layout_gravity="center"
+        android:id="@+id/balances_progress_bar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_weight=".31"
+        />
+
+    <ListView
+        android:id="@+id/balances_list"
+        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="startBalancesActivity"/>
+        android:layout_height="0dp"
+        android:layout_weight=".31"
+        android:scrollbars="none"
+        android:background="@color/balance_list_background">
+    </ListView>
 
 </LinearLayout>
 

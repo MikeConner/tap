@@ -11,10 +11,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.localdata.BaseCodec;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
 import co.tapdatapp.tapandroid.localdata.Denomination;
 
-public class CurrencyCodec {
+public class CurrencyCodec extends BaseCodec {
     private int id;
     private String name;
     private String icon;
@@ -28,7 +29,7 @@ public class CurrencyCodec {
     private static final String MAX_TAP = "max_amount";
     private static final String DENOMINATIONS = "denominations";
     private static final String DENOMINATION_AMOUNT = "amount";
-    private static final String DENOMINATION_ICON = "icon";
+    private static final String DENOMINATION_ICON = "image";
 
     /**
      * Parse a JSON representation of a currency, and load this object
@@ -38,11 +39,12 @@ public class CurrencyCodec {
      */
     public void parse(int currencyId, JSONObject json) throws JSONException {
         id = currencyId;
-        name = json.getString(NAME);
-        icon = json.getString(ICON);
-        symbol = json.getString(SYMBOL);
-        maxTap = json.getInt(MAX_TAP);
-        JSONArray jsonDenominations = json.getJSONArray(DENOMINATIONS);
+        JSONObject nest = json.getJSONObject("response");
+        name = nest.getString(NAME);
+        icon = nest.getString(ICON);
+        symbol = ifNull(nest.getString(SYMBOL), "");
+        maxTap = nest.getInt(MAX_TAP);
+        JSONArray jsonDenominations = nest.getJSONArray(DENOMINATIONS);
         parseDenominations(jsonDenominations);
     }
 
@@ -80,7 +82,7 @@ public class CurrencyCodec {
     parseBalances(JSONObject response) throws JSONException {
         JSONObject in = response.getJSONObject("response");
         BalanceList rv = new BalanceList();
-        rv.put(CurrencyDAO.CURRENCY_BITCOIN, in.getInt("btc_balance"));
+        rv.put(CurrencyDAO.CURRENCY_BITCOIN, in.getInt("dollar_balance"));
         JSONArray balances = in.getJSONArray("balances");
         for (int i = 0; i < balances.length(); i++) {
             JSONObject oneBalance = balances.getJSONObject(i);

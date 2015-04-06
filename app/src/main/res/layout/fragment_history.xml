@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/generic_background"
     tools:context="co.tapdatapp.tapandroid.history.HistoryFragment">
 
     <!-- On initial load, the ProgressBar is visible and the

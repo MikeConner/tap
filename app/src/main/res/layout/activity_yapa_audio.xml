@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/yapaAudioLayout"
+    android:background="@color/generic_background"
+    android:weightSum="1">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/yapa_top_audio"
+        android:layout_weight=".40">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="275dp"
+            android:id="@+id/yapa_audio_top_background"
+            android:scaleType="centerCrop"
+            android:cropToPadding="false"
+            android:adjustViewBounds="true"
+            android:src="@color/yapa_background_audio"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:id="@+id/single_yapa_icon_audio"
+            android:src="@drawable/yapa_audio"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="49dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/single_yapa_text_audio"
+            android:text="@string/single_yapa_audio_click"
+            android:textSize="28sp"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/white"
+            android:layout_toEndOf="@+id/single_yapa_icon_audio"
+            android:layout_marginTop="80dp" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".50"
+        android:orientation="vertical"
+        android:id="@+id/yapa_info_audio">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/yapa_name_audio"
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginStart="15dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/timestamp_sender_audio"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/yapa_sender_audio"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-thin"
+                android:layout_marginStart="15dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/yapa_divider_audio"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-thin"
+                android:text="@string/sender_timestamp_divider"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/yapa_timestamp_audio"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-thin"/>
+            </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/yapa_amount_audio"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif-thin"
+            android:layout_marginStart="15dp" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="5dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/yapa_description_audio"
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginStart="15dp" />
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".10"
+            android:id="@+id/yapa_button_audio">
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/exit_button_audio"
+            android:src="@drawable/done_icon_check"
+            android:layout_centerInParent="true"/>
+        </RelativeLayout>
+</LinearLayout>

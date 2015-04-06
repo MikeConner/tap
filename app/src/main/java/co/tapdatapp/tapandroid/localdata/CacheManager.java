@@ -4,11 +4,11 @@
 
 package co.tapdatapp.tapandroid.localdata;
 
+import co.tapdatapp.tapandroid.TapApplication;
+
 public class CacheManager extends Thread {
 
     private static CacheManager thread;
-
-    private boolean enabled = true;
 
     private Cache cache;
 
@@ -45,25 +45,35 @@ public class CacheManager extends Thread {
     }
 
     /**
-     * Limit at which garbage collection will be attempted.
+     * Limit at which garbage collection will be attempted. This is
+     * 0.1% of the storage space of the device.
      *
      * @return # bytes over which GC should run
      */
-    // @TODO this should be calculated from the device's storage size
     private int getSoftLimit() {
-        // 500K
-        return 500 * 1024;
+        long rv = TapApplication.getStorage() / 1000;
+        if (rv > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        }
+        else {
+            return (int)rv;
+        }
     }
 
     /**
-     * Limit at which *something* is guaranteed to be deleted
+     * Limit at which *something* is guaranteed to be deleted. This
+     * is 10% of the storage space on the device
      *
      * @return # bytes over which GC _must_ delete something
      */
-    // @TODO this should be calculated from the device's storage size
     private int getHardLimit() {
-        // 5M
-        return 5 * 1024 * 1024;
+        long rv = TapApplication.getStorage() / 10;
+        if (rv > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        }
+        else {
+            return (int)rv;
+        }
     }
 
     /**
@@ -87,9 +97,10 @@ public class CacheManager extends Thread {
      * every 30 seconds if no requests are made. Request are made
      * simply by notify()ing the thread.
      */
+    @SuppressWarnings("InfiniteLoopStatement")
     @Override
     public void run() {
-        while (enabled) {
+        while (true) {
             gc();
             synchronized (this) {
                 try {
@@ -115,31 +126,5 @@ public class CacheManager extends Thread {
         }
         thread = new CacheManager(cache);
         thread.start();
-    }
-
-    /**
-     * Request a GC event. Since there is only ever a single thread
-     * running GC, multiple requests in rapid succession from multiple
-     * threads will simply result in a single GC execution. (Or
-     * possibly a few in series, depending on timing) The important
-     * thing is that there will never be multiple GC threads running.
-     */
-    public static void scheduleGC() {
-        thread.notifyAll();
-    }
-
-    /**
-     * Stop the GC thread. This isn't currently used because Android
-     * eschews the typical process model and there's no way to know
-     * when a process is being shut down. It's good design to have it,
-     * but there's just no way to use it.
-     *
-     * @throws InterruptedException
-     */
-    public static void shutdown() throws InterruptedException {
-        thread.enabled = false;
-        thread.notifyAll();
-        thread.join();
-        thread = null;
     }
 }

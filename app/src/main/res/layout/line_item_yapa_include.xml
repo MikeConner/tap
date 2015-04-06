@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Common layout for all line item yapa cardviews -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditText
+        style="@style/AppTheme"
+        android:id="@+id/etYapaText"
+        android:hint="@string/hint_yapa_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent">
+
+        <TextView
+            style="@style/AppTheme"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:id="@+id/tvYapaThreshold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <SeekBar
+            style="@style/AppTheme"
+            android:id="@+id/seekYapaThreshold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</merge>

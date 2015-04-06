@@ -12,8 +12,11 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import co.tapdatapp.tapandroid.remotedata.NewAccountTask;
+import co.tapdatapp.tapandroid.remotedata.NoNetworkError;
 
 public class AccountStartActivity extends Activity {
+
+    public final static int ACCOUNT_CREATION = 1;
 
     /**
      * Just display an indefinite progress meter. In the near future,
@@ -38,7 +41,29 @@ public class AccountStartActivity extends Activity {
         new NewAccountTask().execute(this);
     }
 
+    /**
+     * When successful, exit this Activity, which will return to the
+     * MainActivity with a created account.
+     */
     public void newAccountComplete() {
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    /**
+     * On failure, display a message and exit
+     *
+     * @param t The cause of the failure
+     */
+    // @TODO probably some better error handling
+    public void newAccountError(Throwable t) {
+        if (t instanceof NoNetworkError) {
+            TapApplication.errorToUser(TapApplication.string(R.string.no_network));
+        }
+        else {
+            TapApplication.handleFailures(this, t);
+        }
+        setResult(RESULT_CANCELED);
         finish();
     }
 }

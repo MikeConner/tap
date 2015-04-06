@@ -7,31 +7,33 @@ package co.tapdatapp.tapandroid.history;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.helpers.TapBitmap;
 import co.tapdatapp.tapandroid.localdata.BaseAdapter;
 import co.tapdatapp.tapandroid.localdata.Transaction;
-import co.tapdatapp.tapandroid.localdata.TransactionDAO;
+import co.tapdatapp.tapandroid.yapa.YapaDisplay;
 
 public class HistoryAdapter extends BaseAdapter {
 
-    private static Bitmap rewardBitmap;
-    private static Bitmap iconBitmap;
-
     private Integer recordCount = null;
-    private TransactionDAO dao;
+    private Transaction dao;
     private Activity activity;
     private Transaction transaction;
 
-    public HistoryAdapter(TransactionDAO t, Activity a) {
+    public HistoryAdapter(Transaction t, Activity a) {
         dao = t;
         activity = a;
         transaction = new Transaction();
@@ -81,11 +83,25 @@ public class HistoryAdapter extends BaseAdapter {
                 false
             );
         }
-        transaction.moveTo(i);
-        ((TextView)v.findViewById(R.id.history_text)).setText(transaction.getDescription());
-        ((ImageView)v.findViewById(R.id.history_picture)).setImageBitmap(getRewardBitmap());
-        LoadHistoryImagesTask asyncLoad = new LoadHistoryImagesTask();
-        asyncLoad.execute(v);
+        transaction.moveToByOrder(i);
+        TextView historyText = (TextView) v.findViewById(R.id.history_text);
+        historyText.setText(transaction.getTagName() + " \n" + transaction.getNickname() + " \n" +
+                transaction.getTimestamp());
+        ImageView historyIcon = ((ImageView)v.findViewById(R.id.history_icon));
+        ImageView historyPreview = ((ImageView)v.findViewById(R.id.history_preview));
+        String thumbUrl = transaction.getYapaThumbUrl();
+        String profilePic = transaction.getThumb_url();
+        if (thumbUrl != null && !thumbUrl.isEmpty()) {
+            new ImageFetchTask().execute(historyPreview, thumbUrl);
+        }
+        else{
+            if (profilePic != null && !profilePic.isEmpty()) {
+                new ImageFetchTask().execute(historyPreview, profilePic);
+            }
+        }
+        YapaDisplay yl = new YapaDisplay();
+        historyIcon.setImageDrawable(yl.getIcon(transaction));
+        historyText.setBackgroundColor(yl.getOverlay(transaction));
         return v;
     }
 
@@ -115,43 +131,51 @@ public class HistoryAdapter extends BaseAdapter {
     }
 
     /**
-     * Return a reference to a properly sized Bitmap for the reward
-     * that says "loading" or something similar until the real
-     * Bitmap is retrieved
-     *
-     * @return default Bitmap
+     * Load the image onto the view in the background. This has to be a background task because
+     * the image may not be in the local cache, and thus a network fetch would be required.
      */
-    private Bitmap getRewardBitmap() {
-        final int size = getScreenWidth(activity) / 6;
-        if (rewardBitmap == null) {
-            rewardBitmap = TapBitmap.getLoadingBitmapAtSize(size);
+    private class ImageFetchTask extends AsyncTask<Object, Void, Void> {
+
+        Bitmap imageBitmap = null;
+        ImageView imageView = null;
+        Throwable error = null;
+
+        /**
+         * @param params ImageView to set and Transaction to set from
+         * @return Void
+         */
+        @Override
+        protected Void doInBackground(Object... params) {
+
+            if (params.length != 2) {
+                throw new AssertionError("Requires ImageView and image URL");
+            }
+            imageView = (ImageView)params[0];
+            String thumbUrl= (String)params[1];
+            try {
+                imageBitmap = TapBitmap.fetchFromCacheOrWeb(thumbUrl);
+            }
+            catch (Throwable e) {
+                error = e;
+            }
+            return null;
         }
-        else {
-            if (rewardBitmap.getWidth() != size) {
-                rewardBitmap = TapBitmap.getLoadingBitmapAtSize(size);
+
+        protected void onPostExecute(Void x) {
+            if (imageBitmap != null) {
+                Context context = activity.getApplicationContext();
+                Resources res = context.getResources();
+                BitmapDrawable yapaImage = new BitmapDrawable(res, imageBitmap);
+                imageView.setImageDrawable(yapaImage);
+            }
+            else {
+                if (error != null) {
+                    TapApplication.handleFailures(activity, error);
+                }
+                else {
+                    TapApplication.errorToUser(TapApplication.string(R.string.unknown_error));
+                }
             }
         }
-        return rewardBitmap;
     }
-
-    /**
-     * Return a reference to a properly sized Bitmap for the user icon
-     * that says "loading" or something until the real bitmap is
-     * retrieved
-     *
-     * @return default bitmap
-     */
-    private Bitmap getIconBitmap() {
-        final int size = getScreenWidth(activity) / 7;
-        if (iconBitmap == null) {
-            iconBitmap = TapBitmap.getLoadingBitmapAtSize(size);
-        }
-        else {
-            if (iconBitmap.getWidth() != size) {
-                iconBitmap = TapBitmap.getLoadingBitmapAtSize(size);
-            }
-        }
-        return iconBitmap;
-    }
-
 }
