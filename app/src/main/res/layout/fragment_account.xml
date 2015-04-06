@@ -82,7 +82,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:id="@+id/btn_edit_profile"
+            android:textAlignment="center"
             android:textSize="14sp"
+            android:paddingRight="10dp"
             android:drawableLeft="@drawable/edit_profile_icon"
             android:layout_weight=".495"/>
 
@@ -98,7 +100,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:id="@+id/btn_manage_tags"
+            android:textAlignment="center"
             android:textSize="14sp"
+            android:paddingRight="10dp"
             android:drawableLeft="@drawable/manage_tags_icon"
             android:layout_weight=".495"/>
 
@@ -129,10 +133,11 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:id="@+id/btn_Load_Code"
+            android:textAlignment="center"
+            android:paddingRight="10dp"
             android:textSize="14sp"
             android:drawableLeft="@drawable/load_code_icon"
-            android:layout_weight=".495"
-            android:paddingTop="10dp"/>
+            android:layout_weight=".495"/>
 
         <TextView
             android:layout_width="0dp"
@@ -146,10 +151,11 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:id="@+id/btn_bitcoin_load"
+            android:textAlignment="center"
+            android:paddingRight="10dp"
             android:textSize="14sp"
             android:drawableLeft="@drawable/load_bitcoin_icon"
-            android:layout_weight=".495"
-            android:paddingTop="10dp"/>
+            android:layout_weight=".495"/>
 
     </LinearLayout>
 
