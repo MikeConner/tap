@@ -45,17 +45,23 @@
         <activity android:name=".AccountStartActivity" >
         </activity>
         <activity android:name=".yapa.YapaImage"
-                  android:noHistory="true"/>
+                  android:noHistory="true"
+                  android:theme="@android:style/Theme.Dialog"/>
         <activity android:name=".yapa.YapaUrl"
-                  android:noHistory="true"/>
+                  android:noHistory="true"
+                  android:theme="@android:style/Theme.Dialog"/>
         <activity android:name=".yapa.YapaText"
-                  android:noHistory="true"/>
+                  android:noHistory="true"
+                  android:theme="@android:style/Theme.Dialog"/>
         <activity android:name=".yapa.YapaCoupon"
-                  android:noHistory="true"/>
+                  android:noHistory="true"
+                  android:theme="@android:style/Theme.Dialog"/>
         <activity android:name=".yapa.YapaAudio"
-                  android:noHistory="true"/>
+                  android:noHistory="true"
+                  android:theme="@android:style/Theme.Dialog"/>
         <activity android:name=".yapa.YapaVideo"
-                  android:noHistory="true"/>
+                  android:noHistory="true"
+                  android:theme="@android:style/Theme.Dialog"/>
         <activity android:name=".user.QRCode"/>
         <activity
             android:name=".tags.ManageTagActivity"

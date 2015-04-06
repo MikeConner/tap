@@ -33,6 +33,7 @@
     <color name="generic_background">#f6f6f6</color>
     <color name="toast_background">#f9f9f9</color>
     <color name="toast_text">#525252</color>
+    <color name="toast_header_background">#616161</color>
     <color name="yapa_background_url">#0099cc</color>
     <color name="yapa_background_audio">#864c9e</color>
     <color name="yapa_background_video">#f5881e</color>
