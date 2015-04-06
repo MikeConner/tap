@@ -58,7 +58,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".40"
+        android:layout_weight=".50"
         android:orientation="vertical"
         android:id="@+id/yapa_info_coupon">
         <TextView
@@ -68,9 +68,6 @@
             android:textSize="22sp"
             android:fontFamily="sans-serif-light"
             android:layout_marginStart="15dp" />
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -97,9 +94,6 @@
                 android:textSize="18sp"
                 android:fontFamily="sans-serif-thin"/>
             </LinearLayout>
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="5dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -109,7 +103,7 @@
             android:layout_marginStart="15dp" />
         <Space
             android:layout_width="match_parent"
-            android:layout_height="50dp"/>
+            android:layout_height="5dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -121,7 +115,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".20"
+            android:layout_weight=".10"
             android:id="@+id/yapa_button_coupon">
             <ImageView
                 android:layout_width="60dp"
