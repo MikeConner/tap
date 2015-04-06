@@ -43,6 +43,47 @@ implements View.OnClickListener,
     }
 
     /**
+     * Free the adapter when the view is paused, which both saves
+     * memory and prevents problems with the adapter getting out of
+     * sync with the data.
+     */
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            ((ListView)getView().findViewById(R.id.listViewTags)).setAdapter(null);
+        }
+        catch (NullPointerException npe) {
+            // Ignore for race conditions where the view isn't
+            // created yet
+        }
+    }
+
+    /**
+     * Free the adapter when paging away and reinstate it when
+     * returning. Both saves memory and prevents errors if something
+     * else causes the adapter to become out of sync.
+     */
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public void setUserVisibleHint(boolean visible) {
+        super.setUserVisibleHint(visible);
+        if (visible) {
+            onTagsSynced();
+        }
+        else {
+            try {
+                ((ListView)getView().findViewById(R.id.listViewTags)).setAdapter(null);
+            }
+            catch (NullPointerException npe) {
+                // Ignore for race conditions where the view isn't
+                // created yet
+            }
+        }
+    }
+
+    /**
      * Handles clicks on the "new tag" button
      *
      * @param v The view that was clicked
@@ -62,9 +103,9 @@ implements View.OnClickListener,
     @Override
     public void onTagsSynced() {
         try {
-            TagListAdapter adapter = new TagListAdapter();
             @SuppressWarnings("ConstantConditions")
             ListView tagList = (ListView) getView().findViewById(R.id.listViewTags);
+            TagListAdapter adapter = new TagListAdapter();
             tagList.setAdapter(adapter);
         }
         catch (NullPointerException npe) {
