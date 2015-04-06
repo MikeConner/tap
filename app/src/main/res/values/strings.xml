@@ -99,5 +99,7 @@
     <string name="no_network_title">No Network</string>
     <string name="button_network_settings">Change Network Settings</string>
     <string name="button_return_to_app">Return to Tap</string>
+    <string name="wrong_currency_0">You need to use</string>
+    <string name="wrong_currency_1">in order to tap this tag.</string>
 
 </resources>

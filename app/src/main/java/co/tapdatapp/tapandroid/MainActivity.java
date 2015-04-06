@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.arm.ArmFragment;
 import co.tapdatapp.tapandroid.arm.ArmedFragment;
+import co.tapdatapp.tapandroid.arm.WrongCurrencyException;
 import co.tapdatapp.tapandroid.currency.BalanceList;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
@@ -77,7 +78,6 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         captureNFC();
     }
 
-    //TODO: Move this to DataLoaderFragment
     private void captureNFC(){
         //Capture NFC interactions for this activity
         //TODO: make sure NFC is turned on or kill the APP with dialog
@@ -326,6 +326,25 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         openYapa.putExtra(YapaDisplay.TRANSACTION_ID, t.getSlug());
         openYapa.putExtra(YapaDisplay.DELAY_TIME, 5);
         startActivity(openYapa);
+    }
+
+    // @TODO this should get a lot fancier, possibly with a screen
+    // giving detailed guidance on how to load up on the desired
+    // currency ... actually, the currency should have an instructions
+    // field on the server that can contain written instructions to
+    // the user in the event that this happens
+    @Override
+    public void tappedWrongCurrency(WrongCurrencyException wce) {
+        int currencyId = wce.getCorrectCurrency();
+        CurrencyDAO currency = new CurrencyDAO();
+        currency.moveTo(currencyId);
+        TapApplication.errorToUser(
+            TapApplication.string(R.string.wrong_currency_0) +
+            " " +
+            currency.getName() +
+            " " +
+            TapApplication.string(R.string.wrong_currency_1)
+        );
     }
 
     @Override

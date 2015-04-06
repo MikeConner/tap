@@ -46,4 +46,8 @@ public class WebServiceError extends UserFriendlyError {
         }
         return "Unknown error";
     }
+
+    public WebResponse getWebResponse() {
+        return webResponse;
+    }
 }
