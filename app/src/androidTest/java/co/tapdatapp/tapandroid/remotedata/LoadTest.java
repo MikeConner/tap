@@ -88,7 +88,7 @@ public class LoadTest extends BaseUnitTest {
         public void statistics() {
             float elapsedSeconds = (endTime - startTime) / 1000000000;
             Log.i(LABEL, "Elapsed time: " + elapsedSeconds);
-            Log.i(LABEL, MAX_TAP / elapsedSeconds + " taps per second");
+            Log.i(LABEL, REQUESTS / elapsedSeconds + " taps per second");
             Log.i(LABEL, success + " succeeded, " + failure + " failed");
             if (lastFailure != null) {
                 Log.e(LABEL, "Last failure: ", lastFailure);
