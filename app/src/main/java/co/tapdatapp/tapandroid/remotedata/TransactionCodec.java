@@ -47,6 +47,7 @@ public class TransactionCodec extends BaseCodec {
         rv.setThumb_url(ifNull(input.getString("other_user_thumb"), null));
         rv.setNickname(ifNull(input.getString("other_user_nickname"), null));
         rv.setContent(ifNull(input.getString("content"), null));
+        rv.setTagName(ifNull(input.getString("tag_name"), null));
         return rv;
     }
 
