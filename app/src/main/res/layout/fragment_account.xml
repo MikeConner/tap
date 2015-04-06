@@ -74,7 +74,7 @@
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
         android:weightSum="1"
-        android:layout_weight=".10">
+        android:layout_weight=".19">
 
         <Button
             style="@style/AppTheme.Load_Buttons"
@@ -83,6 +83,7 @@
             android:layout_height="match_parent"
             android:id="@+id/btn_edit_profile"
             android:textSize="18sp"
+            android:drawableLeft="@drawable/edit_profile_icon"
             android:layout_weight=".495"/>
 
         <TextView
@@ -98,6 +99,7 @@
             android:layout_height="match_parent"
             android:id="@+id/btn_manage_tags"
             android:textSize="18sp"
+            android:drawableLeft="@drawable/manage_tags_icon"
             android:layout_weight=".495"/>
 
     </LinearLayout>
@@ -128,8 +130,8 @@
             android:layout_height="match_parent"
             android:id="@+id/btn_Load_Code"
             android:textSize="18sp"
+            android:drawableLeft="@drawable/load_code_icon"
             android:layout_weight=".495"
-            android:drawableTop="@drawable/code_load_small"
             android:paddingTop="10dp"/>
 
         <TextView
@@ -145,8 +147,8 @@
             android:layout_height="match_parent"
             android:id="@+id/btn_bitcoin_load"
             android:textSize="18sp"
+            android:drawableLeft="@drawable/load_bitcoin_icon"
             android:layout_weight=".495"
-            android:drawableTop="@drawable/bitcoin_load_small"
             android:paddingTop="10dp"/>
 
     </LinearLayout>
@@ -156,7 +158,7 @@
         android:id="@+id/balances_progress_bar"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_weight=".40"
+        android:layout_weight=".31"
         />
 
     <ListView
@@ -164,7 +166,7 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".40"
+        android:layout_weight=".31"
         android:scrollbars="none"
         android:background="@color/balance_list_background">
     </ListView>
