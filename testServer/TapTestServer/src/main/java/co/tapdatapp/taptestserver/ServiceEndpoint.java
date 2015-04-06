@@ -56,6 +56,18 @@ public class ServiceEndpoint {
     transactions.reset();
   }
   
+  @GET
+  @Path("ping")
+  @Produces({ MediaType.APPLICATION_JSON })
+  public Response ping() {
+    Monitor.trace("PING response");
+    return Response.ok(new PingResponse()).build();
+  }
+  
+  public class PingResponse {
+    public String response = "Pong";
+  }  
+  
   @POST
   @Path("/registrations.json")
   @Consumes({ MediaType.APPLICATION_JSON })
