@@ -38,6 +38,6 @@
     -->
     <string name="CRASH_ON_FAILURE">false</string>
     <!-- Use Amazon AWS for storage -->
-    <string name="USE_AWS">false</string>
+    <string name="USE_AWS">true</string>
 
 </resources>
