@@ -49,7 +49,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/single_yapa_text_image"
             android:text="@string/single_yapa_image_click"
-            android:textSize="24sp"
+            android:textSize="28sp"
+            android:fontFamily="sans-serif-light"
             android:textColor="@color/white"
             android:layout_toEndOf="@+id/single_yapa_icon_image"
             android:layout_marginTop="80dp" />
@@ -64,7 +65,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/yapa_name_image"
-            android:textSize="28sp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-light"
             android:layout_marginStart="15dp" />
         <Space
             android:layout_width="match_parent"
@@ -78,19 +80,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/yapa_sender_image"
-                android:textSize="20sp"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-thin"
                 android:layout_marginStart="15dp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/yapa_divider_image"
-                android:textSize="20sp"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-thin"
                 android:text="@string/sender_timestamp_divider"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/yapa_timestamp_image"
-                android:textSize="20sp"/>
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-thin"/>
             </LinearLayout>
         <Space
             android:layout_width="match_parent"
@@ -99,7 +104,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/yapa_amount_image"
-            android:textSize="20sp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-thin"
             android:layout_marginStart="15dp" />
         <Space
             android:layout_width="match_parent"
@@ -108,7 +114,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/yapa_description_image"
-            android:textSize="20sp"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif-light"
             android:layout_marginStart="15dp" />
         </LinearLayout>
         <RelativeLayout
