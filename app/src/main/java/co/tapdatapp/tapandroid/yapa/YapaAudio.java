@@ -57,7 +57,7 @@ public class YapaAudio extends Activity {
         TextView amountText = (TextView) findViewById(R.id.yapa_amount_audio);
         TextView descriptionText = (TextView) findViewById(R.id.yapa_description_audio);
 
-        //nameText.setText(transaction.getName());
+        nameText.setText(transaction.getTagName());
         senderText.setText(transaction.getNickname());
         timestampText.setText(transaction.getTimestamp().toString());
         amountText.setText(Integer.toString(transaction.getAmount()));

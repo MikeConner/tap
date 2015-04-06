@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/yapa_name_audio"
-            android:textSize="14sp"
+            android:textSize="22sp"
             android:fontFamily="sans-serif-light"
             android:layout_marginStart="15dp" />
         <Space
@@ -67,21 +67,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/yapa_sender_audio"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:fontFamily="sans-serif-thin"
                 android:layout_marginStart="15dp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/yapa_divider_audio"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:fontFamily="sans-serif-thin"
                 android:text="@string/sender_timestamp_divider"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/yapa_timestamp_audio"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:fontFamily="sans-serif-thin"/>
             </LinearLayout>
         <Space
@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/yapa_amount_audio"
-            android:textSize="14sp"
+            android:textSize="18sp"
             android:fontFamily="sans-serif-thin"
             android:layout_marginStart="15dp" />
         <Space
@@ -101,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/yapa_description_audio"
-            android:textSize="18sp"
+            android:textSize="22sp"
             android:fontFamily="sans-serif-light"
             android:layout_marginStart="15dp" />
         </LinearLayout>

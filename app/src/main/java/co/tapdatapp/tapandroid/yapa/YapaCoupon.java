@@ -63,7 +63,7 @@ public class YapaCoupon extends Activity implements TapBitmap.Callback {
         TextView amountText = (TextView) findViewById(R.id.yapa_amount_coupon);
         TextView descriptionText = (TextView) findViewById(R.id.yapa_description_coupon);
 
-        //nameText.setText(transaction.getName());
+        nameText.setText(transaction.getTagName());
         senderText.setText(transaction.getNickname());
         timestampText.setText(transaction.getTimestamp().toString());
         amountText.setText(Integer.toString(transaction.getAmount()));

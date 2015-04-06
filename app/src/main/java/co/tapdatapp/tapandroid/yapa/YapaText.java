@@ -60,7 +60,7 @@ public class YapaText extends Activity {
         TextView descriptionText = (TextView) findViewById(R.id.yapa_description_text);
         TextView contentText = (TextView) findViewById(R.id.yapa_text_top_background);
 
-        //nameText.setText(transaction.getName());
+        nameText.setText(transaction.getTagName());
         senderText.setText(transaction.getNickname());
         timestampText.setText(transaction.getTimestamp().toString());
         amountText.setText(Integer.toString(transaction.getAmount()));

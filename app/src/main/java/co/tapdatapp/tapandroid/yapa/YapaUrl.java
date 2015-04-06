@@ -57,7 +57,7 @@ public class YapaUrl extends Activity {
         TextView amountText = (TextView) findViewById(R.id.yapa_amount_url);
         TextView descriptionText = (TextView) findViewById(R.id.yapa_description_url);
 
-        //nameText.setText(transaction.getName());
+        nameText.setText(transaction.getTagName());
         senderText.setText(transaction.getNickname());
         timestampText.setText(transaction.getTimestamp().toString());
         amountText.setText(Integer.toString(transaction.getAmount()));

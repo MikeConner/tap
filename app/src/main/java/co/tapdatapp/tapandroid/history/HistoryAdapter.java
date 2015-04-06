@@ -85,7 +85,8 @@ public class HistoryAdapter extends BaseAdapter {
         }
         transaction.moveToByOrder(i);
         TextView historyText = (TextView) v.findViewById(R.id.history_text);
-        historyText.setText(transaction.getNickname() + " \n" + transaction.getTimestamp());
+        historyText.setText(transaction.getTagName() + " \n" + transaction.getNickname() + " \n" +
+                transaction.getTimestamp());
         ImageView historyIcon = ((ImageView)v.findViewById(R.id.history_icon));
         ImageView historyPreview = ((ImageView)v.findViewById(R.id.history_preview));
         String thumbUrl = transaction.getYapaThumbUrl();
