@@ -95,7 +95,9 @@ public class HistoryAdapter extends BaseAdapter {
             new ImageFetchTask().execute(historyPreview, thumbUrl);
         }
         else{
-            new ImageFetchTask().execute(historyPreview, profilePic);
+            if (profilePic != null && !profilePic.isEmpty()) {
+                new ImageFetchTask().execute(historyPreview, profilePic);
+            }
         }
         YapaDisplay yl = new YapaDisplay();
         historyIcon.setImageDrawable(yl.getIcon(transaction));
