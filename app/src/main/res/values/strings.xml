@@ -19,7 +19,7 @@
     <string name="scan_voucher">Bitcoin Deposit</string>
     <string name="uppercase_load">LOAD</string>
     <string name="voucher_qr_code_description">What is this?</string>
-    <string name="arm">ARM</string>
+    <string name="arm">GIVE THIS AMOUNT</string>
     <string name="button_balances">BALANCES</string>
     <string name="button_load_code">LOAD CODE</string>
     <string name="button_load_bitcoin">LOAD BITCOIN</string>
@@ -34,7 +34,7 @@
     <string name="redeem_entry">Enter a redemption code here</string>
     <string name="successful_redeem">Redeemed for</string>
     <string name="currency_changed">Active currency set to</string>
-    <string name="tap_encouragement">Getting Ready to TAP</string>
+    <string name="tap_encouragement">Touch the phone to the tag.</string>
     <string name="armed_graphic">Armed</string>
     <string name="amount">Amount</string>
     <string name="tag_icon_description">Tag Icon</string>
