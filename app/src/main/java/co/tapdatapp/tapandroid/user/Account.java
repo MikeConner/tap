@@ -20,6 +20,7 @@ import java.util.Random;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.TapApplication;
 import co.tapdatapp.tapandroid.currency.BalanceList;
+import co.tapdatapp.tapandroid.currency.GetAllBalancesTask;
 import co.tapdatapp.tapandroid.helpers.DateTime;
 import co.tapdatapp.tapandroid.helpers.UserFriendlyError;
 import co.tapdatapp.tapandroid.localdata.CurrencyDAO;
@@ -28,7 +29,7 @@ import co.tapdatapp.tapandroid.remotedata.NoNetworkError;
 import co.tapdatapp.tapandroid.remotedata.UserAccountCodec;
 import co.tapdatapp.tapandroid.remotedata.WebServiceError;
 
-public class Account {
+public class Account implements GetAllBalancesTask.Callback{
 
     public final static String PREFERENCES = "CurrentUser";
 
@@ -49,6 +50,19 @@ public class Account {
 
     // @TODO I don't think this belongs in this class ...
     private static int armedAmount = 0;
+
+    private static BalanceChangeListener balanceChangeListener;
+
+    public interface BalanceChangeListener {
+        /**
+         * When the balance changes, this method is called
+         */
+        void onBalanceChanged(BalanceList values);
+    }
+
+    public static void setBalanceChangeListener(BalanceChangeListener to) {
+        balanceChangeListener = to;
+    }
 
     public Account() {
         super();
@@ -161,14 +175,21 @@ public class Account {
 
     /**
      * Set balances to expire immediately, effectively forcing a
-     * network load the next time they are requested.
+     * network load the next time they are requested. If there is
+     * a BalanceChangeListener registered, update the balances so
+     * it is notified.
      */
-    public void expireBalances() {
+    public void expireBalances() throws WebServiceError {
         set(BALANCES_EXPIRE, 0L);
+        if (balanceChangeListener != null) {
+            CurrencyDAO userBalance = new CurrencyDAO();
+            setBalances(userBalance.getAllBalances());
+        }
     }
 
     /**
-     * Cache the balance list for fast retrieval later
+     * Cache the balance list for fast retrieval later. If there is
+     * a BalanceChangeListener, notify it of the the updated balances.
      *
      * @param to Balance list to store
      */
@@ -183,6 +204,9 @@ public class Account {
             byte[] sData = os.toByteArray();
             set(BALANCES, new String(sData));
             set(BALANCES_EXPIRE, DateTime.currentEpochTime() + BALANCE_EXPIRE_TIME);
+            if (balanceChangeListener != null) {
+                balanceChangeListener.onBalanceChanged(to);
+            }
         }
         catch (Exception t) {
             // Any errors here are a catastrophic failure
@@ -363,6 +387,33 @@ public class Account {
      */
     public void setActiveCurrency(int to) {
         set(DEFAULT_CURRENCY, Integer.toString(to));
+        new GetAllBalancesTask().execute(this);
+    }
+
+    @Override
+    public void onBalancesLoaded(BalanceList list) {
+        // This method is here because GetAllBalancesTask requires
+        // it in the Callback, but since that task also triggers the
+        // BalanceChangeListener, it's not necessary to do it here
+    }
+
+    @Override
+    public void onBalanceLoadFailed(Throwable t) {
+        if (t instanceof NoNetworkError) {
+            // Special case because there is no activity here to
+            // attach a dialog to
+            TapApplication.errorToUser(
+                TapApplication.string(R.string.no_network)
+            );
+        }
+        else if (t instanceof UserFriendlyError) {
+            TapApplication.errorToUser((UserFriendlyError)t);
+        }
+        else {
+            TapApplication.errorToUser(
+                TapApplication.string(R.string.unknown_error)
+            );
+        }
     }
 
     /**
@@ -371,7 +422,7 @@ public class Account {
      * @param to Amount to arm to (absolute)
      */
     // @TODO I'm not confident that this class is the right place for
-    // this informaiton, but it's a decent placeholder for the time
+    // this information, but it's a decent placeholder for the time
     // being
     public void setArmedAmount(int to) {
         synchronized (Account.class) {

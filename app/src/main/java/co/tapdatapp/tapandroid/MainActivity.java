@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import co.tapdatapp.tapandroid.arm.ArmFragment;
 import co.tapdatapp.tapandroid.arm.ArmedFragment;
+import co.tapdatapp.tapandroid.currency.BalanceList;
 import co.tapdatapp.tapandroid.helpers.CustomViewPager;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
 import co.tapdatapp.tapandroid.history.HistoryFragment;
@@ -45,7 +46,8 @@ public class MainActivity
 extends Activity
 implements DepositBTCFragment.OnFragmentInteractionListener,
            ActionBar.TabListener,
-           TapTxnTask.TapTxnInitiator {
+           TapTxnTask.TapTxnInitiator,
+           Account.BalanceChangeListener {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
@@ -53,6 +55,8 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     private NfcAdapter mNfcAdapter;
     private IntentFilter[] mNdefExchangeFilters;
     private PendingIntent mNfcPendingIntent;
+
+    private Account account;
 
     private boolean mArmed = false;
     private ArmedFragment mArmFrag;
@@ -69,6 +73,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        account = new Account();
         captureNFC();
     }
 
@@ -100,7 +105,6 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     @Override
     protected void onStart() {
         super.onStart();
-        Account account = new Account();
         if (!account.created()) {
             Intent intent = new Intent(this, AccountStartActivity.class);
             startActivityForResult(intent, AccountStartActivity.ACCOUNT_CREATION);
@@ -171,32 +175,15 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         super.onResume();
         currency = new CurrencyDAO();
         if (mNfcAdapter != null) {
-            mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
-                    mNdefExchangeFilters, null);
-            //if (!mNfcAdapter.isEnabled()) {
-            //LayoutInflater inflater = getLayoutInflater();
-            //View dialoglayout = inflater.inflate(R.layout.nfc_settings_layout,(ViewGroup) findViewById(R.id.nfc_settings_layout));
-                /*new AlertDialog.Builder(this).setView(dialoglayout)
-                        .setPositiveButton("Update Settings", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                Intent setnfc = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                                startActivity(setnfc);
-                            }
-                        })
-                        .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            public void onCancel(DialogInterface dialog) {
-                                finish(); // exit application if user cancels
-                            }
-                        }).create().show();
-            }*/
-            // } else {
-            //     Toast.makeText(getApplicationContext(), "Sorry, No NFC Adapter found.", Toast.LENGTH_SHORT).show();
-            // }
+            mNfcAdapter.enableForegroundDispatch(
+                this,
+                mNfcPendingIntent,
+                mNdefExchangeFilters,
+                null
+            );
         }
-
-
-
     }
+
     @Override
     public void onPause(){
         super.onPause();
@@ -209,8 +196,8 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         showArmedDialog();
         //TODO: make sure we unarm on resume
     }
+
     void showArmedDialog() {
-     //  mStackLevel++;
 
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
@@ -239,8 +226,8 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         randomTransactionButton = v;
         outgoingTransaction = new TapTxn();
         outgoingTransaction.setTagID("XX" + UUID.randomUUID().toString().replaceAll("-", "").substring(7, 15));
-        outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
-        outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
+        outgoingTransaction.setTxnAmount(account.getArmedAmount());
+        outgoingTransaction.setCurrencyId(account.getActiveCurrency());
         Log.d("TAP", "Phoney Transaction starting");
         new TapTxnTask().execute(this);
     }
@@ -254,8 +241,8 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         }
         outgoingTransaction = new TapTxn();
         outgoingTransaction.setTagID(tag);
-        outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
-        outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
+        outgoingTransaction.setTxnAmount(account.getArmedAmount());
+        outgoingTransaction.setCurrencyId(account.getActiveCurrency());
         Log.d("TAP", "entered Transaction starting");
         new TapTxnTask().execute(this);
     }
@@ -297,8 +284,8 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
                     mArmed = false;
                     outgoingTransaction = new TapTxn();
                     outgoingTransaction.setTagID(result);
-                    outgoingTransaction.setTxnAmount(new Account().getArmedAmount());
-                    outgoingTransaction.setCurrencyId(new Account().getActiveCurrency());
+                    outgoingTransaction.setTxnAmount(account.getArmedAmount());
+                    outgoingTransaction.setCurrencyId(account.getActiveCurrency());
                     new TapTxnTask().execute(this);
                 } else {
                     //TODO: WHen not in armed mode, if intent is detected, change to send mode
@@ -346,23 +333,45 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         TapApplication.handleFailures(this, t);
     }
 
+    /**
+     * Add a custom TextView to the title bar to display the balance
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.activity_arm, menu);
-
-
-        tvBalance= new TextView(this);
-        tvBalance.setText("$0.00");
+        tvBalance = new TextView(this);
+        tvBalance.setText(TapApplication.string(R.string.calculating));
         tvBalance.setTextColor(getResources().getColor(R.color.white));
-//        tv.setOnClickListener(this);
         tvBalance.setPadding(0, 0, 10, 0);
         tvBalance.setTypeface(null, Typeface.BOLD);
         tvBalance.setTextSize(14);
         menu.add(0, -1, 1, R.string.tap).setActionView(tvBalance).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
+        Account.setBalanceChangeListener(this);
         return true;
     }
+
+    /**
+     * Update the balance on the title bar any time it changes
+     */
+    @Override
+    public void onBalanceChanged(final BalanceList list) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    int currencyId = account.getActiveCurrency();
+                    CurrencyDAO currency = new CurrencyDAO();
+                    currency.moveTo(currencyId);
+                    String value = currency.getSymbol() + list.get(currencyId);
+                    tvBalance.setText(value);
+                }
+                catch (NullPointerException npe) {
+                    // Can happen when things are starting up/shutting down,
+                    // so ignore
+                }
+            }
+        });
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
