@@ -4,6 +4,7 @@
 
 package co.tapdatapp.tapandroid.localdata;
 
+import java.io.InputStream;
 import java.util.NoSuchElementException;
 
 public class MockCache implements Cache {
@@ -24,6 +25,11 @@ public class MockCache implements Cache {
     }
 
     @Override
+    public void put(String name, String mediaType, InputStream data) {
+        throw new NoSuchMethodError("Not implemented");
+    }
+
+    @Override
     public String getType(String name) {
         return typeData;
     }
@@ -34,6 +40,11 @@ public class MockCache implements Cache {
             throw new NoSuchElementException(name);
         }
         return putData;
+    }
+
+    @Override
+    public InputStream getStream(String name) {
+        throw new NoSuchMethodError("Not implemented");
     }
 
     @Override
