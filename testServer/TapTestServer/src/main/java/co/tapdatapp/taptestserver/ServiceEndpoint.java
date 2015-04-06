@@ -166,9 +166,19 @@ public class ServiceEndpoint {
   @Produces({ MediaType.APPLICATION_JSON })
   @Consumes({ MediaType.APPLICATION_JSON })
   public Response newTransaction(NewTransactionRequest request) {
+    if ("wrong".equalsIgnoreCase(request.tag_id)) {
+      Monitor.trace("Responding that currency is wrong");
+      return Response.ok(new WrongCurrencyResponse()).status(500).build();
+    }
     TransactionCreatedResponse response = transactions.create(request);
     Monitor.trace(request.auth_token + " transaction on " + request.tag_id);
     return Response.ok(new ResponseResponse(response)).build();
+  }
+  
+  public class WrongCurrencyResponse {
+    public String error_description = "Wrong currency";
+    public String user_error = "Wrong currency";
+    public int tag_currency = 2;
   }
   
   @GET
