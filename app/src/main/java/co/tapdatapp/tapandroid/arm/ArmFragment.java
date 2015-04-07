@@ -117,6 +117,10 @@ implements View.OnTouchListener {
                         final int SWIPE_MIN_DISTANCE = 250;
                         final int SWIPE_MAX_OFF_PATH = 250;
                         final int SWIPE_THRESHOLD_VELOCITY = 200;
+
+                        ImageView leftArrow = (ImageView) getActivity().findViewById(R.id.left_arrow_arm);
+                        ImageView rightArrow = (ImageView) getActivity().findViewById(R.id.right_arrow_arm);
+
                         try {
                             if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
                                 account.setArmedAmount(account.getArmedAmount() + amount);
@@ -140,7 +144,12 @@ implements View.OnTouchListener {
 
                                     vf.showNext();
                                     curIndex++;
+                                    leftArrow.setVisibility(View.VISIBLE);
                                 }
+                                if(curIndex == (maxIndex)){
+                                    rightArrow.setVisibility(View.INVISIBLE);
+                                }
+
                             } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
                                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                                 if(curIndex > 0) {
@@ -150,6 +159,10 @@ implements View.OnTouchListener {
 
                                     vf.showPrevious();
                                     curIndex--;
+                                    rightArrow.setVisibility(View.VISIBLE);
+                                }
+                                if(curIndex == 0){
+                                    leftArrow.setVisibility(View.INVISIBLE);
                                 }
                             }
                         } catch (Exception e) {
