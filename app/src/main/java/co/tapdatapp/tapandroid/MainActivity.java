@@ -350,6 +350,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     @Override
     public void onTapNetError(Throwable t) {
         TapApplication.handleFailures(this, t);
+        onBackPressed();
     }
 
     /**
