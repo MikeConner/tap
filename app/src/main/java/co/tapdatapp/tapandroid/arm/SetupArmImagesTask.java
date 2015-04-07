@@ -102,7 +102,7 @@ public class SetupArmImagesTask extends AsyncTask<ArmFragment, Void, Void> {
             armFragment.armImagesFailure(error);
         }
         else {
-            armFragment.updateDenominations(denominations, bitmaps, icon);
+            armFragment.updateDenominations(denominations, bitmaps);
         }
     }
 }

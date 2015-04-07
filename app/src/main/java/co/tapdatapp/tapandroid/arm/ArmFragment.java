@@ -8,7 +8,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Vibrator;
@@ -188,8 +187,6 @@ implements View.OnTouchListener {
             try {
                 ViewFlipper layout = (ViewFlipper)getView().findViewById(R.id.currency_items);
                 layout.removeAllViews();
-                TextView viewAmount = (TextView)getView().findViewById(R.id.txtAmount);
-                viewAmount.setBackground(null);
             }
             catch (NullPointerException npe) {
                 // This happens when this is called before the view is created
@@ -243,10 +240,6 @@ implements View.OnTouchListener {
      * method.
      */
     private void updateBitcoinDenominations() {
-        //noinspection ConstantConditions
-        TextView viewAmount = (TextView)getView().findViewById(R.id.txtAmount);
-        viewAmount.setBackground(getActivity().getResources().getDrawable(R.drawable.bitcoin_icon));
-        viewAmount.getBackground().setAlpha(128);
         maxIndex = 2;
         // This will never be called when getView() is null
         //noinspection ConstantConditions
@@ -299,14 +292,8 @@ implements View.OnTouchListener {
      * @param b Array of Bitmaps matching the Denominations
      */
     public void
-    updateDenominations(Denomination[] d, Bitmap[] b, Bitmap logo) {
+    updateDenominations(Denomination[] d, Bitmap[] b) {
         try {
-            //noinspection ConstantConditions
-            TextView viewAmount = (TextView) getView().findViewById(R.id.txtAmount);
-            viewAmount.setBackground(
-                new BitmapDrawable(getActivity().getResources(), logo)
-            );
-            viewAmount.getBackground().setAlpha(128);
             // This will never be called when getView() is null
             //noinspection ConstantConditions
             ViewFlipper layout = (ViewFlipper) getView().findViewById(R.id.currency_items);
