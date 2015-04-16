@@ -8,7 +8,6 @@ package co.tapdatapp.tapandroid.tags;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -53,30 +52,61 @@ public class SelectTagTypeActivity extends Activity {
     private void fillInCurrencies() {
         CurrencyDAO dao = new CurrencyDAO();
         LinkedHashMap<Integer, String> currencyList = dao.getAllOwnedCurrencies();
-        currencyDropdownMap = new int[currencyList.size()];
-        String[] currencyArray = new String[currencyList.size()];
-        int i = 0;
-        for (Integer id : currencyList.keySet()) {
-            currencyDropdownMap[i] = id;
-            currencyArray[i] = currencyList.get(id);
-            i++;
+        Spinner currencySelector = (Spinner)findViewById(R.id.spinnerSelectCurrency);
+        if (currencyList.size() == 1) {
+            // Means only Bitcoin is available, set that and disable
+            // the selection list
+            findViewById(R.id.textSelectCurrency).setVisibility(View.GONE);
+            currencySelector.setVisibility(View.GONE);
+            currencyDropdownMap = new int[1];
+            currencyDropdownMap[0] = CurrencyDAO.CURRENCY_BITCOIN;
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-            this,
-            android.R.layout.simple_spinner_item,
-            currencyArray
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ((Spinner)findViewById(R.id.spinnerSelectCurrency)).setAdapter(adapter);
+        else if (currencyList.size() == 2) {
+            // Means they have a single custom currency, so set that
+            // and disable the selection list
+            findViewById(R.id.textSelectCurrency).setVisibility(View.GONE);
+            currencySelector.setVisibility(View.GONE);
+            currencyDropdownMap = new int[1];
+            for (Integer id : currencyList.keySet()) {
+                if (id != CurrencyDAO.CURRENCY_BITCOIN) {
+                    currencyDropdownMap[0] = id;
+                    break;
+                }
+            }
+        }
+        else {
+            // There are multiple currencies available, give the user
+            // a choice
+            String[] currencyArray = new String[currencyList.size()];
+            currencyDropdownMap = new int[currencyList.size()];
+            int i = 0;
+            for (Integer id : currencyList.keySet()) {
+                currencyDropdownMap[i] = id;
+                currencyArray[i] = currencyList.get(id);
+                i++;
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                currencyArray
+            );
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            currencySelector.setAdapter(adapter);
+        }
     }
 
     /**
-     * Convert the index in the currency spinner to a currency ID
+     * Convert the index in the currency spinner to a currency ID, if
+     * there is only one currency available, just return that.
      */
     private int getSelectedCurrencyId() {
-        int itemNumber = (int)((Spinner)findViewById(R.id.spinnerSelectCurrency)).getSelectedItemId();
-        Log.d("CURRENCY", "currency " + itemNumber + " = " + currencyDropdownMap[itemNumber]);
-        return currencyDropdownMap[itemNumber];
+        if (currencyDropdownMap.length == 1) {
+            return currencyDropdownMap[0];
+        }
+        else {
+            int itemNumber = (int)((Spinner)findViewById(R.id.spinnerSelectCurrency)).getSelectedItemId();
+            return currencyDropdownMap[itemNumber];
+        }
     }
 
     /**
