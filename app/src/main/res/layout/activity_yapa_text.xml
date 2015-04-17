@@ -90,6 +90,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/yapa_timestamp_text"
                 android:textSize="18sp"
+                android:lines="1"
                 android:fontFamily="sans-serif-thin"/>
             </LinearLayout>
         <TextView
