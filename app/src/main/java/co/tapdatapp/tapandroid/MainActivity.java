@@ -350,7 +350,10 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
     @Override
     public void onTapNetError(Throwable t) {
         TapApplication.handleFailures(this, t);
-        onBackPressed();
+        Intent startMain = new Intent(this, MainActivity.class);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(startMain);
+        finish();
     }
 
     /**
