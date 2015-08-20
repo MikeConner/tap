@@ -37,7 +37,12 @@
             android:layout_marginRight="30dp"
             android:layout_marginBottom="10dp"
             android:layout_gravity="center_horizontal"
-            android:layout_weight=".80"/>
+            android:layout_weight=".80"
+            android:textColor="#090909"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowColor="#FFFFFF"
+            android:shadowRadius="25"/>
 
         <Space
             android:layout_width="match_parent"

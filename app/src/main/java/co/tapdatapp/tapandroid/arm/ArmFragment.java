@@ -246,7 +246,7 @@ implements View.OnTouchListener {
         //noinspection ConstantConditions
         TextView viewAmount = (TextView)getView().findViewById(R.id.txtAmount);
         viewAmount.setBackground(getActivity().getResources().getDrawable(R.drawable.bitcoin_icon));
-        viewAmount.getBackground().setAlpha(128);
+        viewAmount.getBackground().setAlpha(200);
         maxIndex = 2;
         // This will never be called when getView() is null
         //noinspection ConstantConditions
@@ -306,7 +306,7 @@ implements View.OnTouchListener {
             viewAmount.setBackground(
                 new BitmapDrawable(getActivity().getResources(), logo)
             );
-            viewAmount.getBackground().setAlpha(128);
+            viewAmount.getBackground().setAlpha(200);
             // This will never be called when getView() is null
             //noinspection ConstantConditions
             ViewFlipper layout = (ViewFlipper) getView().findViewById(R.id.currency_items);

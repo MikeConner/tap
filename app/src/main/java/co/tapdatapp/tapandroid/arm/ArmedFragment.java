@@ -16,6 +16,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+
+
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.graphics.Color;
+import android.view.Menu;
+import android.widget.ImageView;
+
 import co.tapdatapp.tapandroid.MainActivity;
 import co.tapdatapp.tapandroid.R;
 import co.tapdatapp.tapandroid.helpers.DevHelper;
@@ -88,6 +99,16 @@ public class ArmedFragment extends DialogFragment implements View.OnClickListene
         int width = size.x;
         int height = size.y;
         getDialog().getWindow().setLayout(width, height);
+        ImageView armtap = (ImageView)getView().findViewById(R.id.imageYapa);
+        ImageView taptag = (ImageView)getView().findViewById(R.id.taptagarmed);
+
+        AnimatorSet armtapset = (AnimatorSet) AnimatorInflater.loadAnimator(getView().getContext(), R.anim.armtag);
+        AnimatorSet tagtapset = (AnimatorSet) AnimatorInflater.loadAnimator(getView().getContext(), R.anim.armtag);
+
+        armtapset.setTarget(armtap);
+        armtapset.start();
+        tagtapset.setTarget(taptag);
+        tagtapset.start();
     }
 
     /**
