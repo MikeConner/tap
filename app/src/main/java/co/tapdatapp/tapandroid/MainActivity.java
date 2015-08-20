@@ -18,6 +18,7 @@ import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Parcelable;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -76,6 +77,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         super.onCreate(savedInstanceState);
         account = new Account();
         captureNFC();
+
     }
 
     private void captureNFC(){
@@ -261,6 +263,10 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
         super.onNewIntent(intent);
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             Log.d("NFC", "NfcAdapter.ACTION_NDEF_DISCOVERED detected");
+            final Vibrator vibe = (Vibrator)  getSystemService(Context.VIBRATOR_SERVICE);
+            vibe.vibrate(100);
+            long[] pattern = {0, 100, 50, 100, 100, 200};
+            vibe.vibrate(pattern, -1);
             NdefMessage[] messages = null;
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             if (rawMsgs != null) {
@@ -289,7 +295,7 @@ implements DepositBTCFragment.OnFragmentInteractionListener,
                     new TapTxnTask().execute(this);
                 } else {
                     //TODO: WHen not in armed mode, if intent is detected, change to send mode
-                    Toast.makeText(getApplicationContext(), "Tag Contains " + result, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Tap Not Ready.  Select Amount first.  Tag contains: " + result, Toast.LENGTH_SHORT).show();
                 }
             }
             else {

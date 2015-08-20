@@ -46,6 +46,15 @@ public class ArmedFragment extends DialogFragment implements View.OnClickListene
     public void updateWithResult(String message) {
         // This will never be called with a null View
         //noinspection ConstantConditions
+
+/*        ImageView taptag = (ImageView)getView().findViewById(R.id.taptagarmed);
+
+        AnimatorSet tapgrow = (AnimatorSet) AnimatorInflater.loadAnimator(getView().getContext(), R.anim.taggrow);
+
+        tapgrow.setTarget(taptag);
+        tapgrow.start();
+*/
+
         TextView tv = (TextView)getView().findViewById(R.id.txtYap);
         tv.setText(message);
     }
