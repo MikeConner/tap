@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/generic_background"
+    android:background="#dddddd"
     tools:context="co.tapdatapp.tapandroid.arm.ArmedFragment"
     android:weightSum="1">
 
@@ -26,7 +26,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="134dp"
         android:text="@string/tap_encouragement"
         android:id="@+id/txtFrag"
         android:layout_gravity="center"
@@ -67,9 +67,10 @@
             android:layout_width="223dp"
             android:layout_height="226dp"
             android:id="@+id/imageYapa"
-            android:src="@drawable/armed_graphic_2"
+            android:src="@drawable/armgraphic"
             android:layout_marginTop="10dp"
-            android:contentDescription="@string/armed_graphic" />
+            android:contentDescription="@string/armed_graphic"
+            android:visibility="visible" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -78,8 +79,8 @@
             android:src="@drawable/tap_tag"
             android:layout_marginTop="10dp"
             android:contentDescription="@string/armed_graphic"
-            android:layout_gravity="right"
-            android:paddingTop="50dp" />
+            android:paddingTop="50dp"
+            android:layout_gravity="end" />
     </LinearLayout>
 
 </LinearLayout>
